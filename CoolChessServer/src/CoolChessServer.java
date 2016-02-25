@@ -35,7 +35,7 @@ public class CoolChessServer implements Runnable {
 		//BufferedWriter bw = new BufferedWriter(log);
 		PrintWriter out = new PrintWriter(csocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(csocket.getInputStream()));
-                System.out.println("Connected to: " + csocket.getRemoteSocketAddress().toString());
+        System.out.println("Connected to: " + csocket.getRemoteSocketAddress().toString());
 		out.println("Welcome to Cool Chess Server");
 		//boolean determines if connection should be open
 		boolean connected = true;
@@ -48,6 +48,7 @@ public class CoolChessServer implements Runnable {
 		while (connected == true){
 			//reading one line at a time
 			String input = in.readLine();
+			System.out.println(input);
 			out.println(input);
 		}
 		//close the connection
