@@ -1,9 +1,9 @@
-package CoolChess.Client;
+package coolchess.client;
 
 import java.io.*;
 import java.net.*;
 
-public class CoolChessClientHelper {
+public class ClientHelper {
 	private String serverHost;
 	private int portNumber;
 	private String username;
@@ -14,7 +14,7 @@ public class CoolChessClientHelper {
 	private BufferedReader br;
 
 	//contructor Server Host, port number, username, and password are passed in
-	public CoolChessClientHelper(String _serverHost, int _portNumber, String _username){
+	public ClientHelper(String _serverHost, int _portNumber, String _username){
 		serverHost = _serverHost;
 		portNumber = _portNumber;
 		username = _username;

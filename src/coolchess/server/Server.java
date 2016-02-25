@@ -1,14 +1,14 @@
-package CoolChess.Server;
+package coolchess.server;
 
 import java.io.*;
 import java.net.*;
 
-public class CoolChessServer implements Runnable {
+public class Server implements Runnable {
 	Socket csocket;
 	static PrintWriter pw;
 
 	//Server constructor, passing in client socket and a bufferedwriter to the thread
-	CoolChessServer(Socket csocket, PrintWriter pw){
+	Server(Socket csocket, PrintWriter pw){
 		this.csocket = csocket;
 	}
 
@@ -22,7 +22,7 @@ public class CoolChessServer implements Runnable {
 		while (running){
 			//accept connections and spawn a new thread for them
 			Socket sock = ssock.accept();
-			new Thread(new CoolChessServer(sock, pw)).start();
+			new Thread(new Server(sock, pw)).start();
 		}
 		ssock.close();
 	}

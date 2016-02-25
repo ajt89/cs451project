@@ -1,8 +1,8 @@
-package CoolChess.Client;
+package coolchess.client;
 
 import java.util.*;
 
-public class CoolChessClient {
+public class Client {
 	public static void main(String[] args)throws Exception{
 		Scanner in = new Scanner(System.in);
 		
@@ -17,7 +17,7 @@ public class CoolChessClient {
 		String username = in.nextLine();
 		
 		//Construct FTPClient with inputs from user
-		CoolChessClientHelper ccch = new CoolChessClientHelper(serverHost,portNumber,username);	
+		ClientHelper ccch = new ClientHelper(serverHost,portNumber,username);	
 		//Connect with FTP server and setup Buffered readers and writers	
 		ccch.connect();
 		
