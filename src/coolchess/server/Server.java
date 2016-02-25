@@ -1,5 +1,3 @@
-package coolchess.server;
-
 import java.io.*;
 import java.net.*;
 
@@ -43,8 +41,13 @@ public class Server implements Runnable {
 		while (connected == true){
 			//reading one line at a time
 			String input = in.readLine();
-			System.out.println(input);
-			out.println(input);
+			if (input.equals("QUIT")){
+				connected = false;
+			}
+			else{
+				System.out.println(input);
+				out.println(input);
+			}
 		}
 		//close the connection
 		out.close();

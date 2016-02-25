@@ -1,5 +1,3 @@
-package coolchess.client;
-
 import java.util.*;
 
 public class Client {
