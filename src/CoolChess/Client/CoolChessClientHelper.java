@@ -1,3 +1,5 @@
+package CoolChess.Client;
+
 import java.util.*;
 import java.io.*;
 import java.net.*;
