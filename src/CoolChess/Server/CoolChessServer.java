@@ -2,19 +2,14 @@ package CoolChess.Server;
 
 import java.io.*;
 import java.net.*;
-import java.text.*;
-import java.util.*;
 
 public class CoolChessServer implements Runnable {
 	Socket csocket;
 	static PrintWriter pw;
-	static String username;
-	String password;
 
 	//Server constructor, passing in client socket and a bufferedwriter to the thread
-	CoolChessServer(Socket csocket, PrintWriter pw, String username){
+	CoolChessServer(Socket csocket, PrintWriter pw){
 		this.csocket = csocket;
-		this.username = username;
 	}
 
 	public static void main(String args[]) throws Exception{
@@ -23,11 +18,13 @@ public class CoolChessServer implements Runnable {
 		ServerSocket ssock = new ServerSocket(Integer.parseInt(args[0]));
 		System.out.println("Listening on " + args[0]);
 		System.out.println("Hostname: " + InetAddress.getLocalHost().getHostName());
-		while (true){
+		boolean running = true;
+		while (running){
 			//accept connections and spawn a new thread for them
 			Socket sock = ssock.accept();
-			new Thread(new CoolChessServer(sock, pw, username)).start();
+			new Thread(new CoolChessServer(sock, pw)).start();
 		}
+		ssock.close();
 	}
 	
 	//thread for a connection
@@ -41,11 +38,7 @@ public class CoolChessServer implements Runnable {
 		out.println("Welcome to Cool Chess Server");
 		//boolean determines if connection should be open
 		boolean connected = true;
-
-		//states booleans
-		boolean userNeed = true;
 		
-
 		//main loop
 		while (connected == true){
 			//reading one line at a time

@@ -1,9 +1,6 @@
 package CoolChess.Client;
 
 import java.util.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
 
 public class CoolChessClient {
 	public static void main(String[] args)throws Exception{
@@ -52,5 +49,7 @@ public class CoolChessClient {
 				break;
 			}
 		}
+		
+		in.close();
 	}
 }
