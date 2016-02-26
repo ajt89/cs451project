@@ -1,21 +1,21 @@
+package coolchess.client;
+
 import java.io.*;
 import java.net.*;
 
 public class ClientHelper {
 	private String serverHost;
 	private int portNumber;
-	private String username;
 	private String response;
 	private String message;
 	private Socket socket;
 	private BufferedWriter bw;
 	private BufferedReader br;
 
-	//contructor Server Host, port number, username, and password are passed in
-	public ClientHelper(String _serverHost, int _portNumber, String _username){
+	//constructor Server Host, port number, and password are passed in
+	public ClientHelper(String _serverHost, int _portNumber){
 		serverHost = _serverHost;
 		portNumber = _portNumber;
-		username = _username;
 	}
 	
 	//Getters and setters
@@ -35,14 +35,6 @@ public class ClientHelper {
 		this.portNumber = portNumber;
 	}
 	
-	public String getUsername(){
-                return username;
-        }
-
-        public void setUsername(String username){
-                this.username = username;
-        }
-
 	public String getMessage(){
 		return message;
 	}
@@ -89,13 +81,5 @@ public class ClientHelper {
 		setMessage("QUIT\n");
 		setResponse();
                 System.out.println(response);
-	}
-	//sends USER <username> to FTP server, completing first half of login
-	public void USER() throws Exception{
-		bw.write("USER " + username + "\n");
-		bw.flush();
-		setMessage("USER " + username + "\n");
-		setResponse();                
-		System.out.println(response);
 	}
 }
