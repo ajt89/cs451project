@@ -2,7 +2,6 @@ package coolchess.gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -11,6 +10,7 @@ public class Chessboard {
 	private JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private JButton[][] squares = new JButton[8][8];
 	private JPanel board;
+	private String[] starting = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
 	
 	public Chessboard() {
 		initialize();
@@ -43,8 +43,35 @@ public class Chessboard {
 					button.setBackground(Color.BLACK);
 				}
 				squares[i][j] = button;
+				
+			}
+		}
+		
+		for(int i = 0; i < squares.length; i++) {
+			for(int j = 0; j < squares[i].length; j++) {
 				board.add(squares[i][j]);
 			}
+		}
+		
+		setupBoard();
+	}
+	
+	private void setupBoard() {
+		for(int j = 0; j < squares.length; j++) {
+			squares[1][j].setText("Pawn");
+			squares[1][j].setForeground(Color.BLUE);
+		}
+		for(int j = 0; j < squares.length; j++) {
+			squares[6][j].setText("Pawn");
+			squares[6][j].setForeground(Color.RED);
+		}
+		for(int j = 0; j < squares.length; j++) {
+			squares[0][j].setText(starting[j]);
+			squares[0][j].setForeground(Color.BLUE);
+		}
+		for(int j = 0; j < squares.length; j++) {
+			squares[7][j].setText(starting[j]);
+			squares[7][j].setForeground(Color.RED);
 		}
 	}
 	
