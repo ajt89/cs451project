@@ -15,9 +15,9 @@ public class Client {
 		String username = in.nextLine();
 		
 		//Construct FTPClient with inputs from user
-		ClientHelper ccch = new ClientHelper(serverHost,portNumber,username);	
+		ClientHelper ch = new ClientHelper(serverHost,portNumber,username);	
 		//Connect with FTP server and setup Buffered readers and writers	
-		ccch.connect();
+		ch.connect();
 		
 		//Setting up while loop, only exit upon sending QUIT to FTP server
 		boolean exit = false;
@@ -32,14 +32,14 @@ public class Client {
 
 			switch (Integer.parseInt(input)){
 			//exit and send QUIT
-			case 0: ccch.QUIT();
+			case 0: ch.QUIT();
 				exit = true;
 				break;
 				
 			//send raw input
 			case 1: System.out.println("Enter input: ");
 				 input = in.nextLine();
-				 ccch.raw(input);
+				 ch.raw(input);
 				 break;
 				 
 			//to get any unwanted answers
