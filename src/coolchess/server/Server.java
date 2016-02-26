@@ -4,62 +4,113 @@ import java.io.*;
 import java.net.*;
 
 public class Server implements Runnable {
-	Socket csocket;
-	static PrintWriter pw;
+	private ServerThread clients[] = new ServerThread[6];
+	private ServerSocket server = null;
+	private Thread thread = null;
+	private int clientCount = 0;
 
 	//Server constructor, passing in client socket and a bufferedwriter to the thread
-	Server(Socket csocket, PrintWriter pw){
-		this.csocket = csocket;
+	Server(int port){
+		try{
+			System.out.println("Binding to port " + port);
+			server = new ServerSocket(port);
+			System.out.println("Server started: " + server);
+			start();
+		}
+		catch (IOException ioe){
+			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
+		}
 	}
 
-	public static void main(String args[]) throws Exception{
-	
-		//set up socket to listen
-		ServerSocket ssock = new ServerSocket(Integer.parseInt(args[0]));
-		System.out.println("Listening on " + args[0]);
-		System.out.println("Hostname: " + InetAddress.getLocalHost().getHostName());
-		boolean running = true;
-		while (running){
-			//accept connections and spawn a new thread for them
-			Socket sock = ssock.accept();
-			new Thread(new Server(sock, pw)).start();
+	public static void main(String args[]){
+		Server server = null;
+		if(args.length != 1)
+			System.out.println("usage: java Server <port>");
+		else{
+			server = new Server(Integer.parseInt(args[0]));
 		}
-		ssock.close();
 	}
 	
 	//thread for a connection
 	public void run(){
-		try{
-		//Setting up BufferedWriters, BufferedReaders, and PrintWriter
-		//BufferedWriter bw = new BufferedWriter(log);
-		PrintWriter out = new PrintWriter(csocket.getOutputStream(), true);
-		BufferedReader in = new BufferedReader(new InputStreamReader(csocket.getInputStream()));
-        System.out.println("Connected to: " + csocket.getRemoteSocketAddress().toString());
-		out.println("Welcome to Cool Chess Server");
-		//boolean determines if connection should be open
-		boolean connected = true;
-		
-		//main loop
-		while (connected == true){
-			//reading one line at a time
-			String input = in.readLine();
-			if (input.equals("QUIT")){
-				connected = false;
+		while (thread != null){
+			try{
+				System.out.println("Waiting for client... Standby.");
+				addThread(server.accept());
 			}
-			else{
-				System.out.println(input);
-				out.println(input);
+			catch(IOException ioe){
+				System.out.println("Server accept error: " + ioe);
 			}
 		}
-		//close the connection
-		out.close();
-		in.close();
-		csocket.close();
-		System.out.println("Disconnected from: " + csocket.getRemoteSocketAddress().toString());
-
-		//catch any exceptions and record them to the log
-		} catch(IOException e){
-			System.out.println(e);
+	}
+	
+	public void start(){
+		if (thread == null){
+			thread = new Thread(this);
+			thread.start();
+		}
+	}
+	
+	public void stop(){
+		if (thread != null){
+			thread = null;
+		}
+	}
+	
+	private int findClient(int ID){
+		for(int i = 0; i < clientCount; i++){
+			if (clients[i].getID() == ID)
+				return i;
+		}
+		return -1;
+	}
+	
+	public synchronized void handle(int ID, String input){
+		if (input.equals("QUIT")){
+			clients[findClient(ID)].send("QUIT");
+			remove(ID);
+		}
+		else{
+			for (int i = 0; i < clientCount; i++){
+				clients[i].send(ID + ": " + input);
+			}
+		}
+	}
+	
+	public synchronized void remove(int ID){
+		int pos = findClient(ID);
+		if (pos >= 0){
+			ServerThread toTerminate = clients[pos];
+			System.out.println("Removing client thread " + ID + " at " + pos);
+			if (pos < clientCount-1)
+				for (int i = pos+1; i < clientCount; i++){
+					clients[i-1] = clients[i];
+				}
+			clientCount--;
+			try{
+				toTerminate.close();
+			}
+			catch (IOException ioe){
+				System.out.println("Error closing thread: " + ioe);
+			}
+		}
+	}
+	
+	private void addThread(Socket socket){
+		if (clientCount < clients.length){
+			System.out.println("Client accepted: " + socket);
+			clients[clientCount] = new ServerThread(this,socket);
+			try{
+				clients[clientCount].open();
+				clients[clientCount].start();
+				clientCount++;
+			}
+			catch(IOException ioe){
+				System.out.println("Error opening thread: " + ioe);
+			}
+		}
+		else{
+			System.out.println("Clieng refused: maximum " + clients.length + " reached.");
 		}
 	}
 }
