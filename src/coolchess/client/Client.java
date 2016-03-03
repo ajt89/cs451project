@@ -2,29 +2,28 @@ package coolchess.client;
 
 import java.util.*;
 
-public class Client implements Runnable{
+public class Client {	
 	public static void main(String[] args)throws Exception{
 		Scanner in = new Scanner(System.in);
 		
-		//command arguments to variables
 		System.out.println("Please enter server host:");
         String serverHost = in.nextLine();
         System.out.println("Please enter port number:");
 		int portNumber = Integer.parseInt(in.nextLine());
-
-		//Construct FTPClient with inputs from user
+		
 		ClientHelper ch = new ClientHelper(serverHost,portNumber);	
 		//Connect with server and setup Buffered readers and writers	
 		ch.connect();
 		
-		//Setting up while loop, only exit upon sending QUIT to server
+		//Setting up while loop, only exit upon sending QUIT to FTP server
 		boolean exit = false;
 		while(exit != true){
 			String input;
 			
-			//Setting up switch statements, simple numbering system to choose commands
+			//Setting up switch statements, simple numbering system to choose FTP commands
 			System.out.println("Enter 0 to send the QUIT command to server and exit program.");
-			System.out.println("Enter 1 for raw input.");
+			System.out.println("Enter 1 to send a message.");
+			System.out.println("Enter 2 to send username.");
 			
 			input = in.nextLine();
 
@@ -39,6 +38,11 @@ public class Client implements Runnable{
 				 input = in.nextLine();
 				 ch.raw(input);
 				 break;
+			
+			case 2: System.out.println("Enter username: ");
+				 input = in.nextLine();
+				 ch.user(input);
+				 break;
 				 
 			//to get any unwanted answers
 			default: System.out.println("Invalid input");
@@ -47,11 +51,5 @@ public class Client implements Runnable{
 		}
 		
 		in.close();
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
 	}
 }
