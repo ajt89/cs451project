@@ -1,5 +1,4 @@
 package coolchess.client;
-
 import java.io.*;
 import java.net.*;
 
@@ -12,7 +11,7 @@ public class ClientHelper {
 	private BufferedWriter bw;
 	private BufferedReader br;
 
-	//constructor Server Host, port number, and password are passed in
+	// Server Host and port number are passed in
 	public ClientHelper(String _serverHost, int _portNumber){
 		serverHost = _serverHost;
 		portNumber = _portNumber;
@@ -43,15 +42,16 @@ public class ClientHelper {
 		this.message = message;	
 	}
 	//get response from server
+	
 	public void setResponse() throws Exception{
-                response = br.readLine();
-
-        }
+		response = br.readLine();
+    }
+	
 	public String getResponse(){
 		return response;
 	}
 	
-	//used for testing, getting familiar with FTP
+	//used for testing
 	public void raw(String input) throws Exception{
 		bw.write(input + "\n");
 		bw.flush();
@@ -59,7 +59,21 @@ public class ClientHelper {
 		setResponse();
 		System.out.println(response);
 	}	
-	//connect to FTP server via socket, sets up buffered writers and readers
+	
+	public void user(String input) throws Exception{
+		bw.write(input + "\n");
+		bw.flush();
+
+		setResponse();
+		System.out.println(response);
+		
+		bw.write("\n");
+		bw.flush();
+
+		setResponse();
+		System.out.println(response);
+	}
+	//connect to server via socket, sets up buffered writers and readers
 	public void connect() throws Exception{
 		socket = new Socket(serverHost, portNumber);
 		OutputStream os = socket.getOutputStream();
@@ -68,12 +82,12 @@ public class ClientHelper {
 
                 InputStream is = socket.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);	
-	
-		setResponse();
-		System.out.println(response);		
-
+                br = new BufferedReader(isr);
+                
+                setResponse();
+                System.out.println(response);
 	}
+	
 	//sends QUIT to FTP server, closing the connection
 	public void QUIT() throws Exception{
 		bw.write("QUIT\n");
