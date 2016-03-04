@@ -2,7 +2,13 @@ package coolchess.client;
 
 import java.util.*;
 
-public class Client {	
+public class Client implements Runnable{
+	ClientHelper ch;
+	
+	Client(ClientHelper ch){
+		this.ch = ch;
+	}
+	
 	public static void main(String[] args)throws Exception{
 		Scanner in = new Scanner(System.in);
 		
@@ -14,6 +20,7 @@ public class Client {
 		ClientHelper ch = new ClientHelper(serverHost,portNumber);	
 		//Connect with server and setup Buffered readers and writers	
 		ch.connect();
+		new Thread(new Client(ch)).start();
 		
 		//Setting up while loop, only exit upon sending QUIT to FTP server
 		boolean exit = false;
@@ -40,7 +47,7 @@ public class Client {
 				 break;
 			
 			case 2: System.out.println("Enter username: ");
-				 input = in.nextLine();
+				input = in.nextLine();
 				 ch.user(input);
 				 break;
 				 
@@ -51,5 +58,19 @@ public class Client {
 		}
 		
 		in.close();
+	}
+
+	@Override
+	public void run() {
+		try{
+			boolean connected = true;
+			while (connected == true){
+				ch.setResponse();
+				System.out.println("Message from the server: " + ch.getResponse());
+			} 
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		
 	}
 }

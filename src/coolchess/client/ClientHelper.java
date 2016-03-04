@@ -7,6 +7,7 @@ public class ClientHelper {
 	private int portNumber;
 	private String response;
 	private String message;
+	private String username;
 	private Socket socket;
 	private BufferedWriter bw;
 	private BufferedReader br;
@@ -56,22 +57,24 @@ public class ClientHelper {
 		bw.write(input + "\n");
 		bw.flush();
 
-		setResponse();
+		/*setResponse();
 		System.out.println(response);
+		*/
 	}	
 	
 	public void user(String input) throws Exception{
+		username = input;
 		bw.write(input + "\n");
 		bw.flush();
 
-		setResponse();
+		/*setResponse();
 		System.out.println(response);
 		
 		bw.write("\n");
 		bw.flush();
 
 		setResponse();
-		System.out.println(response);
+		System.out.println(response);*/
 	}
 	//connect to server via socket, sets up buffered writers and readers
 	public void connect() throws Exception{
@@ -84,16 +87,17 @@ public class ClientHelper {
                 InputStreamReader isr = new InputStreamReader(is);
                 br = new BufferedReader(isr);
                 
-                setResponse();
-                System.out.println(response);
+                /*setResponse();
+                System.out.println(response);*/
 	}
 	
 	//sends QUIT to FTP server, closing the connection
 	public void QUIT() throws Exception{
 		bw.write("QUIT\n");
 		bw.flush();
-		setMessage("QUIT\n");
+		/*setMessage("QUIT\n");
 		setResponse();
-                System.out.println(response);
+        System.out.println(response);
+        */
 	}
 }
