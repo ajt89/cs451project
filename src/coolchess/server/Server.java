@@ -15,7 +15,7 @@ public class Server {
 		int port = Integer.parseInt(args[0]);
 		System.out.println("Server running... ");
 		System.out.println("Hostname: " + InetAddress.getLocalHost().getHostName());
-		ServerSocket listener = new ServerSocket(port);
+		ServerSocket listener = new ServerSocket(port, 6);
 		System.out.println("Listening on: " + port);
 		
 		try {
@@ -41,6 +41,7 @@ public class Server {
 			try {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				out = new PrintWriter(socket.getOutputStream(), true);
+				PrintWriter individual = new PrintWriter(socket.getOutputStream(), true);
 				while(true){
 					out.println("Enter username: ");
 					username = in.readLine();
@@ -63,11 +64,17 @@ public class Server {
 					if (input == null){
 						return;
 					}
+					else if(input.equals("PING")){
+						individual.println("PONG");
+						System.out.println("PING from " + socket);
+					}
 					else if (input.equals("QUIT")){
 						status = false;
 					}
-					for (PrintWriter writer : pw){
-						writer.println("Message from " + username + ": " + input);
+					else{
+						for (PrintWriter writer : pw){
+							writer.println("Message from " + username + ": " + input);
+						}
 					}
 				}
 			} catch(IOException e){

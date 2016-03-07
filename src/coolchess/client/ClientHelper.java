@@ -52,6 +52,10 @@ public class ClientHelper {
 		return response;
 	}
 	
+	public Socket getSocket(){
+		return socket;
+	}
+	
 	//used for testing
 	public void raw(String input) throws Exception{
 		bw.write(input + "\n");
@@ -70,20 +74,18 @@ public class ClientHelper {
 		username = input;
 		bw.write(input + "\n");
 		bw.flush();
+		new Thread(connectionCheck).start();
 	}
 	//connect to server via socket, sets up buffered writers and readers
 	public void connect() throws Exception{
 		socket = new Socket(serverHost, portNumber);
 		OutputStream os = socket.getOutputStream();
-                OutputStreamWriter osw = new OutputStreamWriter(os);
-                bw = new BufferedWriter(osw);
+        OutputStreamWriter osw = new OutputStreamWriter(os);
+        bw = new BufferedWriter(osw);
 
-                InputStream is = socket.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                br = new BufferedReader(isr);
-                
-                /*setResponse();
-                System.out.println(response);*/
+        InputStream is = socket.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        br = new BufferedReader(isr);
 	}
 	
 	//sends QUIT to server, closing the connection
@@ -91,4 +93,27 @@ public class ClientHelper {
 		bw.write("QUIT\n");
 		bw.flush();
 	}
+	
+	Runnable connectionCheck = new Runnable(){
+		public void run(){
+			try {
+				while(true){
+					raw("PING");
+					setResponse();
+					Thread.sleep(15000);
+				}	
+			} catch (Exception e) {
+				System.out.println(e);
+				try {
+					System.out.println("Attempt reconnect in 30 seconds");
+					Thread.sleep(30000);
+					connect();
+				} catch (Exception e1) {
+					System.out.println(e);
+					System.out.println("Reconnect fail");
+					System.exit(0);
+				}
+			}
+		}
+	};
 }

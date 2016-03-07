@@ -96,8 +96,7 @@ public class Client implements Runnable{
 	@Override
 	public void run() {
 		try{
-			boolean connected = true;
-			while (connected == true){
+			while (ch.getSocket().isConnected()){
 				ch.setResponse();
 				String response = ch.getResponse();
 				if (response != null){
@@ -108,6 +107,7 @@ public class Client implements Runnable{
 					if (response.contains(ch.getUser())){
 						String userChallenge = responseSplit[2].substring(0,responseSplit[2].length()-1);
 						if (responseSplit[2].contains(ch.getUser())){
+							return;
 						}
 						else if (responseSplit[3].equals("challenge") && responseSplit[4].equals(ch.getUser())){
 							System.out.println("Challenge sent from " + userChallenge);
@@ -120,11 +120,14 @@ public class Client implements Runnable{
 							System.out.println("Challenge denied by " + userChallenge);
 						}
 					}
+					else if(response.equals("PONG")){
+						return;
+					}
 					else{
 						System.out.println("Server: " + response);
 					}
 				}
-			} 
+			}
 		}catch(Exception e){
 			System.out.println(e);
 		}
