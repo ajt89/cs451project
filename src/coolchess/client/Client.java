@@ -1,5 +1,4 @@
 package coolchess.client;
-
 import java.util.*;
 
 public class Client implements Runnable{
@@ -46,9 +45,12 @@ public class Client implements Runnable{
 			//Setting up switch statements, simple numbering system to choose FTP commands
 			System.out.println("Enter 0 to send the QUIT command to server and exit program.");
 			System.out.println("Enter 1 to send a message.");
+			System.out.println("Enter 2 to send a challenge.");
+			System.out.println("Enter 3 to accept a challenge.");
+			System.out.println("Enter 4 to deny a challenge.");
 			
 			input = in.nextLine();
-			int choice = 2;
+			int choice = -1;
 			try{
 				choice = Integer.parseInt(input);
 			}catch(NumberFormatException e){
@@ -64,6 +66,21 @@ public class Client implements Runnable{
 			case 1: System.out.println("Enter input: ");
 				input = in.nextLine();
 				ch.raw(input);
+				break;
+			
+			case 2: System.out.println("Enter user to send a challenge to: ");
+				input = in.nextLine();
+				ch.raw("challenge " + input);
+				break;
+				
+			case 3: System.out.println("Enter user to accept: ");
+				input = in.nextLine();
+				ch.raw(input + " accept");
+				break;
+				
+			case 4: System.out.println("Enter user to deny: ");
+				input = in.nextLine();
+				ch.raw(input + " denied");
 				break;
 				 
 			//to get any unwanted answers
@@ -89,10 +106,18 @@ public class Client implements Runnable{
 						System.out.println(responseSplit[i]);
 					}*/
 					if (response.contains(ch.getUser())){
+						String userChallenge = responseSplit[2].substring(0,responseSplit[2].length()-1);
 						if (responseSplit[2].contains(ch.getUser())){
 						}
-						else{
-							System.out.println("Challenge sent from " + responseSplit[2].substring(0,responseSplit[2].length()-1));
+						else if (responseSplit[3].equals("challenge") && responseSplit[4].equals(ch.getUser())){
+							System.out.println("Challenge sent from " + userChallenge);
+							System.out.println("Do you accept?(y/n):");
+						}
+						else if (responseSplit[3].equals(ch.getUser()) && responseSplit[4].equals("accept")){
+							System.out.println("Challenge accepted by " + userChallenge);
+						}
+						else if (responseSplit[3].equals(ch.getUser()) && responseSplit[4].equals("denied")){
+							System.out.println("Challenge denied by " + userChallenge);
 						}
 					}
 					else{
