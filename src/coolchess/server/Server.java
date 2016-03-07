@@ -56,6 +56,7 @@ public class Server {
 					}
 				}
 				out.println("Username accepted");
+				System.out.println(username + " added");
 				pw.add(out);
 				
 				boolean status = true;
@@ -64,17 +65,21 @@ public class Server {
 					if (input == null){
 						return;
 					}
+					else if(input.equals("PLAYERLIST")){
+						for (String s : usernames){
+							individual.println("PLAYERS: " + s);
+							System.out.println("Players: " + s);
+						}
+					}
 					else if(input.equals("PING")){
 						individual.println("PONG");
-						System.out.println("PING from " + socket);
+						System.out.println(username + ": " + input);
 					}
 					else if (input.equals("QUIT")){
 						status = false;
 					}
-					else{
-						for (PrintWriter writer : pw){
-							writer.println("Message from " + username + ": " + input);
-						}
+					for (PrintWriter writer : pw){
+						writer.println(username + ": " + input);
 					}
 				}
 			} catch(IOException e){
