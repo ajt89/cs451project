@@ -1,9 +1,13 @@
 package coolchess.gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import coolchess.game.*;
 
 public class Chessboard {
 
@@ -11,6 +15,7 @@ public class Chessboard {
 	private JButton[][] squares = new JButton[8][8];
 	private JPanel board;
 	private String[] starting = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
+	private Board b;
 	
 	public Chessboard() {
 		initialize();
@@ -43,17 +48,34 @@ public class Chessboard {
 					button.setBackground(Color.BLACK);
 				}
 				squares[i][j] = button;
-				
+				//Rectangle rect = squares[i][j].getBounds();
 			}
 		}
 		
 		for(int i = 0; i < squares.length; i++) {
 			for(int j = 0; j < squares[i].length; j++) {
+				board.setLocation(i, j);
+				//System.out.println(board.getBounds().x);
+				int xcord = board.getBounds().x;
+				int ycord = board.getBounds().y;
+				squares[i][j].addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						showViableMoves(xcord, ycord);
+					}
+
+					
+				});
 				board.add(squares[i][j]);
 			}
 		}
 		
 		setupBoard();
+	}
+	
+	private void showViableMoves(int i, int j) {
+		//System.out.println(i);
+		//System.out.println(j);
+		squares[i][j].setBackground(Color.RED);
 	}
 	
 	private void setupBoard() {
@@ -96,9 +118,11 @@ public class Chessboard {
                 
                 frame.setMinimumSize(frame.getSize());
                 frame.setVisible(true);
+                
+                
 			}
 		};
-		
+
 		SwingUtilities.invokeLater(r);
 	}
 
