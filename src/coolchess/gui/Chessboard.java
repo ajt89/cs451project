@@ -16,6 +16,7 @@ public class Chessboard {
 	private JPanel board;
 	private String[] starting = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
 	private Board b;
+	private boolean active = true;
 	
 	public Chessboard() {
 		initialize();
@@ -60,7 +61,12 @@ public class Chessboard {
 				int ycord = board.getBounds().y;
 				squares[i][j].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						showViableMoves(xcord, ycord);
+						if(active) {
+							showViableMoves(xcord, ycord);
+						}
+						else {
+							//check if current location is within the viable list
+						}
 					}
 
 					
