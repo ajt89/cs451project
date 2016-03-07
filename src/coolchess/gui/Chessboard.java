@@ -17,6 +17,9 @@ public class Chessboard {
 	private String[] starting = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
 	private Board b;
 	private boolean active = true;
+	private boolean isViable;
+	private int activex;
+	private int activey;
 	
 	public Chessboard() {
 		initialize();
@@ -66,6 +69,18 @@ public class Chessboard {
 						}
 						else {
 							//check if current location is within the viable list
+							//if(is in viable list) {
+								
+							//}
+							if(isViable) {
+								movePiece(activex, activey, xcord, ycord);
+							}
+							else {
+								active = false;
+								for(int k = 0; k < 10; k++) {
+									//change colors back to black and white through math
+								}
+							}
 						}
 					}
 
@@ -81,7 +96,16 @@ public class Chessboard {
 	private void showViableMoves(int i, int j) {
 		//System.out.println(i);
 		//System.out.println(j);
+		activex = i;
+		activey = j;
 		squares[i][j].setBackground(Color.RED);
+	}
+	
+	private void movePiece(int oldi, int oldj, int i, int j) {
+		//get image/text from old space
+		String temp = squares[oldi][oldj].getText();
+		squares[oldi][oldj].setText("");
+		squares[i][j].setText(temp);
 	}
 	
 	private void setupBoard() {
