@@ -58,10 +58,14 @@ public class Server {
 				out.println("Username accepted");
 				pw.add(out);
 				
-				while(true){
+				boolean status = true;
+				while(status){
 					String input = in.readLine();
 					if (input == null){
 						return;
+					}
+					else if (input.equals("QUIT")){
+						status = false;
 					}
 					for (PrintWriter writer : pw){
 						writer.println("Message from " + username + ": " + input);
@@ -72,6 +76,7 @@ public class Server {
 			} finally{
 				if (username != null){
 					usernames.remove(username);
+					System.out.println(username + " removed");
 				}
 				try{
 					socket.close();

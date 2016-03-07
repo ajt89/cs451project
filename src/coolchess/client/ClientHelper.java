@@ -42,8 +42,8 @@ public class ClientHelper {
 	public void setMessage(String message){
 		this.message = message;	
 	}
-	//get response from server
 	
+	//get response from server
 	public void setResponse() throws Exception{
 		response = br.readLine();
     }
@@ -62,19 +62,14 @@ public class ClientHelper {
 		*/
 	}	
 	
+	public String getUser(){
+		return username;
+	}
+	
 	public void user(String input) throws Exception{
 		username = input;
 		bw.write(input + "\n");
 		bw.flush();
-
-		/*setResponse();
-		System.out.println(response);
-		
-		bw.write("\n");
-		bw.flush();
-
-		setResponse();
-		System.out.println(response);*/
 	}
 	//connect to server via socket, sets up buffered writers and readers
 	public void connect() throws Exception{
@@ -91,13 +86,9 @@ public class ClientHelper {
                 System.out.println(response);*/
 	}
 	
-	//sends QUIT to FTP server, closing the connection
+	//sends QUIT to server, closing the connection
 	public void QUIT() throws Exception{
 		bw.write("QUIT\n");
 		bw.flush();
-		/*setMessage("QUIT\n");
-		setResponse();
-        System.out.println(response);
-        */
 	}
 }
