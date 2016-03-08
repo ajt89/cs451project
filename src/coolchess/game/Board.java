@@ -1,7 +1,7 @@
 package coolchess.game;
 
 public class Board {
-	private static final int boardSize = 8;
+	public static final int boardSize = 8;
 	private Cell[][] cells;
 	private BoardState state;
 	
