@@ -74,7 +74,6 @@ public class ClientHelper {
 		username = input;
 		bw.write(input + "\n");
 		bw.flush();
-		new Thread(connectionCheck).start();
 	}
 	//connect to server via socket, sets up buffered writers and readers
 	public void connect() throws Exception{
@@ -94,13 +93,12 @@ public class ClientHelper {
 		bw.flush();
 	}
 	
-	Runnable connectionCheck = new Runnable(){
+	/*Runnable connectionCheck = new Runnable(){
 		public void run(){
 			try {
 				while(true){
 					raw("PING");
-					setResponse();
-					Thread.sleep(15000);
+					Thread.sleep(60000);
 				}	
 			} catch (Exception e) {
 				System.out.println(e);
@@ -115,5 +113,5 @@ public class ClientHelper {
 				}
 			}
 		}
-	};
+	};*/
 }

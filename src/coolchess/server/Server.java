@@ -72,14 +72,17 @@ public class Server {
 						}
 					}
 					else if(input.equals("PING")){
-						individual.println("PONG");
-						System.out.println(username + ": " + input);
+						//individual.println("PONG");
+						//System.out.println("PING from: " + username);
 					}
 					else if (input.equals("QUIT")){
 						status = false;
 					}
-					for (PrintWriter writer : pw){
-						writer.println(username + ": " + input);
+					else{
+						//System.out.println(username + ": " + input);
+						for (PrintWriter writer : pw){
+							writer.println(username + ": " + input);
+						}	
 					}
 				}
 			} catch(IOException e){
