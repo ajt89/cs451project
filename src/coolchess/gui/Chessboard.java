@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.ListSelectionEvent;
@@ -231,46 +233,6 @@ public class Chessboard {
 		}
 	}
 	
-	private static JPanel initializeLobby() {
-		JPanel lobby = new JPanel();
-		
-		DefaultListModel list = new DefaultListModel();
-		for(int i = 0; i < 10; i++) {
-			list.addElement("hi" + i);
-		}
-		
-		JButton	challenge = new JButton("Send Challenge");
-		JList people = new JList(list);
-		people.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		people.setLayoutOrientation(JList.VERTICAL);
-		people.setVisibleRowCount(-1);
-		people.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting() == false) {
-					if(people.getSelectedIndex() == -1) {
-						challenge.setEnabled(false);
-					}
-					else {
-						challenge.setEnabled(true);
-					}
-				}
-			}
-		});
-		challenge.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String opponent = (String) people.getSelectedValue();
-				//
-				System.out.println(opponent);
-			}
-		});
-		JScrollPane listScroller = new JScrollPane(people);
-		listScroller.setPreferredSize(new Dimension(250, 400));
-		
-		lobby.add(listScroller);
-		lobby.add(challenge);
-		return lobby;
-	}
-	
 	public JComponent getBoard() {
 		return board;
 	}
@@ -303,7 +265,42 @@ public class Chessboard {
 				menu.add(play);
 				contentPane.add(menu, "CoolChess Menu");
 				
-				JPanel lobby = initializeLobby();
+				JPanel lobby = new JPanel();
+				
+				DefaultListModel list = new DefaultListModel();
+				for(int i = 0; i < 10; i++) {
+					list.addElement("hi" + i);
+				}
+				
+				JButton	challenge = new JButton("Send Challenge");
+				JList people = new JList(list);
+				people.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				people.setLayoutOrientation(JList.VERTICAL);
+				people.setVisibleRowCount(-1);
+				people.addListSelectionListener(new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent e) {
+						if (e.getValueIsAdjusting() == false) {
+							if(people.getSelectedIndex() == -1) {
+								challenge.setEnabled(false);
+							}
+							else {
+								challenge.setEnabled(true);
+							}
+						}
+					}
+				});
+				challenge.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						String opponent = (String) people.getSelectedValue();
+						//
+						System.out.println(opponent);
+					}
+				});
+				JScrollPane listScroller = new JScrollPane(people);
+				listScroller.setPreferredSize(new Dimension(250, 400));
+				
+				lobby.add(listScroller);
+				lobby.add(challenge);
 				
 				contentPane.add(lobby, "Player Lobby");
 				
