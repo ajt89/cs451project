@@ -15,7 +15,7 @@ public class Chessboard {
 	private JButton[][] squares = new JButton[8][8];
 	private JPanel board;
 	private String[] starting = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
-	private Board b;
+	private Board b = new Board(BoardState.WHITE_TURN);
 	private boolean active = true;
 	private boolean player;
 	private boolean isViable;
@@ -72,22 +72,24 @@ public class Chessboard {
 				int ycord = board.getBounds().y;
 				squares[i][j].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if(active) {
-							showViableMoves(xcord, ycord);
-						}
-						else {
-							//check if current location is within the viable list
-							//if(is in viable list) {
-							isViable = true;
-							//}
-							if(isViable) {
-								movePiece(activex, activey, xcord, ycord);
-								active = true;
+						if(player) {
+							if(active) {
+								showViableMoves(xcord, ycord);
 							}
 							else {
-								active = true;
-								for(int k = 0; k < 10; k++) {
-									//change colors back to black and white through math
+								//check if current location is within the viable list
+								//if(is in viable list) {
+								isViable = true;
+								//}
+								if(isViable) {
+									movePiece(activex, activey, xcord, ycord);
+									active = true;
+								}
+								else {
+									active = true;
+									for(int k = 0; k < 10; k++) {
+										//change colors back to black and white through math
+									}
 								}
 							}
 						}
@@ -115,6 +117,68 @@ public class Chessboard {
 		squares[oldi][oldj].setText("");
 		squares[i][j].setText(temp);
 		//move in board as well
+	}
+	
+	private void update(Board b) {
+		//for(int i = 0; i < b.getSize(); i++) {
+		//for(int j = 0; j < b.getSize(); j++) {
+		Cell[][] cells = b.getCells();
+		for(int i = 0; i < 8; i++) {
+			for(int j = 0; j < 8; j++) {
+				switch(cells[i][j].getCellState()) {
+					case EMPTY:
+						break;
+					case WHITE_KING:
+						squares[i][j].setText("King");
+						squares[i][j].setForeground(Color.RED);
+						break;
+					case WHITE_QUEEN:
+						squares[i][j].setText("Queen");
+						squares[i][j].setForeground(Color.RED);
+						break;
+					case WHITE_ROOK:
+						squares[i][j].setText("Rook");
+						squares[i][j].setForeground(Color.RED);
+						break;
+					case WHITE_BISHOP:
+						squares[i][j].setText("Bishop");
+						squares[i][j].setForeground(Color.RED);
+						break;
+					case WHITE_KNIGHT:
+						squares[i][j].setText("Knight");
+						squares[i][j].setForeground(Color.RED);
+						break;
+					case WHITE_PAWN:
+						squares[i][j].setText("Pawn");
+						squares[i][j].setForeground(Color.RED);
+						break;
+					case BLACK_KING:
+						squares[i][j].setText("King");
+						squares[i][j].setForeground(Color.BLUE);
+						break;
+					case BLACK_QUEEN:
+						squares[i][j].setText("Queen");
+						squares[i][j].setForeground(Color.BLUE);
+						break;
+					case BLACK_ROOK:
+						squares[i][j].setText("Rook");
+						squares[i][j].setForeground(Color.BLUE);
+						break;
+					case BLACK_BISHOP:
+						squares[i][j].setText("Bishop");
+						squares[i][j].setForeground(Color.BLUE);
+						break;
+					case BLACK_KNIGHT:
+						squares[i][j].setText("Knight");
+						squares[i][j].setForeground(Color.BLUE);
+						break;
+					case BLACK_PAWN:
+						squares[i][j].setText("Pawn");
+						squares[i][j].setForeground(Color.BLUE);
+						break;
+				}
+			}
+		}
 	}
 	
 	private void flipBoard() {
