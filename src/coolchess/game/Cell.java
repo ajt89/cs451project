@@ -1,8 +1,11 @@
 package coolchess.game;
 
 import java.awt.Point;
+import java.io.Serializable;
 
-public class Cell {
+public class Cell implements Serializable{
+	private static final long serialVersionUID = -1445032280984057587L;
+	
 	private Point position;
 	private CellState state;
 	

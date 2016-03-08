@@ -1,6 +1,10 @@
 package coolchess.game;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
+	private static final long serialVersionUID = 6068364453892314431L;
+	
 	private Cell from;
 	private Cell to;
 	
