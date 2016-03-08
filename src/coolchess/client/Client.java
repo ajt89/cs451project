@@ -45,9 +45,10 @@ public class Client implements Runnable{
 			//Setting up switch statements, simple numbering system to choose FTP commands
 			System.out.println("Enter 0 to send the QUIT command to server and exit program.");
 			System.out.println("Enter 1 to send a message.");
-			System.out.println("Enter 2 to send a challenge.");
-			System.out.println("Enter 3 to accept a challenge.");
-			System.out.println("Enter 4 to deny a challenge.");
+			System.out.println("Enter 2 to request playerlist.");
+			System.out.println("Enter 3 to send a challenge.");
+			System.out.println("Enter 4 to accept a challenge.");
+			System.out.println("Enter 5 to deny a challenge.");
 			
 			input = in.nextLine();
 			int choice = -1;
@@ -67,18 +68,21 @@ public class Client implements Runnable{
 				input = in.nextLine();
 				ch.raw(input);
 				break;
-			
-			case 2: System.out.println("Enter user to send a challenge to: ");
+				
+			case 2: ch.raw("PLAYERLIST");
+				break;
+				
+			case 3: System.out.println("Enter user to send a challenge to: ");
 				input = in.nextLine();
 				ch.raw("challenge " + input);
 				break;
 				
-			case 3: System.out.println("Enter user to accept: ");
+			case 4: System.out.println("Enter user to accept: ");
 				input = in.nextLine();
 				ch.raw(input + " accept");
 				break;
 				
-			case 4: System.out.println("Enter user to deny: ");
+			case 5: System.out.println("Enter user to deny: ");
 				input = in.nextLine();
 				ch.raw(input + " denied");
 				break;
@@ -95,33 +99,25 @@ public class Client implements Runnable{
 
 	@Override
 	public void run() {
+		String me = ch.getUser();
 		try{
 			while (ch.getSocket().isConnected()){
 				ch.setResponse();
 				String response = ch.getResponse();
 				if (response != null){
 					String[] responseSplit = response.split(" ");
-					/*for (int i = 0; i < responseSplit.length; i++){
-						System.out.println(responseSplit[i]);
-					}*/
-					if (response.contains(ch.getUser())){
-						String userChallenge = responseSplit[2].substring(0,responseSplit[2].length()-1);
-						if (responseSplit[2].contains(ch.getUser())){
-							return;
+					if (response.length() == 3 && response.contains(me)){
+						String userMessage = responseSplit[0].substring(0,responseSplit[0].length()-1);
+						if(responseSplit[1].equals("challenge") && responseSplit[2].equals(me)){
+							System.out.println("Challenge sent from " + userMessage);
+							System.out.println("Do you accept?");
 						}
-						else if (responseSplit[3].equals("challenge") && responseSplit[4].equals(ch.getUser())){
-							System.out.println("Challenge sent from " + userChallenge);
-							System.out.println("Do you accept?(y/n):");
+						else if(responseSplit[1].equals(me) && responseSplit[2].equals("accept")){
+							System.out.println("Challenge accepted by " + userMessage);
 						}
-						else if (responseSplit[3].equals(ch.getUser()) && responseSplit[4].equals("accept")){
-							System.out.println("Challenge accepted by " + userChallenge);
+						else if(responseSplit[1].equals(me) && responseSplit[2].equals("denied")){
+							System.out.println("Challenge denied by " + userMessage);
 						}
-						else if (responseSplit[3].equals(ch.getUser()) && responseSplit[4].equals("denied")){
-							System.out.println("Challenge denied by " + userChallenge);
-						}
-					}
-					else if(response.equals("PONG")){
-						return;
 					}
 					else{
 						System.out.println("Server: " + response);
@@ -130,6 +126,15 @@ public class Client implements Runnable{
 			}
 		}catch(Exception e){
 			System.out.println(e);
+			try{
+				System.out.println("Attempt reconnect in 30 seconds");
+				Thread.sleep(30000);
+				ch.connect();
+			} catch (Exception e1) {
+				System.out.println(e);
+				System.out.println("Reconnect fail");
+				System.exit(0);
+			}
 		}
 		
 	}
