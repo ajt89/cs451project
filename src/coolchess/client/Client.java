@@ -86,6 +86,9 @@ public class Client implements Runnable{
 				input = in.nextLine();
 				ch.raw(input + " denied");
 				break;
+				
+			case 6: ch.printPlayerlist();
+				break;
 				 
 			//to get any unwanted answers
 			default: System.out.println("Invalid input");
@@ -106,7 +109,7 @@ public class Client implements Runnable{
 				String response = ch.getResponse();
 				if (response != null){
 					String[] responseSplit = response.split(" ");
-					if (response.length() == 3 && response.contains(me)){
+					if (responseSplit.length == 3 && response.contains(me)){
 						String userMessage = responseSplit[0].substring(0,responseSplit[0].length()-1);
 						if(responseSplit[1].equals("challenge") && responseSplit[2].equals(me)){
 							System.out.println("Challenge sent from " + userMessage);
@@ -114,10 +117,14 @@ public class Client implements Runnable{
 						}
 						else if(responseSplit[1].equals(me) && responseSplit[2].equals("accept")){
 							System.out.println("Challenge accepted by " + userMessage);
+							ch.raw("GAME " + me + " " + userMessage);
 						}
 						else if(responseSplit[1].equals(me) && responseSplit[2].equals("denied")){
 							System.out.println("Challenge denied by " + userMessage);
 						}
+					}
+					else if (response.contains("PLAYERS")){
+						ch.setPlayerlist(responseSplit[1]);
 					}
 					else{
 						System.out.println("Server: " + response);

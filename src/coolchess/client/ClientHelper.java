@@ -1,6 +1,7 @@
 package coolchess.client;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class ClientHelper {
 	private String serverHost;
@@ -11,6 +12,7 @@ public class ClientHelper {
 	private Socket socket;
 	private BufferedWriter bw;
 	private BufferedReader br;
+	private ArrayList<String> playerlist = new ArrayList<String>();;
 
 	// Server Host and port number are passed in
 	public ClientHelper(String _serverHost, int _portNumber){
@@ -70,6 +72,20 @@ public class ClientHelper {
 		return username;
 	}
 	
+	public void setPlayerlist(String input){
+		playerlist.add(input);
+	}
+	
+	public ArrayList<String> getPlayerlist(){
+		return playerlist;
+	}
+	
+	public void printPlayerlist(){
+		for (int i = 0; i < playerlist.size(); i++){
+			System.out.println(playerlist.get(i));
+		}
+	}
+	
 	public void user(String input) throws Exception{
 		username = input;
 		bw.write(input + "\n");
@@ -92,26 +108,4 @@ public class ClientHelper {
 		bw.write("QUIT\n");
 		bw.flush();
 	}
-	
-	/*Runnable connectionCheck = new Runnable(){
-		public void run(){
-			try {
-				while(true){
-					raw("PING");
-					Thread.sleep(60000);
-				}	
-			} catch (Exception e) {
-				System.out.println(e);
-				try {
-					System.out.println("Attempt reconnect in 30 seconds");
-					Thread.sleep(30000);
-					connect();
-				} catch (Exception e1) {
-					System.out.println(e);
-					System.out.println("Reconnect fail");
-					System.exit(0);
-				}
-			}
-		}
-	};*/
 }

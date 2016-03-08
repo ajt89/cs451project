@@ -6,6 +6,7 @@ import java.util.*;
 public class Server {
 	private static HashSet<String> usernames = new HashSet<String>();
 	private static HashSet<PrintWriter> pw = new HashSet<PrintWriter>();
+	private static HashMap<String, Socket> userSocket = new HashMap<String, Socket>();
 	
 	public static void main(String[] args) throws Exception{
 		if (args.length != 1){
@@ -17,7 +18,6 @@ public class Server {
 		System.out.println("Hostname: " + InetAddress.getLocalHost().getHostName());
 		ServerSocket listener = new ServerSocket(port, 6);
 		System.out.println("Listening on: " + port);
-		
 		try {
 			while (true){
 				new Handler(listener.accept()).start();
@@ -55,6 +55,7 @@ public class Server {
 						}
 					}
 				}
+				userSocket.put(username,socket);
 				out.println("Username accepted");
 				System.out.println(username + " added");
 				pw.add(out);
@@ -77,6 +78,14 @@ public class Server {
 					}
 					else if (input.equals("QUIT")){
 						status = false;
+					}
+					else if (input.contains("GAME")){
+						String[] inputArray = input.split(" ");
+						String user1 = inputArray[1];
+						String user2 = inputArray[2];
+						Socket user1Socket = userSocket.get(user1);
+						Socket user2Socket = userSocket.get(user2);
+						new ServerHelper(user1Socket,user2Socket);
 					}
 					else{
 						//System.out.println(username + ": " + input);
