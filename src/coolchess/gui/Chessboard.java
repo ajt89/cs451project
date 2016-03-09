@@ -19,6 +19,7 @@ import coolchess.game.*;
 public class Chessboard {
 
 	private boolean white;
+	private String playerName;
 	private static JFrame frame = new JFrame();
 	private static Container contentPane = frame.getContentPane();
 	private static CardLayout cardLayout = new CardLayout();
@@ -295,6 +296,10 @@ public class Chessboard {
 			squares[7][j].setIcon(new ImageIcon(pieces[1][starting[j]]));
 			//squares[7][j].setForeground(Color.RED);
 		}
+	}
+	
+	public void setPlayerName(String s) {
+		playerName = s;
 	}
 	
 	public JComponent getBoard() {
