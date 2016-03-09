@@ -134,7 +134,7 @@ public class Chessboard {
 			JOptionPane.showMessageDialog(frame, "You have lost.", "You lose",JOptionPane.PLAIN_MESSAGE);
 			//send win message to opponent
 			try {
-				ch.raw("SURRENDER");
+				ch.raw(ch.getUser() + " SURRENDER");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -244,7 +244,7 @@ public class Chessboard {
 		}
 	}
 	
-	private void flipBoard() {
+	public void flipBoard() {
 		if(white) {
 			white = false;
 		}
