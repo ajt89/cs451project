@@ -132,6 +132,11 @@ public class Chessboard {
 		if(n == 0) {
 			JOptionPane.showMessageDialog(frame, "You have lost.", "You lose",JOptionPane.PLAIN_MESSAGE);
 			//send win message to opponent
+			try {
+				ch.raw("SURRENDER");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			cl.previous(cp);
 		}
 	}
