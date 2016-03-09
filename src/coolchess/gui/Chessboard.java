@@ -18,6 +18,7 @@ import coolchess.game.*;
 
 public class Chessboard {
 
+	private boolean white;
 	private static JFrame frame = new JFrame();
 	private static Container contentPane = frame.getContentPane();
 	private static CardLayout cardLayout = new CardLayout();
@@ -36,13 +37,12 @@ public class Chessboard {
 	private int activey;
 	//ClientHelper ch;
 	
-	public Chessboard(ClientHelper ch) {
+	public Chessboard(ClientHelper ch, CardLayout cl) {
 		//this.ch=ch;
-		initialize(ch);
+		initialize(ch, cl);
 	}
 	
-	public final void initialize(ClientHelper ch) {
-		
+	public final void initialize(ClientHelper ch, CardLayout cl) {
 		createImages();
 		
 		gui.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -152,9 +152,14 @@ public class Chessboard {
         }
 	}
 	
+	public void setWhite(boolean b) {
+		white = b;
+	}
+	
 	private void showViableMoves(int i, int j) {
 		//System.out.println(i);
 		//System.out.println(j);
+		//adjust based on white or !white
 		activex = i;
 		activey = j;
 		//squares[i][j].setBackground(Color.gray);
@@ -164,6 +169,7 @@ public class Chessboard {
 	private void movePiece(int oldi, int oldj, int i, int j) {
 		//get image/text from old space
 		//String temp = squares[oldi][oldj].getText();
+		//adjust based on white or !white
 		Icon ic = squares[oldi][oldj].getIcon();
 		squares[oldi][oldj].setIcon(null);
 		squares[i][j].setIcon(ic);
@@ -233,6 +239,12 @@ public class Chessboard {
 	}
 	
 	private void flipBoard() {
+		if(white) {
+			white = false;
+		}
+		else {
+			white = true;
+		}
 		JButton[][] temp = new JButton[8][8];
 		Insets margins = new Insets(0,0,0,0);
 		for(int i = 0; i < squares.length; i++) {
@@ -292,7 +304,7 @@ public class Chessboard {
 		ClientHelper ch = new ClientHelper("AJ-PC", 6969);
 		Runnable r = new Runnable() {
 			public void run() {
-				Chessboard cb = new Chessboard(ch);
+				Chessboard cb = new Chessboard(ch, cardLayout);
 				//JFrame frame = new JFrame();
 				
 				//Container contentPane = frame.getContentPane();
