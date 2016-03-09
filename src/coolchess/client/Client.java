@@ -2,21 +2,26 @@ package coolchess.client;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import coolchess.game.Move;
 import coolchess.gui.Chessboard;
 
 public class Client implements Runnable{
-	ClientHelper ch;
+	static ClientHelper ch;
 	static boolean gameChallenge = false;
 	static boolean challengeAccept = false;
 	static boolean challengeDenied = false;
+	static boolean victory = false;
 	static String challengeUser;
 	static CardLayout cardLayout = new CardLayout();
 	static Container contentPane;
+	private boolean surrender = false;
 	
 	Client(ClientHelper ch){
 		this.ch = ch;
@@ -36,13 +41,12 @@ public class Client implements Runnable{
 		
 		Runnable r = new Runnable() {
 			public void run() {
-				Chessboard cb = new Chessboard();
+				
 				JFrame frame = new JFrame();
 				
 				contentPane = frame.getContentPane();
-				cardLayout = new CardLayout();
-				
 				contentPane.setLayout(cardLayout);
+				Chessboard cb = new Chessboard(ch, cardLayout, contentPane);
 				JPanel menu = new JPanel();
 				JButton play = new JButton("Play");
 				DefaultListModel list = new DefaultListModel();
@@ -173,53 +177,12 @@ public class Client implements Runnable{
 				JScrollPane listScroller = new JScrollPane(people);
 				listScroller.setPreferredSize(new Dimension(250, 400));
 				
-				if (gameChallenge){
-					Object[] options = {"Accpet","Decline"};
-					int n = JOptionPane.showOptionDialog(new JFrame(),
-							"You have received a challenge from " + challengeUser,
-							"Challenge Recieved",
-							JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.QUESTION_MESSAGE,
-							null,
-							options,
-							options[1]);
-					try {
-						if (n == 0){		
-							ch.raw(challengeUser + " accept");
-						}
-						else{
-							ch.raw(challengeUser + " denied");
-						}
-					} catch (Exception e1) {
-						System.out.println(e1);
-					}
-				}
-				
-				if (challengeAccept){
-					JOptionPane.showMessageDialog(new JFrame(),
-							"Your challenge has been accepted",
-							"Challenge Accepted",
-							JOptionPane.PLAIN_MESSAGE);
-					challengeUser = null;
-					gameChallenge = false;
-					challengeAccept = false;
-					cardLayout.next(contentPane);
-				}
-				
-				if (challengeDenied){
-					JOptionPane.showMessageDialog(new JFrame(),
-							"Your challenge has been declined",
-							"Challenge declined",
-							JOptionPane.PLAIN_MESSAGE);
-					challengeUser = null;
-					gameChallenge = false;
-					challengeDenied = false;
-				}
-				
 				lobby.add(listScroller);
 				lobby.add(challenge);
 				lobby.add(refresh);
 				lobby.add(ready);
+				
+				
 				
 				contentPane.add(lobby, "Player Lobby");
 				
@@ -349,6 +312,7 @@ public class Client implements Runnable{
 				ch.setResponse();
 				String response = ch.getResponse();
 				if (response != null){
+					System.out.println(response);
 					String[] responseSplit = response.split(" ");
 					if (responseSplit.length == 3 && response.contains(me)){
 						String userMessage = responseSplit[0].substring(0,responseSplit[0].length()-1);
@@ -370,14 +334,10 @@ public class Client implements Runnable{
 							System.out.println("Challenge denied by " + userMessage);
 						}
 					}
-					/*else if (response.contains("PLAYERS")){
-						return;
-						ch.setPlayerlist(responseSplit[1]);
-						list.addElement(responseSplit[1]);
+					else if (response.contains("VICTORY") && response.contains(me)){
+						System.out.println("Victory received");
+						victory = true;
 					}
-					else{
-						System.out.println("Server: " + response);
-					}*/
 				}
 				if (gameChallenge){
 					Object[] options = {"Accept","Decline"};
@@ -393,6 +353,8 @@ public class Client implements Runnable{
 						if (n == 0){		
 							ch.raw(challengeUser + " accept");
 							cardLayout.next(contentPane);
+							new Thread(ChessGame).start();
+							new Thread(SurrenderListen).start();
 						}
 						else{
 							ch.raw(challengeUser + " denied");
@@ -412,6 +374,8 @@ public class Client implements Runnable{
 					gameChallenge = false;
 					challengeAccept = false;
 					cardLayout.next(contentPane);
+					new Thread(ChessGame).start();
+					new Thread(SurrenderListen).start();
 				}
 				
 				if (challengeDenied){
@@ -422,6 +386,13 @@ public class Client implements Runnable{
 					challengeUser = null;
 					gameChallenge = false;
 					challengeDenied = false;
+				}
+				if (victory){
+					JOptionPane.showMessageDialog(new JFrame(), 
+							"You win.", 
+							"You win",
+							JOptionPane.PLAIN_MESSAGE);
+					cardLayout.previous(contentPane);
 				}
 			}
 		}catch(Exception e){
@@ -439,5 +410,47 @@ public class Client implements Runnable{
 		}
 		
 	}
+	
+	static Runnable ChessGame = new Runnable(){
+		public void run(){
+			try{
+				ObjectInputStream objectIn = new ObjectInputStream(ch.getSocket().getInputStream());
+				ObjectOutputStream ObjectOut = new ObjectOutputStream(ch.getSocket().getOutputStream());
+				while(true){
+					Move obj = (Move)objectIn.readObject();
+				}
+			} catch (Exception e){
+				System.out.println(e);
+			}
+			
+		}
+	};
+	
+	static Runnable SurrenderListen = new Runnable(){
+		public void run() {
+			try{
+				System.out.println("SurrenderListen running");
+				boolean inProgress = true;
+				String input;
+				while(inProgress){
+					ch.setResponse();
+					input = ch.getResponse();
+					System.out.println(input);
+					System.out.println("Client: " + input);
+					if (input.contains("VICTORY")){
+						inProgress = false;
+						System.out.println("VICTORY");
+						JOptionPane.showMessageDialog(new JFrame(), "You win.", "You win",JOptionPane.PLAIN_MESSAGE);
+						cardLayout.previous(contentPane);
+						break;
+					}
+				}
+			} catch(Exception e){
+				System.out.println(e);
+			}
+			
+		}
+		
+	};
 	
 }

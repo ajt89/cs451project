@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import coolchess.game.Move;
+
 public class ClientHelper {
 	private String serverHost;
 	private int portNumber;
@@ -13,6 +15,7 @@ public class ClientHelper {
 	private BufferedWriter bw;
 	private BufferedReader br;
 	private ArrayList<String> playerlist = new ArrayList<String>();;
+	private Move obj;
 
 	// Server Host and port number are passed in
 	public ClientHelper(String _serverHost, int _portNumber){
@@ -116,5 +119,10 @@ public class ClientHelper {
 	public void QUIT() throws Exception{
 		bw.write("QUIT\n");
 		bw.flush();
+	}
+	
+	public void startGame(){
+	//	new Thread(ChessGame).start();
+	//	new Thread(SurrenderListen).start();
 	}
 }

@@ -7,6 +7,7 @@ public class Server {
 	private static HashSet<String> usernames = new HashSet<String>();
 	private static HashSet<PrintWriter> pw = new HashSet<PrintWriter>();
 	private static HashMap<String, Socket> userSocket = new HashMap<String, Socket>();
+	private static HashMap<String,String> opponents = new HashMap<String,String>();
 	
 	public static void main(String[] args) throws Exception{
 		if (args.length != 1){
@@ -32,6 +33,7 @@ public class Server {
 		private Socket socket;
 		private BufferedReader in;
 		private PrintWriter out;
+		//private String opponent;
 		
 		public Handler(Socket socket){
 			this.socket = socket;
@@ -91,13 +93,27 @@ public class Server {
 					else if (input.equals("QUIT")){
 						status = false;
 					}
-					else if (input.contains("GAME")){
+					else if (input.contains("GAME") && input.contains(username)){
 						String[] inputArray = input.split(" ");
 						String user1 = inputArray[1];
 						String user2 = inputArray[2];
+						
+						opponents.put(user1,user2);
+						opponents.put(user2,user1);
+						System.out.println(user1 + ": opponent = " + opponents.get(user1));
+						System.out.println(user2 + ": opponent = " + opponents.get(user2));
+						
 						Socket user1Socket = userSocket.get(user1);
 						Socket user2Socket = userSocket.get(user2);
+						System.out.println("launching server helper");
 						new ServerHelper(user1Socket,user2Socket);
+					}
+					else if (input.contains(username) && input.contains("SURRENDER")){
+						//individual.println("VICTORY");
+						for (PrintWriter writer : pw){
+							writer.println(opponents.get(username) + " VICTORY");
+						}
+						System.out.println("VICTORY sent to " + opponents.get(username));
 					}
 					else{
 						//System.out.println(username + ": " + input);
