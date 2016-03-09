@@ -53,7 +53,7 @@ public class Chessboard {
 		JButton surrender = new JButton("Surrender");
 		surrender.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				surrender(ch);
+				surrender(ch, cl);
 			}
 		});
 		options.add(surrender);
@@ -125,14 +125,14 @@ public class Chessboard {
 		setupBoard();
 	}
 	
-	public void surrender(ClientHelper ch) {
+	public void surrender(ClientHelper ch, CardLayout cl) {
 		Object[] options = {"Yes", "No"};
 		int n = JOptionPane.showConfirmDialog(frame, "Would you like to surrender?", "Surrender",
 			    JOptionPane.YES_NO_OPTION);
 		if(n == 0) {
 			JOptionPane.showMessageDialog(frame, "You have lost.", "You lose",JOptionPane.PLAIN_MESSAGE);
 			//send win message to opponent
-			cardLayout.previous(contentPane);
+			cl.previous(contentPane);
 		}
 	}
 	
