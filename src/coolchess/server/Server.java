@@ -57,7 +57,12 @@ public class Server {
 				}
 				userSocket.put(username,socket);
 				out.println("Username accepted");
+				
 				System.out.println(username + " added");
+				/*for (String s : usernames){
+					out.println("PLAYERS: " + s);
+					System.out.println("Players: " + s);
+				}*/
 				pw.add(out);
 				
 				boolean status = true;
@@ -67,6 +72,13 @@ public class Server {
 						return;
 					}
 					else if(input.equals("PLAYERLIST")){
+						int numberUsers = 0;
+						for (String s : usernames){
+							numberUsers = numberUsers + 1;
+						}
+						String numUsers = Integer.toString(numberUsers);
+						individual.println("NUMBERPLAYERS: " + numUsers);
+						System.out.println("NUMBERPLAYERS: " + numUsers);
 						for (String s : usernames){
 							individual.println("PLAYERS: " + s);
 							System.out.println("Players: " + s);
@@ -93,6 +105,7 @@ public class Server {
 							writer.println(username + ": " + input);
 						}	
 					}
+					System.out.println(username + ": " + input);
 				}
 			} catch(IOException e){
 				System.out.println(e);

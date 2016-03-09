@@ -72,8 +72,17 @@ public class ClientHelper {
 		return username;
 	}
 	
+	public void clearPlayerlist (){
+		playerlist = new ArrayList<String>();
+	}
+	
 	public void setPlayerlist(String input){
-		playerlist.add(input);
+		if (input.equals(getUser())){
+			return;
+		}
+		else if(!playerlist.contains(input)){
+			playerlist.add(input);
+		}
 	}
 	
 	public ArrayList<String> getPlayerlist(){
