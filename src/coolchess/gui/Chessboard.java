@@ -37,12 +37,12 @@ public class Chessboard {
 	private int activey;
 	//ClientHelper ch;
 	
-	public Chessboard(ClientHelper ch, CardLayout cl) {
+	public Chessboard(ClientHelper ch, CardLayout cl, Container cp) {
 		//this.ch=ch;
-		initialize(ch, cl);
+		initialize(ch, cl, cp);
 	}
 	
-	public final void initialize(ClientHelper ch, CardLayout cl) {
+	public final void initialize(ClientHelper ch, CardLayout cl, Container cp) {
 		createImages();
 		
 		gui.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -53,7 +53,7 @@ public class Chessboard {
 		JButton surrender = new JButton("Surrender");
 		surrender.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				surrender(ch, cl);
+				surrender(ch, cl, cp);
 			}
 		});
 		options.add(surrender);
@@ -125,14 +125,14 @@ public class Chessboard {
 		setupBoard();
 	}
 	
-	public void surrender(ClientHelper ch, CardLayout cl) {
+	public void surrender(ClientHelper ch, CardLayout cl, Container cp) {
 		Object[] options = {"Yes", "No"};
 		int n = JOptionPane.showConfirmDialog(frame, "Would you like to surrender?", "Surrender",
 			    JOptionPane.YES_NO_OPTION);
 		if(n == 0) {
 			JOptionPane.showMessageDialog(frame, "You have lost.", "You lose",JOptionPane.PLAIN_MESSAGE);
 			//send win message to opponent
-			cl.previous(contentPane);
+			cl.previous(cp);
 		}
 	}
 	
@@ -304,7 +304,7 @@ public class Chessboard {
 		ClientHelper ch = new ClientHelper("AJ-PC", 6969);
 		Runnable r = new Runnable() {
 			public void run() {
-				Chessboard cb = new Chessboard(ch, cardLayout);
+				Chessboard cb = new Chessboard(ch, cardLayout, contentPane);
 				//JFrame frame = new JFrame();
 				
 				//Container contentPane = frame.getContentPane();
