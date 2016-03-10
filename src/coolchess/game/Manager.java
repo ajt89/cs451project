@@ -1,6 +1,7 @@
 package coolchess.game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Manager {
 	private Board board;
@@ -10,7 +11,20 @@ public class Manager {
 	}
 	
 	public void doMove(Move m){
-		
+		for(Cell c : m.getCells()){
+			Piece p = board.getPiece(c);
+			if(p != null){
+				p.setLoc(null);
+			}
+		}
+		for(Iterator<Piece> iter = board.getPieces().iterator(); iter.hasNext();){
+			if(iter.next().getLoc() == null){
+				iter.remove();
+			}
+		}
+		for(int i = 0; i < m.getPieces().size(); i++){
+			m.getPieces().get(i).setLoc(m.getCells().get(i));
+		}
 	}
 	
 	public Board getBoard(){

@@ -33,7 +33,7 @@ public abstract class Piece implements Serializable {
 		this.loc = loc;
 	}
 	
-	public boolean onBoard(){
-		return loc != null;
+	public boolean equals(Piece p){
+		return this.color == p.getColor() && this.type == p.getType() && this.loc.equals(p.getLoc());
 	}
 }
