@@ -20,7 +20,7 @@ public class Manager {
 			return new ArrayList<Cell>();
 		}
 		else{
-			switch(p.type){
+			switch(p.getType()){
 			case BLACK_BISHOP:    
 				return Validator.bishopMoves(board, p, true);
 			case BLACK_KING:
