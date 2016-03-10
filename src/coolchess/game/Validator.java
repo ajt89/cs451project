@@ -118,7 +118,48 @@ public class Validator {
 	}
 
 	public static ArrayList<Cell> pawnMoves(Board board, Piece p, boolean isBlack) {
-		return new ArrayList<Cell>();
+		ArrayList<Cell> ret = new ArrayList<Cell>();
+		
+		int n = p.getLoc().getNum();
+		int l = p.getLoc().getLet();
+		if(isBlack){
+			if(n + 1 < Board.boardSize){
+				ret.add(new Cell(n + 1, l));
+				if(l + 1 < Board.boardSize){
+					Cell c = new Cell(n + 1, l + 1);
+					if(board.getPiece(c) != null){
+						ret.add(c);
+					}
+				}
+				if(l - 1 >= 0){
+					Cell c = new Cell(n + 1, l - 1);
+					if(board.getPiece(c) != null){
+						ret.add(c);
+					}
+				}
+			}
+		}
+		else{
+			if(n - 1 >= 0){
+				ret.add(new Cell(n - 1, l));
+				if(l + 1 < Board.boardSize){
+					Cell c = new Cell(n - 1, l + 1);
+					if(board.getPiece(c) != null){
+						ret.add(c);
+					}
+				}
+				if(l - 1 >= 0){
+					Cell c = new Cell(n - 1, l - 1);
+					if(board.getPiece(c) != null){
+						ret.add(c);
+					}
+				}
+			}
+		}
+		
+		removeSameSide(board, ret, isBlack);
+		
+		return ret;
 	}
 
 	public static ArrayList<Cell> queenMoves(Board board, Piece p, boolean isBlack) {
