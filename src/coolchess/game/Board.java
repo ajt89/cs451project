@@ -61,48 +61,6 @@ public class Board {
 		return pieces;
 	}
 	
-	public ArrayList<Piece> getViablePieces(){
-		if(state == BoardState.BLACK_TURN){
-			ArrayList<Piece> ret = new ArrayList<Piece>();
-			for(Piece p : pieces){
-				switch(p.getType()){
-				case BLACK_BISHOP:
-				case BLACK_KING:
-				case BLACK_KNIGHT:
-				case BLACK_PAWN:
-				case BLACK_QUEEN:
-				case BLACK_ROOK:
-					ret.add(p);
-					break;
-				default:
-					break;
-				}
-			}
-			return ret;
-		}
-		else if(state == BoardState.WHITE_TURN){
-			ArrayList<Piece> ret = new ArrayList<Piece>();
-			for(Piece p : pieces){
-				switch(p.getType()){
-				case WHITE_BISHOP:
-				case WHITE_KING:
-				case WHITE_KNIGHT:
-				case WHITE_PAWN:
-				case WHITE_QUEEN:
-				case WHITE_ROOK:
-					ret.add(p);
-					break;
-				default:
-					break;
-				}
-			}
-			return ret;
-		}
-		else{
-			return new ArrayList<Piece>();
-		}
-	}
-	
 	public ArrayList<Piece> getPiecesOfType(PieceType pt){
 		ArrayList<Piece> ret = new ArrayList<Piece>();
 		for(Piece p : pieces){
