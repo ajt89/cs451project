@@ -18,7 +18,7 @@ public class Move implements Serializable {
 		}
 		
 		this.pieces = pieces;
-		this.setCells(cells);
+		this.cells = cells;
 	}
 	
 	public Move(Piece piece, Cell cell){
@@ -35,17 +35,9 @@ public class Move implements Serializable {
 	public ArrayList<Piece> getPieces() {
 		return pieces;
 	}
-
-	public void setPieces(ArrayList<Piece> pieces) {
-		this.pieces = pieces;
-	}
 	
 	public ArrayList<Cell> getCells() {
 		return cells;
-	}
-
-	public void setCells(ArrayList<Cell> cells) {
-		this.cells = cells;
 	}
 
 	public static class InvalidMoveException extends Exception{
