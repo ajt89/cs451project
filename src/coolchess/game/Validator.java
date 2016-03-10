@@ -84,7 +84,24 @@ public class Validator {
 	}
 
 	public static ArrayList<Cell> knightMoves(Board board, Piece p, boolean isBlack) {
-		return new ArrayList<Cell>();
+		ArrayList<Cell> ret = new ArrayList<Cell>();
+		
+		int n = p.getLoc().getNum();
+		int l = p.getLoc().getLet();
+		for(int r = -1; r <= 1; r+=2){
+			for(int c = -1; c <= 1; c+=2){
+				if(n + 1*r >= 0 && l + 2*c >= 0 && n + 1*r < Board.boardSize && l + 2*c < Board.boardSize){
+					ret.add(new Cell(n + 1*r, l + 2*c));
+				}
+				if(n + 2*r >= 0 && l + 1*c >= 0 && n + 2*r < Board.boardSize && l + 1*c < Board.boardSize){
+					ret.add(new Cell(n + 2*r, l + 1*c));
+				}
+			}
+		}
+		
+		removeSameSide(board, ret, isBlack);
+		
+		return ret;
 	}
 
 	public static ArrayList<Cell> pawnMoves(Board board, Piece p, boolean isBlack) {
