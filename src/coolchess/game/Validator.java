@@ -22,7 +22,7 @@ public class Validator {
 		}
 	}
 	
-	public static ArrayList<Cell> bishopMoves(Board board, Piece p, boolean isBlack) {
+	public static ArrayList<Cell> bishopMoves(Board board, Bishop p, boolean isBlack) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -61,7 +61,7 @@ public class Validator {
 		return ret;
 	}
 
-	public static ArrayList<Cell> kingMoves(Board board, Piece p, boolean isBlack) {
+	public static ArrayList<Cell> kingMoves(Board board, King p, boolean isBlack) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -96,7 +96,7 @@ public class Validator {
 		return ret;
 	}
 
-	public static ArrayList<Cell> knightMoves(Board board, Piece p, boolean isBlack) {
+	public static ArrayList<Cell> knightMoves(Board board, Knight p, boolean isBlack) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -117,7 +117,7 @@ public class Validator {
 		return ret;
 	}
 
-	public static ArrayList<Cell> pawnMoves(Board board, Piece p, boolean isBlack) {
+	public static ArrayList<Cell> pawnMoves(Board board, Pawn p, boolean isBlack) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -162,7 +162,7 @@ public class Validator {
 		return ret;
 	}
 
-	public static ArrayList<Cell> queenMoves(Board board, Piece p, boolean isBlack) {
+	public static ArrayList<Cell> queenMoves(Board board, Queen p, boolean isBlack) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -229,7 +229,7 @@ public class Validator {
 		return ret;
 	}
 
-	public static ArrayList<Cell> rookMoves(Board board, Piece p, boolean isBlack) {
+	public static ArrayList<Cell> rookMoves(Board board, Rook p, boolean isBlack) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -267,14 +267,5 @@ public class Validator {
 		removeSameSide(board, ret, isBlack);
 		
 		return ret;
-	}
-	
-	public static void main(String[] args){
-		Board b = new Board(BoardState.BLACK_TURN);
-		Piece p = b.getPiecesOfType(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN).get(0);
-		System.out.println(queenMoves(b, p, true).size());
-		Piece p2 = new Queen(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN, new Cell(3, 3));
-		b.getPieces().add(p2);
-		System.out.println(queenMoves(b, p2, true).size());
 	}
 }

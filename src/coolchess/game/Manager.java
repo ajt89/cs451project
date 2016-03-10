@@ -40,22 +40,10 @@ public class Manager {
 	
 	public ArrayList<Piece> getViablePieces(){
 		if(board.getBoardState() == BoardState.BLACK_TURN){
-			ArrayList<Piece> ret = new ArrayList<Piece>();
-			for(Piece p : board.getPieces()){
-				if(p.getColor() == PieceTypes.Color.BLACK){
-					ret.add(p);
-				}
-			}
-			return ret;
+			return board.getPiecesOfType(PieceTypes.Color.BLACK);
 		}
 		else if(board.getBoardState() == BoardState.WHITE_TURN){
-			ArrayList<Piece> ret = new ArrayList<Piece>();
-			for(Piece p : board.getPieces()){
-				if(p.getColor() == PieceTypes.Color.WHITE){
-					ret.add(p);
-				}
-			}
-			return ret;
+			return board.getPiecesOfType(PieceTypes.Color.WHITE);
 		}
 		else{
 			return new ArrayList<Piece>();
@@ -71,17 +59,17 @@ public class Manager {
 		else{
 			switch(p.getType()){
 			case BISHOP:    
-				return Validator.bishopMoves(board, p, p.getColor() == PieceTypes.Color.BLACK);
+				return Validator.bishopMoves(board, (Bishop)p, p.getColor() == PieceTypes.Color.BLACK);
 			case KING:
-				return Validator.kingMoves(board, p, p.getColor() == PieceTypes.Color.BLACK);
+				return Validator.kingMoves(board, (King)p, p.getColor() == PieceTypes.Color.BLACK);
 			case KNIGHT:
-				return Validator.knightMoves(board, p, p.getColor() == PieceTypes.Color.BLACK);
+				return Validator.knightMoves(board, (Knight)p, p.getColor() == PieceTypes.Color.BLACK);
 			case PAWN:
-				return Validator.pawnMoves(board, p, p.getColor() == PieceTypes.Color.BLACK);
+				return Validator.pawnMoves(board, (Pawn)p, p.getColor() == PieceTypes.Color.BLACK);
 			case QUEEN:
-				return Validator.queenMoves(board, p, p.getColor() == PieceTypes.Color.BLACK);
+				return Validator.queenMoves(board, (Queen)p, p.getColor() == PieceTypes.Color.BLACK);
 			case ROOK:
-				return Validator.rookMoves(board, p, p.getColor() == PieceTypes.Color.BLACK);
+				return Validator.rookMoves(board, (Rook)p, p.getColor() == PieceTypes.Color.BLACK);
 			default:
 				return null;
 			}
