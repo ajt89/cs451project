@@ -27,7 +27,7 @@ public class Chessboard {
 	private JPanel gui = new JPanel(new BorderLayout(3, 3));
 	private JButton[][] squares = new JButton[8][8];
 	private JPanel board;
-	public static final int QUEEN = 0, KING = 1, ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
+	public static final int QUEEN = 1, KING = 0, ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
 	private int[] starting = {ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK};
 	private Image[][] pieces = new Image[2][6];
 	//private Board b = new Board(BoardState.WHITE_TURN);
@@ -137,7 +137,7 @@ public class Chessboard {
 	}
 	
 	public void surrender(ClientHelper ch, CardLayout cl, Container cp) {
-		Object[] options = {"Yes", "No"};
+		//Object[] options = {"Yes", "No"};
 		int n = JOptionPane.showConfirmDialog(frame, "Would you like to surrender?", "Surrender",
 			    JOptionPane.YES_NO_OPTION);
 		if(n == 0) {
@@ -176,12 +176,20 @@ public class Chessboard {
 		//System.out.println(i);
 		//System.out.println(j);
 		//adjust based on white or !white
-		activex = i;
-		activey = j;
-		System.out.println(i + " " + j);
-		ArrayList<Cell> viable = man.viableLocations(i, j);
+		ArrayList<Cell> viable = new ArrayList<Cell>();
+		if(white) {
+			activex = i;
+			activey = j;	
+			viable = man.viableLocations(i, j);
+		}
+		else {
+			activex = 8 - i;
+			activey = 8 - j;
+			viable = man.viableLocations(8-i, 8-j);
+		}
+		//System.out.println(i + " " + j);
 		//System.out.println(viable.size());
-		viable.add(new Cell(3, 5));
+		//viable.add(new Cell(3, 5));
 		old = viable;
 		for(int k = 0; k < viable.size(); k++) {
 			Cell c = viable.get(k);
@@ -218,10 +226,23 @@ public class Chessboard {
 		//get image/text from old space
 		//String temp = squares[oldi][oldj].getText();
 		//adjust based on white or !white
-		Icon ic = squares[oldi][oldj].getIcon();
-		squares[oldi][oldj].setIcon(null);
-		squares[i][j].setIcon(ic);
+		if(white) {
+			Icon ic = squares[oldi][oldj].getIcon();
+			squares[oldi][oldj].setIcon(null);
+			squares[i][j].setIcon(ic);
+			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
+			man.doMove(new Move(p, new Cell(i, j)));
+		}
+		else {
+			Icon ic = squares[8-oldi][8-oldj].getIcon();
+			squares[8-oldi][8-oldj].setIcon(null);
+			squares[i][j].setIcon(ic);
+			Piece p = man.getBoard().getPiece(new Cell(8-oldi, 8-oldj));
+			man.doMove(new Move(p, new Cell(8-i, 8-j)));
+		}
+		white = !white;
 		
+		//man.doMove();
 		//move in board as well
 	}
 	
