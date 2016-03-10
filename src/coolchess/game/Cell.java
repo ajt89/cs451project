@@ -1,66 +1,40 @@
 package coolchess.game;
 
-import java.awt.Point;
 import java.io.Serializable;
 
 public class Cell implements Serializable{
 	private static final long serialVersionUID = -1445032280984057587L;
+
+	private int num;
+	private int let;
 	
-	private Point position;
-	private CellState state;
-	
-	public Cell(int num, int let, CellState state){
-		this.position = new Point(let, num); // x => letter, y => number
-		this.state = state;
+	public Cell(int num, int let){
+		// num => number / r, let => letter / c
+		this.setNum(num);
+		this.setLet(let);
 	}
 	
 	public Cell(Cell c){
-		this.position = c.getPosition();
-		this.state = c.getCellState();
+		this(c.getNum(), c.getLet());
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+	public int getLet() {
+		return let;
+	}
+
+	public void setLet(int let) {
+		this.let = let;
 	}
 	
-	public Point getPosition(){
-		return new Point(this.position);
-	}
-	
-	public CellState getCellState(){
-		return state;
-	}
-	
-	public void setCellState(CellState state){
-		this.state = state;
-	}
-	
-	public String toIcon(){
-		switch(this.state){
-		case EMPTY:
-			return " ";
-		case WHITE_KING:
-			return "♔";
-		case WHITE_QUEEN:
-			return "♕";
-		case WHITE_ROOK:
-			return "♖";
-		case WHITE_BISHOP:
-			return "♗";
-		case WHITE_KNIGHT:
-			return "♘";
-		case WHITE_PAWN:
-			return "♙";
-		case BLACK_KING:
-			return "♚";
-		case BLACK_QUEEN:
-			return "♛";
-		case BLACK_ROOK:
-			return "♜";
-		case BLACK_BISHOP:
-			return "♝";
-		case BLACK_KNIGHT:
-			return "♞";
-		case BLACK_PAWN:
-			return "♟";
-		default:
-			return "?";
-		}
+	public boolean equals(Cell c){
+		return this.num == c.getNum() && this.let == c.getLet();
 	}
 }

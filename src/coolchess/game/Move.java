@@ -1,36 +1,27 @@
 package coolchess.game;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Move implements Serializable {
 	private static final long serialVersionUID = 6068364453892314431L;
 	
-	private Cell from;
-	private Cell to;
+	private ArrayList<Piece> pieces;
 	
-	public Move(Cell from, Cell to){
-		this.from = from;
-		this.to = to;
+	public Move(Piece... pieces){
+		this.setPieces(new ArrayList<Piece>(Arrays.asList(pieces)));
 	}
 
 	public Move(Move m){
-		this.from = m.getFrom();
-		this.to= m.getTo();
-	}
-	
-	public Cell getFrom() {
-		return new Cell(from);
+		this.pieces = m.getPieces();
 	}
 
-	public void setFrom(Cell from) {
-		this.from = from;
+	public ArrayList<Piece> getPieces() {
+		return pieces;
 	}
 
-	public Cell getTo() {
-		return new Cell(to);
-	}
-
-	public void setTo(Cell to) {
-		this.to = to;
+	public void setPieces(ArrayList<Piece> pieces) {
+		this.pieces = pieces;
 	}
 }
