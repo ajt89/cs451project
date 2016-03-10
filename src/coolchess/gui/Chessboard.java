@@ -30,7 +30,9 @@ public class Chessboard {
 	public static final int QUEEN = 0, KING = 1, ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
 	private int[] starting = {ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK};
 	private Image[][] pieces = new Image[2][6];
-	private Board b = new Board(BoardState.WHITE_TURN);
+	//private Board b = new Board(BoardState.WHITE_TURN);
+	private Manager man = new Manager(BoardState.WHITE_TURN);
+	private ArrayList<Cell> old;
 	private boolean active = true;
 	private boolean player;
 	private boolean isViable;
@@ -98,23 +100,31 @@ public class Chessboard {
 					public void actionPerformed(ActionEvent e) {
 						if(player) {
 							if(active) {
+								if(white) {
+									Cell c = new Cell(xcord, ycord);
+									/*if(man.getBoard().getPiece(c)) {
+										
+									}*/
+								}
 								showViableMoves(xcord, ycord);
 							}
 							else {
 								//check if current location is within the viable list
 								//if(is in viable list) {
-								isViable = true;
+								//isViable = true;
 								//}
-								if(isViable) {
-									movePiece(activex, activey, xcord, ycord);
-									active = true;
-								}
-								else {
-									active = true;
-									for(int k = 0; k < 10; k++) {
-										//change colors back to black and white through math
+								for(int k = 0; k < old.size(); k++) {
+									Cell c = old.get(k);
+									if(xcord == c.getNum() && ycord == c.getLet()) {
+										isViable = true;
 									}
 								}
+								if(isViable) {
+									movePiece(activex, activey, xcord, ycord);
+								}
+								active = true;
+								isViable = false;
+								color();
 							}
 						}
 					}	
@@ -168,8 +178,40 @@ public class Chessboard {
 		//adjust based on white or !white
 		activex = i;
 		activey = j;
+		System.out.println(i + " " + j);
+		ArrayList<Cell> viable = man.viableLocations(i, j);
+		//System.out.println(viable.size());
+		viable.add(new Cell(3, 5));
+		old = viable;
+		for(int k = 0; k < viable.size(); k++) {
+			Cell c = viable.get(k);
+			squares[c.getNum()][c.getLet()].setBackground(Color.RED);
+		}
 		//squares[i][j].setBackground(Color.gray);
 		active = false;
+	}
+	
+	private void color() {
+		Insets margins = new Insets(0,0,0,0);
+		for(int i = 0; i < old.size(); i++) {
+			JButton button = new JButton();
+			button.setMargin(margins);
+			ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
+			button.setIcon(icon);
+			
+			int x = old.get(i).getNum();
+			int y = old.get(i).getLet();
+			
+			if((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)) {
+				//button.setBackground(Color.WHITE);
+				squares[x][y].setBackground(Color.WHITE);
+			}
+			else {
+				//button.setBackground(Color.BLACK);
+				squares[x][y].setBackground(Color.BLACK);
+			}
+			//squares[x][y] = button;
+		}
 	}
 	
 	private void movePiece(int oldi, int oldj, int i, int j) {
@@ -179,10 +221,11 @@ public class Chessboard {
 		Icon ic = squares[oldi][oldj].getIcon();
 		squares[oldi][oldj].setIcon(null);
 		squares[i][j].setIcon(ic);
+		
 		//move in board as well
 	}
 	
-	private void update(Board b) {
+	/*private void update(Board b) {
 		//for(int i = 0; i < b.getSize(); i++) {
 		//for(int j = 0; j < b.getSize(); j++) {
 		Cell[][] cells = b.getCells();
@@ -242,7 +285,7 @@ public class Chessboard {
 				}
 			}
 		}
-	}
+	}*/
 	
 	public void flipBoard() {
 		if(white) {
