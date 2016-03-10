@@ -97,16 +97,60 @@ public class Validator {
 		int n = p.getLoc().getNum();
 		int l = p.getLoc().getLet();
 		for(int i = 1; n + i < Board.boardSize && l + i < Board.boardSize; i++){
-				ret.add(new Cell(n + i, l + i));
+			Cell c = new Cell(n + i, l + i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
 		}
 		for(int i = 1; n + i < Board.boardSize && l - i >= 0; i++){
-			ret.add(new Cell(n + i, l - i));
+			Cell c = new Cell(n + i, l - i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
 		}
 		for(int i = 1; n - i >= 0 && l + i < Board.boardSize; i++){
-			ret.add(new Cell(n - i, l + i));
+			Cell c = new Cell(n - i, l + i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
 		}
 		for(int i = 1; n - i >= 0 && l - i >= 0; i++){
-			ret.add(new Cell(n - i, l - i));
+			Cell c = new Cell(n - i, l - i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; n + i < Board.boardSize; i++){
+			Cell c = new Cell(n + i, l);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; n - i >= 0; i++){
+			Cell c = new Cell(n - i, l);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; l + i < Board.boardSize; i++){
+			Cell c = new Cell(n, l + i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; l - i >= 0; i++){
+			Cell c = new Cell(n, l - i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
 		}
 		
 		removeSameSide(board, ret, isBlack);
@@ -120,10 +164,10 @@ public class Validator {
 	
 	public static void main(String[] args){
 		Board b = new Board(BoardState.BLACK_TURN);
-		Piece p = b.getPiecesOfType(PieceType.BLACK_BISHOP).get(0);
-		System.out.println(bishopMoves(b, p, true).size());
-		Piece p2 = new Bishop(PieceType.BLACK_BISHOP, new Cell(3, 3));
+		Piece p = b.getPiecesOfType(PieceType.BLACK_QUEEN).get(0);
+		System.out.println(queenMoves(b, p, true).size());
+		Piece p2 = new Queen(PieceType.BLACK_QUEEN, new Cell(3, 3));
 		b.getPieces().add(p2);
-		System.out.println(bishopMoves(b, p2, true).size());
+		System.out.println(queenMoves(b, p2, true).size());
 	}
 }
