@@ -13,6 +13,10 @@ public class Manager {
 		
 	}
 	
+	public Board getBoard(){
+		return board;
+	}
+	
 	public ArrayList<Piece> getViablePieces(){
 		if(board.getState() == BoardState.BLACK_TURN){
 			ArrayList<Piece> ret = new ArrayList<Piece>();
