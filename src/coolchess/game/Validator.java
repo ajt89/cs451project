@@ -4,24 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Validator {
-	public static ArrayList<Cell> bishopMoves(Board board, Piece p, boolean isBlack) {
-		ArrayList<Cell> ret = new ArrayList<Cell>();
-		
-		int n = p.getLoc().getNum();
-		int l = p.getLoc().getLet();
-		for(int i = 1; n + i < Board.boardSize && l + i < Board.boardSize; i++){
-				ret.add(new Cell(n + i, l + i));
-		}
-		for(int i = 1; n + i < Board.boardSize && l - i >= 0; i++){
-			ret.add(new Cell(n + i, l - i));
-		}
-		for(int i = 1; n - i >= 0 && l + i < Board.boardSize; i++){
-			ret.add(new Cell(n - i, l + i));
-		}
-		for(int i = 1; n - i >= 0 && l - i >= 0; i++){
-			ret.add(new Cell(n - i, l - i));
-		}
-		
+	private static void removeSameSide(Board board, ArrayList<Cell> ret, boolean isBlack){
 		for(Iterator<Cell> iter = ret.iterator(); iter.hasNext();){
 			Piece pp = board.getPiece(iter.next());
 			if(pp != null){
@@ -55,6 +38,27 @@ public class Validator {
 				}
 			}
 		}
+	}
+	
+	public static ArrayList<Cell> bishopMoves(Board board, Piece p, boolean isBlack) {
+		ArrayList<Cell> ret = new ArrayList<Cell>();
+		
+		int n = p.getLoc().getNum();
+		int l = p.getLoc().getLet();
+		for(int i = 1; n + i < Board.boardSize && l + i < Board.boardSize; i++){
+				ret.add(new Cell(n + i, l + i));
+		}
+		for(int i = 1; n + i < Board.boardSize && l - i >= 0; i++){
+			ret.add(new Cell(n + i, l - i));
+		}
+		for(int i = 1; n - i >= 0 && l + i < Board.boardSize; i++){
+			ret.add(new Cell(n - i, l + i));
+		}
+		for(int i = 1; n - i >= 0 && l - i >= 0; i++){
+			ret.add(new Cell(n - i, l - i));
+		}
+		
+		removeSameSide(board, ret, isBlack);
 		
 		return ret;
 	}
