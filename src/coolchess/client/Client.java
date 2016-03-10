@@ -174,6 +174,20 @@ public class Client implements Runnable{
 						t.start();
 			    	}
 			    });
+			    
+			    JButton quit = new JButton("Quit");
+			    quit.addActionListener(new ActionListener() {
+			    	public void actionPerformed(ActionEvent e) {
+			    		ready.setEnabled(false);
+			    		try {
+							ch.QUIT();
+							System.exit(0);
+						} catch (Exception e1) {
+							System.out.println(e1);
+						}
+			    		
+			    	}
+			    });
 				JScrollPane listScroller = new JScrollPane(people);
 				listScroller.setPreferredSize(new Dimension(250, 400));
 				
@@ -181,8 +195,7 @@ public class Client implements Runnable{
 				lobby.add(challenge);
 				lobby.add(refresh);
 				lobby.add(ready);
-				
-				
+				lobby.add(quit);
 				
 				contentPane.add(lobby, "Player Lobby");
 				
