@@ -61,10 +61,20 @@ public class Board {
 		return pieces;
 	}
 	
-	public ArrayList<Piece> getPiecesOfType(PieceTypes.Color color, PieceTypes.Type type){
+	public ArrayList<Piece> getPiecesOfTypes(PieceTypes.Color color, PieceTypes.Type type){
 		ArrayList<Piece> ret = new ArrayList<Piece>();
 		for(Piece p : pieces){
 			if(p.getColor() == color && p.getType() == type){
+				ret.add(p);
+			}
+		}
+		return ret;
+	}
+	
+	public ArrayList<Piece> getPiecesOfType(PieceTypes.Color color){
+		ArrayList<Piece> ret = new ArrayList<Piece>();
+		for(Piece p : pieces){
+			if(p.getColor() == color){
 				ret.add(p);
 			}
 		}
