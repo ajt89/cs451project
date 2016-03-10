@@ -189,7 +189,43 @@ public class Validator {
 	}
 
 	public static ArrayList<Cell> rookMoves(Board board, Piece p, boolean isBlack) {
-		return new ArrayList<Cell>();
+		ArrayList<Cell> ret = new ArrayList<Cell>();
+		
+		int n = p.getLoc().getNum();
+		int l = p.getLoc().getLet();
+
+		for(int i = 1; n + i < Board.boardSize; i++){
+			Cell c = new Cell(n + i, l);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; n - i >= 0; i++){
+			Cell c = new Cell(n - i, l);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; l + i < Board.boardSize; i++){
+			Cell c = new Cell(n, l + i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		for(int i = 1; l - i >= 0; i++){
+			Cell c = new Cell(n, l - i);
+			ret.add(c);
+			if(board.getPiece(c) != null){
+				break;
+			}
+		}
+		
+		removeSameSide(board, ret, isBlack);
+		
+		return ret;
 	}
 	
 	public static void main(String[] args){
