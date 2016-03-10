@@ -13,8 +13,8 @@ public class Manager {
 		
 	}
 	
-	public ArrayList<Cell> viableLocations(Cell c){
-		Piece p = board.getPiece(c);
+	public ArrayList<Cell> viableLocations(int num, int let){
+		Piece p = board.getPiece(new Cell(num, let));
 		
 		if(p == null){
 			return new ArrayList<Cell>();
