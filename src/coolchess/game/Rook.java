@@ -5,19 +5,18 @@ public class Rook extends Piece {
 
 	private boolean moved;
 	
-	public Rook(PieceType type, int id, Cell loc, boolean moved){
+	public Rook(PieceType type, Cell loc, boolean moved){
 		this.type = type;
-		this.id = id;
 		this.loc = loc;
 		this.moved = moved;
 	}
 	
-	public Rook(PieceType type, int id, Cell loc){
-		this(type, id, loc, false);
+	public Rook(PieceType type, Cell loc){
+		this(type, loc, false);
 	}
 	
 	public Rook(Rook r){
-		this(r.getType(), r.getId(), r.getLoc(), r.hasMoved());
+		this(r.getType(), r.getLoc(), r.hasMoved());
 	}
 
 	public boolean hasMoved() {

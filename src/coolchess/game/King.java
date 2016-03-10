@@ -6,20 +6,19 @@ public class King extends Piece {
 	private boolean moved;
 	private boolean check;
 
-	public King(PieceType type, int id, Cell loc, boolean moved, boolean check){
+	public King(PieceType type, Cell loc, boolean moved, boolean check){
 		this.type = type;
-		this.id = id;
 		this.loc = loc;
 		this.moved = moved;
 		this.check = check;
 	}
 	
-	public King(PieceType type, int id, Cell loc){
-		this(type, id, loc, false, false);
+	public King(PieceType type, Cell loc){
+		this(type, loc, false, false);
 	}
 	
 	public King(King k){
-		this(k.getType(), k.getId(), k.getLoc(), k.hasMoved(), k.isInCheck());
+		this(k.getType(), k.getLoc(), k.hasMoved(), k.isInCheck());
 	}
 
 	public boolean isInCheck() {
