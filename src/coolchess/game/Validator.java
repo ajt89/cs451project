@@ -9,31 +9,13 @@ public class Validator {
 			Piece pp = board.getPiece(iter.next());
 			if(pp != null){
 				if(isBlack){
-					switch(pp.getType()){
-					case BLACK_BISHOP:
-					case BLACK_KING:
-					case BLACK_KNIGHT:
-					case BLACK_PAWN:
-					case BLACK_QUEEN:
-					case BLACK_ROOK:
+					if(pp.getColor() == PieceTypes.Color.BLACK){
 						iter.remove();
-						break;
-					default:
-						break;
 					}
 				}
 				else{
-					switch(pp.getType()){
-					case WHITE_BISHOP:
-					case WHITE_KING:
-					case WHITE_KNIGHT:
-					case WHITE_PAWN:
-					case WHITE_QUEEN:
-					case WHITE_ROOK:
+					if(pp.getColor() == PieceTypes.Color.WHITE){
 						iter.remove();
-						break;
-					default:
-						break;
 					}
 				}
 			}
@@ -181,9 +163,9 @@ public class Validator {
 	
 	public static void main(String[] args){
 		Board b = new Board(BoardState.BLACK_TURN);
-		Piece p = b.getPiecesOfType(PieceType.BLACK_QUEEN).get(0);
+		Piece p = b.getPiecesOfType(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN).get(0);
 		System.out.println(queenMoves(b, p, true).size());
-		Piece p2 = new Queen(PieceType.BLACK_QUEEN, new Cell(3, 3));
+		Piece p2 = new Queen(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN, new Cell(3, 3));
 		b.getPieces().add(p2);
 		System.out.println(queenMoves(b, p2, true).size());
 	}

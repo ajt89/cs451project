@@ -19,29 +19,29 @@ public class Board {
 		this.pieces = new ArrayList<Piece>();
 		
 		//white backline
-		this.pieces.add(new Rook(PieceType.WHITE_ROOK, new Cell(boardSize-1, 0)));
-		this.pieces.add(new Rook(PieceType.WHITE_ROOK, new Cell(boardSize-1, boardSize-1)));
-		this.pieces.add(new Knight(PieceType.WHITE_KNIGHT, new Cell(boardSize-1, 1)));
-		this.pieces.add(new Knight(PieceType.WHITE_KNIGHT, new Cell(boardSize-1, boardSize-2)));
-		this.pieces.add(new Bishop(PieceType.WHITE_BISHOP, new Cell(boardSize-1, 2)));
-		this.pieces.add(new Bishop(PieceType.WHITE_BISHOP, new Cell(boardSize-1, boardSize-3)));
-		this.pieces.add(new Queen(PieceType.WHITE_QUEEN, new Cell(boardSize-1, 3)));
-		this.pieces.add(new King(PieceType.WHITE_KING, new Cell(boardSize-1, 4)));
+		this.pieces.add(new Rook(PieceTypes.Color.WHITE, PieceTypes.Type.ROOK, new Cell(boardSize-1, 0)));
+		this.pieces.add(new Rook(PieceTypes.Color.WHITE, PieceTypes.Type.ROOK, new Cell(boardSize-1, boardSize-1)));
+		this.pieces.add(new Knight(PieceTypes.Color.WHITE, PieceTypes.Type.KNIGHT, new Cell(boardSize-1, 1)));
+		this.pieces.add(new Knight(PieceTypes.Color.WHITE, PieceTypes.Type.KNIGHT, new Cell(boardSize-1, boardSize-2)));
+		this.pieces.add(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(boardSize-1, 2)));
+		this.pieces.add(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(boardSize-1, boardSize-3)));
+		this.pieces.add(new Queen(PieceTypes.Color.WHITE, PieceTypes.Type.QUEEN, new Cell(boardSize-1, 3)));
+		this.pieces.add(new King(PieceTypes.Color.WHITE, PieceTypes.Type.KING, new Cell(boardSize-1, 4)));
 		
 		//black backline
-		this.pieces.add(new Rook(PieceType.BLACK_ROOK, new Cell(0, 0)));
-		this.pieces.add(new Rook(PieceType.BLACK_ROOK, new Cell(0, boardSize-1)));
-		this.pieces.add(new Knight(PieceType.BLACK_KNIGHT, new Cell(0, 1)));
-		this.pieces.add(new Knight(PieceType.BLACK_KNIGHT, new Cell(0, boardSize-2)));
-		this.pieces.add(new Bishop(PieceType.BLACK_BISHOP, new Cell(0, 2)));
-		this.pieces.add(new Bishop(PieceType.BLACK_BISHOP, new Cell(0, boardSize-3)));
-		this.pieces.add(new Queen(PieceType.BLACK_QUEEN, new Cell(0, 3)));
-		this.pieces.add(new King(PieceType.BLACK_KING, new Cell(0, 4)));
+		this.pieces.add(new Rook(PieceTypes.Color.BLACK, PieceTypes.Type.ROOK, new Cell(0, 0)));
+		this.pieces.add(new Rook(PieceTypes.Color.BLACK, PieceTypes.Type.ROOK, new Cell(0, boardSize-1)));
+		this.pieces.add(new Knight(PieceTypes.Color.BLACK, PieceTypes.Type.KNIGHT, new Cell(0, 1)));
+		this.pieces.add(new Knight(PieceTypes.Color.BLACK, PieceTypes.Type.KNIGHT, new Cell(0, boardSize-2)));
+		this.pieces.add(new Bishop(PieceTypes.Color.BLACK, PieceTypes.Type.BISHOP, new Cell(0, 2)));
+		this.pieces.add(new Bishop(PieceTypes.Color.BLACK, PieceTypes.Type.BISHOP, new Cell(0, boardSize-3)));
+		this.pieces.add(new Queen(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN, new Cell(0, 3)));
+		this.pieces.add(new King(PieceTypes.Color.BLACK, PieceTypes.Type.KING, new Cell(0, 4)));
 		
 		// pawns
 		for(int i = 16; i < 24; i++){
-			this.pieces.add(new Pawn(PieceType.WHITE_PAWN, new Cell(boardSize-2, i-16)));
-			this.pieces.add(new Pawn(PieceType.BLACK_PAWN, new Cell(1, i-16)));
+			this.pieces.add(new Pawn(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN, new Cell(boardSize-2, i-16)));
+			this.pieces.add(new Pawn(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN, new Cell(1, i-16)));
 		}
 	}
 	
@@ -61,10 +61,10 @@ public class Board {
 		return pieces;
 	}
 	
-	public ArrayList<Piece> getPiecesOfType(PieceType pt){
+	public ArrayList<Piece> getPiecesOfType(PieceTypes.Color color, PieceTypes.Type type){
 		ArrayList<Piece> ret = new ArrayList<Piece>();
 		for(Piece p : pieces){
-			if(p.getType() == pt){
+			if(p.getColor() == color && p.getType() == type){
 				ret.add(p);
 			}
 		}

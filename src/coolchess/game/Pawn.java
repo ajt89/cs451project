@@ -6,19 +6,20 @@ public class Pawn extends Piece {
 	private boolean moved;
 	private boolean advanced;
 	
-	public Pawn(PieceType type, Cell loc, boolean moved, boolean advanced){
+	public Pawn(PieceTypes.Color color, PieceTypes.Type type, Cell loc, boolean moved, boolean advanced){
+		this.color = color;
 		this.type = type;
 		this.loc = loc;
 		this.moved = moved;
 		this.advanced = advanced;
 	}
 	
-	public Pawn(PieceType type, Cell loc){
-		this(type, loc, false, false);
+	public Pawn(PieceTypes.Color color, PieceTypes.Type type, Cell loc){
+		this(color, type, loc, false, false);
 	}
 	
 	public Pawn(Pawn p){
-		this(p.getType(), p.getLoc(), p.hasMoved(), p.hasAdvanced());
+		this(p.getColor(), p.getType(), p.getLoc(), p.hasMoved(), p.hasAdvanced());
 	}
 
 	public boolean hasAdvanced() {
