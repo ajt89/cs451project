@@ -46,10 +46,10 @@ public class Board {
 	}
 	
 	public Board(Board b){
-		this(b.getState(), b.getPieces());
+		this(b.getBoardState(), b.getPieces());
 	}
 
-	public BoardState getState(){
+	public BoardState getBoardState(){
 		return this.state;
 	}
 	

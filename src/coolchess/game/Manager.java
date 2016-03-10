@@ -25,6 +25,13 @@ public class Manager {
 		for(int i = 0; i < m.getPieces().size(); i++){
 			m.getPieces().get(i).setLoc(m.getCells().get(i));
 		}
+		
+		if(board.getBoardState() == BoardState.BLACK_TURN){
+			board.setBoardState(BoardState.WHITE_TURN);
+		}
+		else{
+			board.setBoardState(BoardState.BLACK_TURN);
+		}
 	}
 	
 	public Board getBoard(){
@@ -32,7 +39,7 @@ public class Manager {
 	}
 	
 	public ArrayList<Piece> getViablePieces(){
-		if(board.getState() == BoardState.BLACK_TURN){
+		if(board.getBoardState() == BoardState.BLACK_TURN){
 			ArrayList<Piece> ret = new ArrayList<Piece>();
 			for(Piece p : board.getPieces()){
 				if(p.getColor() == PieceTypes.Color.BLACK){
@@ -41,7 +48,7 @@ public class Manager {
 			}
 			return ret;
 		}
-		else if(board.getState() == BoardState.WHITE_TURN){
+		else if(board.getBoardState() == BoardState.WHITE_TURN){
 			ArrayList<Piece> ret = new ArrayList<Piece>();
 			for(Piece p : board.getPieces()){
 				if(p.getColor() == PieceTypes.Color.WHITE){
