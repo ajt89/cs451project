@@ -147,7 +147,7 @@ public class ClientHelper {
 	}
 	
 	public void setupGame() throws Exception{
-		socketObject = new Socket(serverHost, 7878);
+		socketObject = new Socket(serverHost, 7878+counter);
 		objectOut = new ObjectOutputStream(socketObject.getOutputStream());
         objectIn = new ObjectInputStream(socketObject.getInputStream());
 	}
