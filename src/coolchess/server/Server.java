@@ -109,6 +109,7 @@ public class Server {
 					}
 					else if(input.contains(username + " challenge")){
 						Thread t = new Thread(GameStart);
+						t.start();
 						for (PrintWriter writer : pw){
 							writer.println("COUNTER: " + counter);
 						}	
@@ -123,7 +124,6 @@ public class Server {
 						System.out.println(user1 + ": opponent = " + opponents.get(user1) + " ");
 						System.out.println(user2 + ": opponent = " + opponents.get(user2) + " ");
 						
-						t.start();
 						for (PrintWriter writer : pw){
 							writer.println(input);
 						}
@@ -132,23 +132,11 @@ public class Server {
 						for (PrintWriter writer : pw){
 							writer.println(username + " " + input);
 						}
-						if (input.contains("denied")){
-							try{
-								gameServer.get(username).interrupt();
-							}catch (Exception e){
-								System.out.println(e);
-							}
-						}
 					}
 					else if (input.contains(username) && input.contains("SURRENDER")){
 						//individual.println("VICTORY");
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " VICTORY");
-						}
-						try{
-							gameServer.get(username).interrupt();
-						}catch (Exception e){
-							System.out.println(e);
 						}
 						System.out.println("VICTORY sent to " + opponents.get(username));
 					}
@@ -156,21 +144,11 @@ public class Server {
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " LOSS");
 						}
-						try{
-							gameServer.get(username).interrupt();
-						}catch (Exception e){
-							System.out.println(e);
-						}
 						System.out.println("LOSS sent to " + opponents.get(username));
 					}
 					else if (input.contains(username) && input.contains("TIE")){
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " TIE");
-						}
-						try{
-							gameServer.get(username).interrupt();
-						}catch (Exception e){
-							System.out.println(e);
 						}
 						System.out.println("TIE sent to " + opponents.get(username));
 					}
