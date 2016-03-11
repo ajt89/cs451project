@@ -496,7 +496,7 @@ public class Chessboard {
         			buttonPress.setBool(true);
         			//white = !white;
         		}
-				buttonPress.setBool(true);
+				//buttonPress.setBool(true);
         		System.out.println("made true");
 				//notPressed = false;
 				//frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
