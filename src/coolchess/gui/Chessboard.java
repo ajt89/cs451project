@@ -236,18 +236,6 @@ public class Chessboard {
 				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
 				button.setIcon(icon);
 				
-				int x;
-				int y;
-				/*
-				if(!white) {
-					x = 7 - old.get(i).getNum();
-					y = 7 - old.get(i).getLet();
-				}
-				else {
-					x = old.get(i).getNum();
-					y = old.get(i).getLet();
-				}*/
-				//System.out.println("Should recolor:" + x + " " + y);
 				if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
 					//button.setBackground(Color.WHITE);
 					squares[i][j].setBackground(Color.WHITE);
@@ -263,6 +251,7 @@ public class Chessboard {
 	
 	public void receiveMove(ClientHelper ch) {
 		boolean listening = true;
+		System.out.println("Inside receive move");
 		Move m = null;
 		while(listening) {
 			try {
@@ -284,34 +273,18 @@ public class Chessboard {
 	}
 	
 	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch) {
-		//get image/text from old space
-		//String temp = squares[oldi][oldj].getText();
-		//adjust based on white or !white
-		//boolean listening = false;
 		Move m = null;
 		if(white) {
 			Icon ic = squares[oldi][oldj].getIcon();
 			squares[oldi][oldj].setIcon(null);
 			squares[i][j].setIcon(ic);
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
-			/*(if(listening) {
-				while(listening) {
-					try {
-						m = ch.getMove();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			else {*/
 			m = new Move(p, new Cell(i, j));
-			//}
 			try {
 				System.out.println("send move white 1");
 				ch.sendMove(m);
 				System.out.println("send move white 2");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				System.out.println(e);
 				e.printStackTrace();
 			}
@@ -322,24 +295,12 @@ public class Chessboard {
 			squares[7-oldi][7-oldj].setIcon(null);
 			squares[i][j].setIcon(ic);
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
-			/*if(!listening) {
-				try {
-					m = ch.getMove();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			else {*/
 			m = new Move(p, new Cell(7-i, 7-j));
-			//}
 			try {
-
 				System.out.println("send move black 1");
 				ch.sendMove(m);
-
 				System.out.println("send move black 2");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				System.out.println(e);
 				e.printStackTrace();
 			}
@@ -348,8 +309,6 @@ public class Chessboard {
 		
 		update();
 		white = !white;
-
-		//man.doMove();
 	}
 	
 	private void update() {
@@ -489,12 +448,6 @@ public class Chessboard {
 	}
 	
 	public void flipBoard() {
-		/*if(white) {
-			white = false;
-		}
-		else {
-			white = true;
-		}*/
 		JButton[][] temp = new JButton[8][8];
 		Insets margins = new Insets(0,0,0,0);
 		for(int i = 0; i < squares.length; i++) {
@@ -503,7 +456,6 @@ public class Chessboard {
 				button.setMargin(margins);
 				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
 				button.setIcon(icon);
-				
 				if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
 					button.setBackground(Color.WHITE);
 				}
@@ -526,24 +478,24 @@ public class Chessboard {
 	private void setupBoard() {
 		for(int j = 0; j < squares.length; j++) {
 			squares[1][j].setIcon(new ImageIcon(pieces[0][PAWN]));;
-			//squares[1][j].setForeground(Color.BLUE);
 		}
 		for(int j = 0; j < squares.length; j++) {
 			squares[6][j].setIcon(new ImageIcon(pieces[1][PAWN]));;
-			//squares[6][j].setForeground(Color.RED);
 		}
 		for(int j = 0; j < squares.length; j++) {
 			squares[0][j].setIcon(new ImageIcon(pieces[0][starting[j]]));
-			//squares[0][j].setForeground(Color.BLUE);
 		}
 		for(int j = 0; j < squares.length; j++) {
 			squares[7][j].setIcon(new ImageIcon(pieces[1][starting[j]]));
-			//squares[7][j].setForeground(Color.RED);
 		}
 	}
 	
 	public void setPlayerName(String s) {
 		playerName = s;
+	}
+	
+	public String getPlayerName() {
+		return playerName;
 	}
 	
 	public JComponent getBoard() {
@@ -559,10 +511,6 @@ public class Chessboard {
 		Runnable r = new Runnable() {
 			public void run() {
 				Chessboard cb = new Chessboard(ch, cardLayout, contentPane);
-				//JFrame frame = new JFrame();
-				
-				//Container contentPane = frame.getContentPane();
-				//CardLayout cardLayout = new CardLayout();
 				
 				contentPane.setLayout(cardLayout);
 				JPanel menu = new JPanel();
@@ -582,9 +530,6 @@ public class Chessboard {
 				JPanel lobby = new JPanel();
 				
 				DefaultListModel list = new DefaultListModel();
-				/*for(int i = 0; i < 10; i++) {
-					list.addElement("hi" + i);
-				}*/
 				JButton add = new JButton("Add Name");
 				add.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -633,8 +578,7 @@ public class Chessboard {
 				
 				contentPane.add(cb.getGui(), "CoolChess");
 				
-				//frame.add(cb.getGui());
-                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setLocationByPlatform(true);
                 
                 frame.pack();
