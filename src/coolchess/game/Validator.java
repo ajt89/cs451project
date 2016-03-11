@@ -197,6 +197,11 @@ public class Validator {
 						}
 					}
 				}
+				
+				//advancing / double length movement on first move
+				if(!p.hasMoved() && n + 2 < Board.boardSize){
+					ret.add(new Cell(n + 2, l));
+				}
 			}
 			else{
 				if(n - 1 >= 0){
@@ -213,6 +218,11 @@ public class Validator {
 							ret.add(c);
 						}
 					}
+				}
+				
+				//advancing / double length movement on first move
+				if(!p.hasMoved() && n - 2 >= 0){
+					ret.add(new Cell(n - 2, l));
 				}
 			}
 			
