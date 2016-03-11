@@ -279,12 +279,9 @@ public class Chessboard {
 			man.doMove(m);
 			boolean temp = checkPromote();
 			if(temp) {
-				try {
-					Thread.sleep(7500);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				long start = System.currentTimeMillis();
+				long end = System.currentTimeMillis();
+				while(end - start < 1000) {}
 			}
 			try {
 				ch.sendBoard(man.getBoard());
@@ -304,12 +301,9 @@ public class Chessboard {
 			man.doMove(m);
 			boolean temp = checkPromote();
 			if(temp) {
-				try {
-					Thread.sleep(7500);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				long start = System.currentTimeMillis();
+				long end = System.currentTimeMillis();
+				while(end - start < 1000) {}
 			}
 			try {
 				ch.sendBoard(man.getBoard());
