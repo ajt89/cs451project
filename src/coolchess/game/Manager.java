@@ -61,13 +61,9 @@ public class Manager {
 			else{ // en passant
 				Cell pc = pp.getLoc();
 				Cell mc = m.getCell();
-				//System.out.println("pc " + );
-				System.out.println("piece length before possible enpassant deletion " + board.getPieces().size());
 				if(board.getPiece(mc) == null && Math.abs(pc.getNum() - mc.getNum()) == 1 && Math.abs(pc.getLet() - mc.getLet()) == 1){
-					board.getPieces().remove(board.getPiece(new Cell(pc.getNum(), 2 * pc.getLet() - mc.getLet())));
-					System.out.println("piece length after definite empassant deletion " + board.getPieces().size());
+					board.getPieces().remove(board.getPiece(new Cell(pc.getNum(), mc.getLet())));
 				}
-				System.out.println("piece length after possible enpassant deletion " + board.getPieces().size());
 			}
 		}
 		// most pieces don't require special treatment
