@@ -59,11 +59,21 @@ public class Manager {
 		p.setLoc(m.getCell());
 
 		// switch turn - also needs to check if the game is over or not
+		// turn off possibility for en passant after you finish your turn
 		if(board.getBoardState() == BoardState.BLACK_TURN){
 			board.setBoardState(BoardState.WHITE_TURN);
+			
+			for(Piece pp : board.getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN)){
+				Pawn ppp = (Pawn)pp;
+				ppp.setAdvanced(false);
+			}
 		}
 		else{
 			board.setBoardState(BoardState.BLACK_TURN);
+			for(Piece pp : board.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN)){
+				Pawn ppp = (Pawn)pp;
+				ppp.setAdvanced(false);
+			}
 		}
 	}
 	
