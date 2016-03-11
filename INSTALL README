@@ -1,4 +1,4 @@
 1) Install eclipse
 2) Import project into eclipse
-3) Run server.java through eclipse with a port number as arguments
-4) Run client.java through eclipse with hostname and port number
+3) Run server.java through eclipse with a port number as arguments OR on the commandline by running projectcs451_server.jar with a port number as the argument
+4) Run client.java through eclipse with hostname and port number OR on the commandline by running projectcs451_client.jar with a hostname and port number as the argument
