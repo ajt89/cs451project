@@ -14,6 +14,27 @@ public class Manager {
 		this.board  = board;
 	}
 	
+	public void promote(Cell loc, PieceTypes.Type type){
+		Pawn p = (Pawn)(board.getPiece(loc));
+		board.getPieces().remove(p);
+		switch(type){
+		case BISHOP:
+			board.getPieces().add(new Bishop(p.getColor(), type, loc));
+			break;
+		case KNIGHT:
+			board.getPieces().add(new Knight(p.getColor(), type, loc));
+			break;
+		case QUEEN:
+			board.getPieces().add(new Queen(p.getColor(), type, loc));
+			break;
+		case ROOK:
+			board.getPieces().add(new Rook(p.getColor(), type, loc));
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public void doMove(Move m){
 		// get rid of taken pieces
 		Piece p = board.getPiece(m.getCell());
