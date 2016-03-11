@@ -249,16 +249,14 @@ public class Chessboard2 {
 	public void receiveMove(ClientHelper ch) {
 		boolean listening = true;
 		System.out.println("Inside receive move");
-		Move m = null;
+		Board b = null;
 		while(listening) {
 			try {
-				m = ch.getMove();
-				System.out.println(m.getCell().getNum());
-				System.out.println(m.getCell().getLet());
-				if(m != null) {
+				b = ch.getBoard();
+				if(b != null) {
 					listening = false;
 				}
-				man.doMove(m);
+				man = new Manager(b);
 				System.out.println("Should've done move");
 			} catch (Exception e) {
 				System.out.println(e);
@@ -278,15 +276,15 @@ public class Chessboard2 {
 			squares[i][j].setIcon(ic);
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(i, j));
+			man.doMove(m);
 			/*try {
-				System.out.println("send move white 1");
-				ch.sendMove(m);
-				System.out.println("send move white 2");
+				System.out.println("send board white 1");
+				ch.sendBoard(man.getBoard());
+				System.out.println("send board 2");
 			} catch (Exception e) {
 				System.out.println(e);
 				e.printStackTrace();
 			}*/
-			man.doMove(m);
 		}
 		else {
 			Icon ic = squares[7-oldi][7-oldj].getIcon();
@@ -294,15 +292,17 @@ public class Chessboard2 {
 			squares[i][j].setIcon(ic);
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(7-i, 7-j));
+			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 			/*try {
 				System.out.println("send move black 1");
-				ch.sendMove(m);
+				ch.sendBoard(man.getBoard());
+				//System.out.println(m + " 3");
 				System.out.println("send move black 2");
 			} catch (Exception e) {
 				System.out.println(e);
 				e.printStackTrace();
-			}*/
-			man.doMove(new Move(p, new Cell(7-i, 7-j)));
+			}
+			System.out.println(m + " 4");*/
 		}
 		
 		update();

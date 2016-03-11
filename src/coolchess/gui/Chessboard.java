@@ -254,37 +254,16 @@ public class Chessboard {
 		while(listening) {
 			try {
 				b = ch.getBoard();
-				//System.out.println(m);
-				//System.out.println(m.getCell().getNum());
-				//System.out.println(m.getCell().getLet());
-				//Piece p = m.getPiece();
-				//System.out.println(p.toString());
-				//System.out.println(p.getLoc().getNum());
-				//System.out.println(p.getLoc().getLet());
-				//if(!white) {
-				//	m = new Move(p, new Cell(m.getCell().getNum(),m.getCell().getLet()));
-				//}
-				//System.out.println(man.getBoard().getPiece(new Cell(6,5)));
 				if(b != null) {
 					listening = false;
 				}
 				man = new Manager(b);
-				//System.out.println(m);
 				System.out.println("Should've done move");
 			} catch (Exception e) {
 				System.out.println(e);
 				e.printStackTrace();
 			}
 		}
-
-		/*System.out.println(m);
-		System.out.println(m.getPiece());
-		System.out.println(m.getPiece().getLoc());
-		System.out.println(man.getBoard().getPiece(m.getPiece().getLoc()));
-		System.out.println(m.getPiece().getLoc().equals(new Cell(m.getCell().getNum(),m.getCell().getLet())));
-		System.out.println(man.getBoard().getPiece(new Cell(m.getCell().getNum(),m.getCell().getLet())));
-		System.out.println(man.getBoard().getPiece(new Cell(m.getCell().getNum(),m.getCell().getLet())).toString());
-		//white = !white;*/
 		update();
 		player = !player;
 	}
