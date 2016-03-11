@@ -316,7 +316,12 @@ public class Chessboard {
 			//}
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
-
+		try {
+			ch.sendMove(m);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		update();
 		white = !white;
 
