@@ -302,8 +302,15 @@ public class Chessboard {
 				}
 			}
 			else {*/
-				m = new Move(p, new Cell(i, j));
+			m = new Move(p, new Cell(i, j));
 			//}
+			try {
+				ch.sendMove(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+				e.printStackTrace();
+			}
 			man.doMove(m);
 		}
 		else {
@@ -319,17 +326,18 @@ public class Chessboard {
 				}
 			}
 			else {*/
-				m = new Move(p, new Cell(7-i, 7-j));
+			m = new Move(p, new Cell(7-i, 7-j));
 			//}
+			try {
+				ch.sendMove(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+				e.printStackTrace();
+			}	
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
-		try {
-			ch.sendMove(m);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
-			e.printStackTrace();
-		}
+		
 		update();
 		white = !white;
 
