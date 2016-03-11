@@ -183,15 +183,18 @@ public class Validator {
 			int l = p.getLoc().getLet();
 			if(p.getColor() == PieceTypes.Color.BLACK){
 				if(n + 1 < Board.boardSize){
-					ret.add(new Cell(n + 1, l));
+					Cell c = new Cell(n + 1, l);
+					if(board.getPiece(c) == null){
+						ret.add(c);
+					}
 					if(l + 1 < Board.boardSize){
-						Cell c = new Cell(n + 1, l + 1);
+						c = new Cell(n + 1, l + 1);
 						if(board.getPiece(c) != null){
 							ret.add(c);
 						}
 					}
 					if(l - 1 >= 0){
-						Cell c = new Cell(n + 1, l - 1);
+						c = new Cell(n + 1, l - 1);
 						if(board.getPiece(c) != null){
 							ret.add(c);
 						}
@@ -200,20 +203,26 @@ public class Validator {
 				
 				//advancing / double length movement on first move
 				if(!p.hasMoved() && n + 2 < Board.boardSize){
-					ret.add(new Cell(n + 2, l));
+					Cell c = new Cell(n + 2, l);
+					if(board.getPiece(c) == null){
+						ret.add(c);
+					}
 				}
 			}
 			else{
 				if(n - 1 >= 0){
-					ret.add(new Cell(n - 1, l));
+					Cell c = new Cell(n - 1, l);
+					if(board.getPiece(c) == null){
+						ret.add(c);
+					}
 					if(l + 1 < Board.boardSize){
-						Cell c = new Cell(n - 1, l + 1);
+						c = new Cell(n - 1, l + 1);
 						if(board.getPiece(c) != null){
 							ret.add(c);
 						}
 					}
 					if(l - 1 >= 0){
-						Cell c = new Cell(n - 1, l - 1);
+						c = new Cell(n - 1, l - 1);
 						if(board.getPiece(c) != null){
 							ret.add(c);
 						}
@@ -222,7 +231,10 @@ public class Validator {
 				
 				//advancing / double length movement on first move
 				if(!p.hasMoved() && n - 2 >= 0){
-					ret.add(new Cell(n - 2, l));
+					Cell c = new Cell(n - 2, l);
+					if(board.getPiece(c) == null){
+						ret.add(c);
+					}
 				}
 			}
 			
