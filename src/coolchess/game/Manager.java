@@ -69,21 +69,56 @@ public class Manager {
 		// most pieces don't require special treatment
 		p.setLoc(m.getCell());
 
-		// switch turn - also needs to check if the game is over or not
+		// switch turn - also checks if the game is over or not
 		// turn off possibility for en passant after you finish your turn
-		if(board.getBoardState() == BoardState.BLACK_TURN){
+		if(board.getBoardState() == BoardState.BLACK_TURN){			
 			board.setBoardState(BoardState.WHITE_TURN);
 			
 			for(Piece pp : board.getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN)){
 				Pawn ppp = (Pawn)pp;
 				ppp.setAdvanced(false);
 			}
+			
+			boolean viable = false;
+			for(Piece v : getViablePieces()){
+				if(viableLocations(v).size() != 0){
+					viable = true;
+					break;
+				}
+			}
+			
+			if(!viable){
+				if(((King)(board.getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.KING).get(0))).inCheck(board)){
+					board.setBoardState(BoardState.BLACK_WIN);
+				}
+				else{
+					board.setBoardState(BoardState.TIE);
+				}
+			}
 		}
 		else{
 			board.setBoardState(BoardState.BLACK_TURN);
+			
 			for(Piece pp : board.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN)){
 				Pawn ppp = (Pawn)pp;
 				ppp.setAdvanced(false);
+			}
+			
+			boolean viable = false;
+			for(Piece v : getViablePieces()){
+				if(viableLocations(v).size() != 0){
+					viable = true;
+					break;
+				}
+			}
+			
+			if(!viable){
+				if(((King)(board.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.KING).get(0))).inCheck(board)){
+					board.setBoardState(BoardState.WHITE_WIN);
+				}
+				else{
+					board.setBoardState(BoardState.TIE);
+				}
 			}
 		}
 	}
@@ -104,9 +139,7 @@ public class Manager {
 		}
 	}
 	
-	public ArrayList<Cell> viableLocations(int num, int let){
-		Piece p = board.getPiece(new Cell(num, let));
-		
+	public ArrayList<Cell> viableLocations(Piece p){		
 		if(p == null){
 			return new ArrayList<Cell>();
 		}
@@ -128,5 +161,9 @@ public class Manager {
 				return null;
 			}
 		}
+	}
+	
+	public ArrayList<Cell> viableLocations(int num, int let){
+		return viableLocations(board.getPiece(new Cell(num, let)));
 	}
 }
