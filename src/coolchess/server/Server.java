@@ -13,6 +13,7 @@ public class Server {
 	private static HashSet<PrintWriter> pw = new HashSet<PrintWriter>();
 	private static HashMap<String, Socket> userSocket = new HashMap<String, Socket>();
 	private static HashMap<String,String> opponents = new HashMap<String,String>();
+	private static HashMap<String,Thread> gameServer = new HashMap<String,Thread>();
 	private static int port;
 	private static int counter = 1;
 	//private static Move m;
@@ -81,7 +82,6 @@ public class Server {
 				
 				boolean status = true;
 				while(status){
-					Thread t = null;
 					String input = in.readLine();
 					if (input == null){
 						return;
@@ -100,16 +100,23 @@ public class Server {
 						}
 					}
 					else if (input.equals("QUIT")){
+						try{
+							gameServer.get(username).interrupt();
+						}catch (Exception e){
+							System.out.println(e);
+						}
 						status = false;
 					}
 					else if(input.contains(username + " challenge")){
-						t = new Thread(GameStart);
+						Thread t = new Thread(GameStart);
 						for (PrintWriter writer : pw){
 							writer.println("COUNTER: " + counter);
 						}	
 						String[] inputArray = input.split(" ");
 						String user1 = inputArray[0];
 						String user2 = inputArray[2];
+						gameServer.put(user1, t);
+						gameServer.put(user2, t);
 						
 						opponents.put(user1,user2);
 						opponents.put(user2,user1);
@@ -126,28 +133,44 @@ public class Server {
 							writer.println(username + " " + input);
 						}
 						if (input.contains("denied")){
-							t.interrupt();
+							try{
+								gameServer.get(username).interrupt();
+							}catch (Exception e){
+								System.out.println(e);
+							}
 						}
 					}
 					else if (input.contains(username) && input.contains("SURRENDER")){
-						t.interrupt();
 						//individual.println("VICTORY");
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " VICTORY");
 						}
+						try{
+							gameServer.get(username).interrupt();
+						}catch (Exception e){
+							System.out.println(e);
+						}
 						System.out.println("VICTORY sent to " + opponents.get(username));
 					}
 					else if (input.contains(username) && input.contains("WIN")){
-						t.interrupt();
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " LOSS");
+						}
+						try{
+							gameServer.get(username).interrupt();
+						}catch (Exception e){
+							System.out.println(e);
 						}
 						System.out.println("LOSS sent to " + opponents.get(username));
 					}
 					else if (input.contains(username) && input.contains("TIE")){
-						t.interrupt();
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " TIE");
+						}
+						try{
+							gameServer.get(username).interrupt();
+						}catch (Exception e){
+							System.out.println(e);
 						}
 						System.out.println("TIE sent to " + opponents.get(username));
 					}
