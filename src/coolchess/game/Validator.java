@@ -91,6 +91,36 @@ public class Validator {
 			ret.add(new Cell(n, l - 1));
 		}
 		
+		//castling
+		if(!p.hasMoved() && !p.inCheck(board)){
+			for(Piece r : board.getPiecesOfTypes(p.getColor(), PieceTypes.Type.ROOK)){
+				Rook rr = (Rook) r;
+				if(!rr.hasMoved()){
+					boolean occupied = false;
+					for(int i = 1 + Math.min(p.getLoc().getLet(), rr.getLoc().getLet()); i < Math.max(p.getLoc().getLet(), rr.getLoc().getLet()); i++){
+						if(board.getPiece(new Cell(p.getLoc().getNum(), i)) != null){
+							occupied = true;
+							break;
+						}
+					}
+					if(!occupied){
+						if(rr.getLoc().getLet() == Math.min(p.getLoc().getLet(), rr.getLoc().getLet())){
+							Cell left = new Cell(p.getLoc().getNum(), p.getLoc().getLet()-2);
+							if(!p.testCheck(board, left)){
+								ret.add(left);
+							}
+						}
+						else{
+							Cell right = new Cell(p.getLoc().getNum(), p.getLoc().getLet()+2);
+							if(!p.testCheck(board, right)){
+								ret.add(right);
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		removeSameSide(board, ret, isBlack);
 		
 		return ret;

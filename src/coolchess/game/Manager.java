@@ -11,21 +11,33 @@ public class Manager {
 	}
 	
 	public void doMove(Move m){
-		for(Cell c : m.getCells()){
-			Piece p = board.getPiece(c);
-			if(p != null){
-				p.setLoc(null);
-			}
+		// get rid of taken pieces
+		Piece p = board.getPiece(m.getCell());
+		if(p != null){
+			p.setLoc(null);
 		}
+		
 		for(Iterator<Piece> iter = board.getPieces().iterator(); iter.hasNext();){
 			if(iter.next().getLoc() == null){
 				iter.remove();
 			}
 		}
-		for(int i = 0; i < m.getPieces().size(); i++){
-			m.getPieces().get(i).setLoc(m.getCells().get(i));
-		}
 		
+		// actually move piece
+		p = m.getPiece();
+		if(p.getType() == PieceTypes.Type.KING){
+			// castling right
+			if(p.getLoc().getLet() - m.getCell().getLet() == -2){
+				board.getPiece(new Cell(p.getLoc().getNum(), 0)).setLoc(new Cell(p.getLoc().getNum(), 5));
+			} // castling left
+			else if(p.getLoc().getLet() - m.getCell().getLet() == 2){
+				board.getPiece(new Cell(p.getLoc().getNum(), 0)).setLoc(new Cell(p.getLoc().getNum(), 3));
+			}
+		}
+		// most pieces don't require special treatment
+		p.setLoc(m.getCell());
+
+		// switch turn - also needs to check if the game is over or not
 		if(board.getBoardState() == BoardState.BLACK_TURN){
 			board.setBoardState(BoardState.WHITE_TURN);
 		}

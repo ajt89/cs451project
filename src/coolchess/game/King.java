@@ -4,30 +4,20 @@ public class King extends Piece {
 	private static final long serialVersionUID = -1477668621166621201L;
 	
 	private boolean moved;
-	private boolean check;
 
-	public King(PieceTypes.Color color, PieceTypes.Type type, Cell loc, boolean moved, boolean check){
+	public King(PieceTypes.Color color, PieceTypes.Type type, Cell loc, boolean moved){
 		this.color = color;
 		this.type = type;
 		this.loc = loc;
 		this.moved = moved;
-		this.check = check;
 	}
 	
 	public King(PieceTypes.Color color, PieceTypes.Type type, Cell loc){
-		this(color, type, loc, false, false);
+		this(color, type, loc, false);
 	}
 	
 	public King(King k){
-		this(k.getColor(), k.getType(), k.getLoc(), k.hasMoved(), k.isInCheck());
-	}
-
-	public boolean isInCheck() {
-		return check;
-	}
-
-	public void setCheck(boolean check) {
-		this.check = check;
+		this(k.getColor(), k.getType(), k.getLoc(), k.hasMoved());
 	}
 
 	public boolean hasMoved() {
@@ -36,5 +26,55 @@ public class King extends Piece {
 
 	public void setMoved(boolean moved) {
 		this.moved = moved;
+	}
+	
+	public boolean testCheck(Board b, Cell loc){
+		for(Piece p : b.getPiecesOfType(this.color == PieceTypes.Color.BLACK ? PieceTypes.Color.WHITE : PieceTypes.Color.BLACK)){
+			switch(p.getType()){
+			case BISHOP:    
+				for(Cell c : Validator.bishopMoves(b, (Bishop)p, p.getColor() == PieceTypes.Color.BLACK)){
+					if(loc.equals(c)){
+						return true;
+					}
+				}
+			case KING:
+				for(Cell c : Validator.kingMoves(b, (King)p, p.getColor() == PieceTypes.Color.BLACK)){
+					if(loc.equals(c)){
+						return true;
+					}
+				}
+			case KNIGHT:
+				for(Cell c : Validator.knightMoves(b, (Knight)p, p.getColor() == PieceTypes.Color.BLACK)){
+					if(loc.equals(c)){
+						return true;
+					}
+				}
+			case PAWN:
+				for(Cell c : Validator.pawnMoves(b, (Pawn)p, p.getColor() == PieceTypes.Color.BLACK)){
+					if(loc.equals(c)){
+						return true;
+					}
+				}
+			case QUEEN:
+				for(Cell c : Validator.queenMoves(b, (Queen)p, p.getColor() == PieceTypes.Color.BLACK)){
+					if(loc.equals(c)){
+						return true;
+					}
+				}
+			case ROOK:
+				for(Cell c : Validator.rookMoves(b, (Rook)p, p.getColor() == PieceTypes.Color.BLACK)){
+					if(loc.equals(c)){
+						return true;
+					}
+				}
+			default:
+				// nothing
+			}
+		}
+		return false;
+	}
+	
+	public boolean inCheck(Board b){
+		return testCheck(b, this.getLoc());
 	}
 }
