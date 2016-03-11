@@ -226,7 +226,7 @@ public class Validator {
 				//advancing / double length movement on first move
 				if(!p.hasMoved() && n + 2 < Board.boardSize){
 					Cell c = new Cell(n + 2, l);
-					if(board.getPiece(c) == null){
+					if(board.getPiece(new Cell(n + 1, l)) == null && board.getPiece(c) == null){
 						ret.add(c);
 					}
 				}
@@ -276,7 +276,7 @@ public class Validator {
 				//advancing / double length movement on first move
 				if(!p.hasMoved() && n - 2 >= 0){
 					Cell c = new Cell(n - 2, l);
-					if(board.getPiece(c) == null){
+					if(board.getPiece(new Cell(n - 1, l)) == null && board.getPiece(c) == null){
 						ret.add(c);
 					}
 				}
