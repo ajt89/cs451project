@@ -39,11 +39,7 @@ public class King extends Piece {
 				}
 				break;
 			case KING:
-				for(Cell c : Validator.kingMoves(b, (King)p, p.getColor() == PieceTypes.Color.BLACK)){
-					if(loc.equals(c)){
-						return true;
-					}
-				}
+				// kings can't put other kings in check
 				break;
 			case KNIGHT:
 				for(Cell c : Validator.knightMoves(b, (Knight)p, p.getColor() == PieceTypes.Color.BLACK)){
