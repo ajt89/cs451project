@@ -47,7 +47,7 @@ public class Manager {
 			Pawn pp = (Pawn)p;
 			
 			if(!pp.hasMoved()){
-				if(!!pp.hasAdvanced()){
+				if(!pp.hasAdvanced()){
 					if(Math.abs(pp.getLoc().getNum() - m.getCell().getNum()) == 2){
 						pp.setAdvanced(true);
 					}
