@@ -19,7 +19,7 @@ import coolchess.game.*;
 public class Chessboard {
 
 	
-	boolean notPressed = false;
+	boolean buttonPress;
 	private boolean white = true;
 	private String playerName;
 	private static JFrame frame = new JFrame();
@@ -405,6 +405,8 @@ public class Chessboard {
         					}
         				}
         			}
+
+        			buttonPress = true;
         			//white = !white;
         		}
         		else if(r.isSelected()) {
@@ -431,6 +433,7 @@ public class Chessboard {
         					}
         				}
         			}
+        			buttonPress = true;
         			//white = !white;
         		}
         		else if(b.isSelected()) {
@@ -457,6 +460,8 @@ public class Chessboard {
         					}
         				}
         			}
+
+        			buttonPress = true;
         			//white = !white;
         		}
         		else if(k.isSelected()) {
@@ -483,9 +488,10 @@ public class Chessboard {
         					}
         				}
         			}
+        			buttonPress = true;
         			//white = !white;
         		}
-				notPressed = false;
+				//notPressed = false;
         	}
         });
         cont.add(submit);
@@ -499,7 +505,7 @@ public class Chessboard {
     			this.ch = ch;
     		}
     		public void run(){
-    			if(submit.getModel().isPressed()) {
+    			if(buttonPress) {
     				Board b = man.getBoard();
     				try {
     					ch.sendBoard(b);
