@@ -305,7 +305,9 @@ public class Chessboard {
 			m = new Move(p, new Cell(i, j));
 			//}
 			try {
+				System.out.println("send move white 1");
 				ch.sendMove(m);
+				System.out.println("send move white 2");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println(e);
@@ -329,12 +331,16 @@ public class Chessboard {
 			m = new Move(p, new Cell(7-i, 7-j));
 			//}
 			try {
+
+				System.out.println("send move black 1");
 				ch.sendMove(m);
+
+				System.out.println("send move black 2");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println(e);
 				e.printStackTrace();
-			}	
+			}
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
 		
