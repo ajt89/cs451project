@@ -104,14 +104,18 @@ public class Chessboard {
 							if(active) {
 								if(white) {
 									Cell c = new Cell(xcord, ycord);
-									if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.WHITE) {
-										showViableMoves(xcord, ycord);
+									if(man.getBoard().getPiece(c) != null) {
+										if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.WHITE) {
+											showViableMoves(xcord, ycord);
+										}
 									}
 								}
 								else {
 									Cell c = new Cell(7-xcord, 7-ycord);
-									if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.BLACK) {
-										showViableMoves(xcord, ycord);
+									if(man.getBoard().getPiece(c) != null) {
+										if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.BLACK) {
+											showViableMoves(xcord, ycord);
+										}
 									}
 								}
 							}
@@ -204,7 +208,7 @@ public class Chessboard {
 		else {
 			activex = 7 - i;
 			activey = 7 - j;
-			viable = man.viableLocations(7-i, 7-j);
+			viable = man.viableLocations(activex, activey);
 		}
 		System.out.println(activex + " " + activey);
 		//System.out.println(viable.size());
@@ -224,33 +228,35 @@ public class Chessboard {
 	
 	private void color() {
 		Insets margins = new Insets(0,0,0,0);
-		for(int i = 0; i < old.size(); i++) {
-			JButton button = new JButton();
-			button.setMargin(margins);
-			ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
-			button.setIcon(icon);
-			
-			int x;
-			int y;
-			
-			if(!white) {
-				x = old.get(i).getNum();
-				y = old.get(i).getLet();
+		for(int i = 0; i < squares.length; i++) {
+			for(int j = 0; j < squares.length; j++) {
+				JButton button = new JButton();
+				button.setMargin(margins);
+				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
+				button.setIcon(icon);
+				
+				int x;
+				int y;
+				/*
+				if(!white) {
+					x = 7 - old.get(i).getNum();
+					y = 7 - old.get(i).getLet();
+				}
+				else {
+					x = old.get(i).getNum();
+					y = old.get(i).getLet();
+				}*/
+				//System.out.println("Should recolor:" + x + " " + y);
+				if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
+					//button.setBackground(Color.WHITE);
+					squares[i][j].setBackground(Color.WHITE);
+				}
+				else {
+					//button.setBackground(Color.BLACK);
+					squares[i][j].setBackground(Color.BLACK);
+				}
+				//squares[x][y] = button;
 			}
-			else {
-				x = 7 - old.get(i).getNum();
-				y = 7 - old.get(i).getLet();
-			}
-			System.out.println("Should recolor:" + x + " " + y);
-			if((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)) {
-				//button.setBackground(Color.WHITE);
-				squares[x][y].setBackground(Color.WHITE);
-			}
-			else {
-				//button.setBackground(Color.BLACK);
-				squares[x][y].setBackground(Color.BLACK);
-			}
-			//squares[x][y] = button;
 		}
 	}
 	
@@ -266,6 +272,7 @@ public class Chessboard {
 					listening = false;
 				}
 			} catch (Exception e) {
+				System.out.println(e);
 				e.printStackTrace();
 			}
 		}
@@ -295,8 +302,15 @@ public class Chessboard {
 				}
 			}
 			else {*/
-				m = new Move(p, new Cell(i, j));
+			m = new Move(p, new Cell(i, j));
 			//}
+			try {
+				ch.sendMove(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+				e.printStackTrace();
+			}
 			man.doMove(m);
 		}
 		else {
@@ -312,16 +326,18 @@ public class Chessboard {
 				}
 			}
 			else {*/
-				m = new Move(p, new Cell(7-i, 7-j));
+			m = new Move(p, new Cell(7-i, 7-j));
 			//}
+			try {
+				ch.sendMove(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+				e.printStackTrace();
+			}	
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
-		try {
-			ch.sendMove(m);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		update();
 		white = !white;
 
