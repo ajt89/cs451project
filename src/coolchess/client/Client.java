@@ -238,6 +238,18 @@ public class Client implements Runnable{
 						int counter = Integer.parseInt(responseSplit[1]);
 						ch.setCounter(counter);
 					}
+					else if (response.contains("VICTORY") && response.contains(me)){
+						JOptionPane.showMessageDialog(new JFrame(), "You win.", "Victory",JOptionPane.PLAIN_MESSAGE);
+						cardLayout.previous(contentPane);
+					}
+					else if (response.contains("LOSS") && response.contains(me)){
+						JOptionPane.showMessageDialog(new JFrame(), "You lose.", "Defeat",JOptionPane.PLAIN_MESSAGE);
+						cardLayout.previous(contentPane);
+					}
+					else if (response.contains("TIE") && response.contains(me)){
+						JOptionPane.showMessageDialog(new JFrame(), "You tie?", "Tie",JOptionPane.PLAIN_MESSAGE);
+						cardLayout.previous(contentPane);
+					}
 				}
 				if (gameChallenge){
 					Object[] options = {"Accept","Decline"};
@@ -258,9 +270,9 @@ public class Client implements Runnable{
 							cb.setWhite(false);
 							cb.setPlayer(false);
 							cardLayout.next(contentPane);
-							new Thread(SurrenderListen).start();
-							new Thread(LossListen).start();
-							new Thread(TieListen).start();
+							//new Thread(SurrenderListen).start();
+							//new Thread(LossListen).start();
+							//new Thread(TieListen).start();
 						}
 						else{
 							ch.raw(challengeUser + " denied");
@@ -282,9 +294,9 @@ public class Client implements Runnable{
 					cb.setWhite(true);
 					cb.setPlayer(true);
 					cardLayout.next(contentPane);
-					new Thread(SurrenderListen).start();
-					new Thread(LossListen).start();
-					new Thread(TieListen).start();
+					//new Thread(SurrenderListen).start();
+					//new Thread(LossListen).start();
+					//new Thread(TieListen).start();
 				}
 				
 				if (challengeDenied){
@@ -313,7 +325,7 @@ public class Client implements Runnable{
 		}
 		
 	}
-	
+/*	
 	static Runnable SurrenderListen = new Runnable(){
 		public void run() {
 			try{
@@ -393,7 +405,7 @@ public class Client implements Runnable{
 			
 		}
 		
-	};
+	};*/
 	
 	static Runnable MoveListen = new Runnable(){
 		public void run(){
