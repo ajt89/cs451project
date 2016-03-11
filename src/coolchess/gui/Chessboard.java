@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,7 +21,8 @@ import coolchess.game.*;
 public class Chessboard {
 
 	
-	boolean buttonPress;
+	private BooleanObservable buttonPress = new BooleanObservable(false);
+	private ButtonObserver buobs;
 	private boolean white = true;
 	private String playerName;
 	private static JFrame frame = new JFrame();
@@ -45,6 +48,8 @@ public class Chessboard {
 	public Chessboard(ClientHelper ch, CardLayout cl, Container cp) {
 		//this.ch=ch;
 		initialize(ch, cl, cp);
+		buobs = new ButtonObserver(ch);
+		buttonPress.addObserver(buobs);
 		//new Thread ObjectListener
 	}
 	
@@ -406,7 +411,7 @@ public class Chessboard {
         				}
         			}
 
-        			buttonPress = true;
+        			buttonPress.setBool(true);
         			//white = !white;
         		}
         		else if(r.isSelected()) {
@@ -433,7 +438,7 @@ public class Chessboard {
         					}
         				}
         			}
-        			buttonPress = true;
+        			buttonPress.setBool(true);
         			//white = !white;
         		}
         		else if(b.isSelected()) {
@@ -461,7 +466,7 @@ public class Chessboard {
         				}
         			}
 
-        			buttonPress = true;
+        			buttonPress.setBool(true);
         			//white = !white;
         		}
         		else if(k.isSelected()) {
@@ -488,16 +493,19 @@ public class Chessboard {
         					}
         				}
         			}
-        			buttonPress = true;
+        			buttonPress.setBool(true);
         			//white = !white;
         		}
+				buttonPress.setBool(true);
+        		System.out.println("made true");
 				//notPressed = false;
+				//frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         	}
         });
         cont.add(submit);
         int x;
         int y;
-        class ButtonListener implements Runnable{
+        /*class ButtonListener implements Runnable{
     		private JButton submit;
     		private ClientHelper ch;
     		public ButtonListener(JButton submit, ClientHelper ch){
@@ -506,24 +514,27 @@ public class Chessboard {
     		}
     		public void run(){
     			if(buttonPress) {
+    				System.out.println("got pressed");
     				Board b = man.getBoard();
     				try {
+    					System.out.println("Trying to send before");
     					ch.sendBoard(b);
+    					System.out.println("Trying to send after");
     				} catch (Exception e) {
     					// TODO Auto-generated catch block
     					e.printStackTrace();
     				}
     			}
     		}
-    	};
+    	};*/
 		if (white) {
 			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 0) {
 					frame.setVisible(true);
 					//new Thread(ButtonListener(submit, ch)).start();
-					Runnable run = new ButtonListener(submit, ch);
-					new Thread(run).start();
+					//Runnable run = new ButtonListener(submit, ch);
+					//new Thread(run).start();
 					return true;
 				}
 			}
@@ -533,8 +544,8 @@ public class Chessboard {
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 7) {
 					frame.setVisible(true);
-					Runnable run = new ButtonListener(submit, ch);
-					new Thread(run).start();
+					//Runnable run = new ButtonListener(submit, ch);
+					//new Thread(run).start();
 					return true;
 				}
 			}
@@ -670,6 +681,58 @@ public class Chessboard {
 					break;
 				
 				}
+			}
+		}
+	}
+	
+	class BooleanObservable extends Observable {
+		private boolean bool;
+		
+		public BooleanObservable(boolean b) {
+			this.bool = b;
+		}
+		
+		public boolean getBool() {
+			return bool;
+		}
+		
+		public void setBool(boolean b) {
+			  this.bool = b;
+			  setChanged();
+			  notifyObservers(b);
+		}
+	}
+	
+	public class ButtonObserver implements Observer {
+		private boolean bool;
+		private ClientHelper ch;
+
+		public ButtonObserver(ClientHelper ch) {
+			bool = false;
+			this.ch = ch;
+		}
+
+		public void update(Observable obj, Object arg) {
+			if (arg instanceof Boolean) {
+				bool = (Boolean) arg;
+				System.out.println("Entered update: " + bool);
+				if(bool) {
+					Board b = man.getBoard();
+					try {
+						System.out.println("Gonna send board");
+						ch.sendBoard(b);
+						System.out.println("Sent board");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						System.out.println("Failed send");
+						e.printStackTrace();
+					}
+					buttonPress.setBool(false);
+				}
+				System.out.println("Finished if");
+			} 
+			else {
+				System.out.println("That else thing");
 			}
 		}
 	}
