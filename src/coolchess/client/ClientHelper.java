@@ -11,9 +11,12 @@ public class ClientHelper {
 	private String response;
 	private String message;
 	private String username;
-	private Socket socket;
+	private Socket socketString;
+	private Socket socketObject;
 	private BufferedWriter bw;
 	private BufferedReader br;
+	private ObjectInputStream objectIn;
+	private ObjectOutputStream objectOut;
 	private ArrayList<String> playerlist = new ArrayList<String>();;
 	private Move obj;
 
@@ -57,8 +60,12 @@ public class ClientHelper {
 		return response;
 	}
 	
-	public Socket getSocket(){
-		return socket;
+	public Socket getSocketString(){
+		return socketString;
+	}
+	
+	public Socket getSocketObject(){
+		return socketObject;
 	}
 	
 	//used for testing
@@ -70,6 +77,15 @@ public class ClientHelper {
 		System.out.println(response);
 		*/
 	}	
+	
+	public void sendMove(Move m) throws Exception{
+		objectOut.writeObject(m);
+	}
+	
+	public Move getMove() throws Exception{
+		Move obj = (Move)objectIn.readObject();
+		return obj;
+	}
 	
 	public String getUser(){
 		return username;
@@ -105,16 +121,20 @@ public class ClientHelper {
 	}
 	//connect to server via socket, sets up buffered writers and readers
 	public void connect() throws Exception{
-		socket = new Socket(serverHost, portNumber);
-		OutputStream os = socket.getOutputStream();
+		socketString = new Socket(serverHost, portNumber);
+		OutputStream os = socketString.getOutputStream();
         OutputStreamWriter osw = new OutputStreamWriter(os);
         bw = new BufferedWriter(osw);
 
-        InputStream is = socket.getInputStream();
+        InputStream is = socketString.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         br = new BufferedReader(isr);
+        
+        socketObject = new Socket(serverHost, portNumber);
+        objectIn = new ObjectInputStream(socketObject.getInputStream());
+		objectOut = new ObjectOutputStream(socketObject.getOutputStream());
 	}
-	
+		
 	//sends QUIT to server, closing the connection
 	public void QUIT() throws Exception{
 		bw.write("QUIT\n");

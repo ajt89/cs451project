@@ -18,7 +18,7 @@ import coolchess.game.*;
 
 public class Chessboard {
 
-	private boolean white;
+	private boolean white = true;
 	private String playerName;
 	private static JFrame frame = new JFrame();
 	private static Container contentPane = frame.getContentPane();
@@ -101,7 +101,7 @@ public class Chessboard {
 						if(player) {
 							if(active) {
 								if(white) {
-									Cell c = new Cell(xcord, ycord);
+									//Cell c = new Cell(xcord, ycord);
 									/*if(man.getBoard().getPiece(c)) {
 										
 									}*/
@@ -115,17 +115,24 @@ public class Chessboard {
 								//}
 								for(int k = 0; k < old.size(); k++) {
 									Cell c = old.get(k);
-									if(xcord == c.getNum() && ycord == c.getLet()) {
+									if(xcord == c.getNum() && ycord == c.getLet() && white) {
+										isViable = true;
+									}
+									else if(xcord == 7-c.getNum() && ycord == 7-c.getLet() && !white){
 										isViable = true;
 									}
 								}
 								if(isViable) {
-									movePiece(activex, activey, xcord, ycord);
+									movePiece(activex, activey, xcord, ycord, ch);
+									player = false;
 								}
 								active = true;
 								isViable = false;
 								color();
 							}
+						}
+						else {
+							receiveMove(ch);
 						}
 					}	
 				});
@@ -177,23 +184,29 @@ public class Chessboard {
 		//System.out.println(j);
 		//adjust based on white or !white
 		ArrayList<Cell> viable = new ArrayList<Cell>();
+		System.out.println(white);
 		if(white) {
 			activex = i;
 			activey = j;	
 			viable = man.viableLocations(i, j);
 		}
 		else {
-			activex = 8 - i;
-			activey = 8 - j;
-			viable = man.viableLocations(8-i, 8-j);
+			activex = 7 - i;
+			activey = 7 - j;
+			viable = man.viableLocations(7-i, 7-j);
 		}
-		//System.out.println(i + " " + j);
+		System.out.println(activex + " " + activey);
 		//System.out.println(viable.size());
 		//viable.add(new Cell(3, 5));
 		old = viable;
 		for(int k = 0; k < viable.size(); k++) {
 			Cell c = viable.get(k);
-			squares[c.getNum()][c.getLet()].setBackground(Color.RED);
+			if(white) {
+				squares[c.getNum()][c.getLet()].setBackground(Color.RED);
+			}
+			else {
+				squares[7-c.getNum()][7-c.getLet()].setBackground(Color.RED);
+			}
 		}
 		//squares[i][j].setBackground(Color.gray);
 		active = false;
@@ -207,9 +220,18 @@ public class Chessboard {
 			ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
 			button.setIcon(icon);
 			
-			int x = old.get(i).getNum();
-			int y = old.get(i).getLet();
+			int x;
+			int y;
 			
+			if(!white) {
+				x = old.get(i).getNum();
+				y = old.get(i).getLet();
+			}
+			else {
+				x = 7 - old.get(i).getNum();
+				y = 7 - old.get(i).getLet();
+			}
+			System.out.println("Should recolor:" + x + " " + y);
 			if((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1)) {
 				//button.setBackground(Color.WHITE);
 				squares[x][y].setBackground(Color.WHITE);
@@ -222,28 +244,203 @@ public class Chessboard {
 		}
 	}
 	
-	private void movePiece(int oldi, int oldj, int i, int j) {
+	private void receiveMove(ClientHelper ch) {
+		boolean listening = true;
+		Move m = null;
+		while(listening) {
+			try {
+				m = ch.getMove();
+				if(m != null) {
+					listening = false;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		man.doMove(m);
+		white = !white;
+		update();
+	}
+	
+	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch) {
 		//get image/text from old space
 		//String temp = squares[oldi][oldj].getText();
 		//adjust based on white or !white
+		//boolean listening = false;
+		Move m = null;
 		if(white) {
 			Icon ic = squares[oldi][oldj].getIcon();
 			squares[oldi][oldj].setIcon(null);
 			squares[i][j].setIcon(ic);
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
-			man.doMove(new Move(p, new Cell(i, j)));
+			/*(if(listening) {
+				while(listening) {
+					try {
+						m = ch.getMove();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			else {*/
+				m = new Move(p, new Cell(i, j));
+			//}
+			man.doMove(m);
 		}
 		else {
-			Icon ic = squares[8-oldi][8-oldj].getIcon();
-			squares[8-oldi][8-oldj].setIcon(null);
+			Icon ic = squares[7-oldi][7-oldj].getIcon();
+			squares[7-oldi][7-oldj].setIcon(null);
 			squares[i][j].setIcon(ic);
-			Piece p = man.getBoard().getPiece(new Cell(8-oldi, 8-oldj));
-			man.doMove(new Move(p, new Cell(8-i, 8-j)));
+			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
+			/*if(!listening) {
+				try {
+					m = ch.getMove();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {*/
+				m = new Move(p, new Cell(7-i, 7-j));
+			//}
+			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
 		white = !white;
 		
 		//man.doMove();
 		//move in board as well
+	}
+	
+	private void update() {
+		ArrayList<Piece> p = man.getBoard().getPieces();
+		
+		for(int i = 0; i < squares.length; i++) {
+			for(int j = 0; j < squares.length; j++) {
+				squares[i][j].setIcon(null);
+			}
+		}
+		if(white) {
+			for(int i = 0; i < p.size(); i++) {
+				Piece pi = p.get(i);
+				Cell c = pi.getLoc();
+				int x = c.getNum();
+				int y = c.getLet();
+				switch (pi.getType()) {
+				case BISHOP:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][BISHOP]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][BISHOP]));
+					}
+					break;
+				case KING:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][KING]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][KING]));
+					}
+					break;
+				case KNIGHT:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][KNIGHT]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][KNIGHT]));
+					}
+					break;
+				case PAWN:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][PAWN]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][PAWN]));
+					}
+					break;
+				case QUEEN:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][QUEEN]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][QUEEN]));
+					}
+					break;
+				case ROOK:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][ROOK]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][ROOK]));
+					}
+					break;
+				default:
+					break;
+				
+				}
+			}
+		}
+		else {
+			for(int i = 0; i < p.size(); i++) {
+				Piece pi = p.get(i);
+				Cell c = pi.getLoc();
+				int x = 7 - c.getNum();
+				int y = 7 - c.getLet();
+				switch (pi.getType()) {
+				case BISHOP:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][BISHOP]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][BISHOP]));
+					}
+					break;
+				case KING:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][KING]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][KING]));
+					}
+					break;
+				case KNIGHT:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][KNIGHT]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][KNIGHT]));
+					}
+					break;
+				case PAWN:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][PAWN]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][PAWN]));
+					}
+					break;
+				case QUEEN:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][QUEEN]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][QUEEN]));
+					}
+					break;
+				case ROOK:
+					if(pi.getColor() == PieceTypes.Color.BLACK) {
+						squares[x][y].setIcon(new ImageIcon(pieces[0][ROOK]));
+					}
+					else {
+						squares[x][y].setIcon(new ImageIcon(pieces[1][ROOK]));
+					}
+					break;
+				default:
+					break;
+				
+				}
+			}
+		}
+		white = !white;
 	}
 	
 	/*private void update(Board b) {
@@ -309,12 +506,12 @@ public class Chessboard {
 	}*/
 	
 	public void flipBoard() {
-		if(white) {
+		/*if(white) {
 			white = false;
 		}
 		else {
 			white = true;
-		}
+		}*/
 		JButton[][] temp = new JButton[8][8];
 		Insets margins = new Insets(0,0,0,0);
 		for(int i = 0; i < squares.length; i++) {
