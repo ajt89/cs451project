@@ -141,8 +141,8 @@ public class Chessboard {
 						}
 						else {
 							//squares[xcord][ycord].setEnabled(false);
-							//receiveMove(ch);
-							//player = true;
+							receiveMove(ch);
+							player = true;
 						}
 					}	
 				});
@@ -313,7 +313,10 @@ public class Chessboard {
 			//}
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
+
+		update();
 		white = !white;
+
 		//man.doMove();
 	}
 	
@@ -447,7 +450,6 @@ public class Chessboard {
 				}
 			}
 		}
-		white = !white;
 	}
 	
 	public void setPlayer(boolean b) {
