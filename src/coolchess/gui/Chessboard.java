@@ -43,6 +43,7 @@ public class Chessboard {
 	public Chessboard(ClientHelper ch, CardLayout cl, Container cp) {
 		//this.ch=ch;
 		initialize(ch, cl, cp);
+		//new Thread ObjectListener
 	}
 	
 	public final void initialize(ClientHelper ch, CardLayout cl, Container cp) {
@@ -145,9 +146,9 @@ public class Chessboard {
 						}
 						else {
 							//squares[xcord][ycord].setEnabled(false);
-							System.out.println("Does it get here on black?");
-							receiveMove(ch);
-							player = true;
+							//System.out.println("Does it get here on black?");
+							//receiveMove(ch);
+							//player = true;
 						}
 					}	
 				});
@@ -260,7 +261,7 @@ public class Chessboard {
 		}
 	}
 	
-	private void receiveMove(ClientHelper ch) {
+	public void receiveMove(ClientHelper ch) {
 		boolean listening = true;
 		Move m = null;
 		while(listening) {
@@ -279,6 +280,7 @@ public class Chessboard {
 		man.doMove(m);
 		white = !white;
 		update();
+		player = !player;
 	}
 	
 	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch) {
@@ -646,5 +648,10 @@ public class Chessboard {
 
 		SwingUtilities.invokeLater(r);
 	}
+	/*static Runnable ObjectListener = new Runnable(){
+		public void run(){
+			receiveMove(ch);
+		}
+	};*/
 
 }
