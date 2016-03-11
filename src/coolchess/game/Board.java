@@ -88,7 +88,7 @@ public class Board {
 	// possibly null result
 	public Piece getPiece(Cell c){
 		for(Piece p : pieces){
-			if(p.getLoc().equals(c)){
+			if(p.getLoc() != null && p.getLoc().equals(c)){
 				return p;
 			}
 		}
