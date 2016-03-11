@@ -71,17 +71,17 @@ public class Manager {
 		else{
 			switch(p.getType()){
 			case BISHOP:    
-				return Validator.bishopMoves(board, (Bishop)p);
+				return Validator.removeChecks(board, p, Validator.bishopMoves(board, (Bishop)p));
 			case KING:
-				return Validator.kingMoves(board, (King)p);
+				return Validator.removeChecks(board, p, Validator.kingMoves(board, (King)p));
 			case KNIGHT:
-				return Validator.knightMoves(board, (Knight)p);
+				return Validator.removeChecks(board, p, Validator.knightMoves(board, (Knight)p));
 			case PAWN:
-				return Validator.pawnMoves(board, (Pawn)p);
+				return Validator.removeChecks(board, p, Validator.pawnMoves(board, (Pawn)p));
 			case QUEEN:
-				return Validator.queenMoves(board, (Queen)p);
+				return Validator.removeChecks(board, p, Validator.queenMoves(board, (Queen)p));
 			case ROOK:
-				return Validator.rookMoves(board, (Rook)p);
+				return Validator.removeChecks(board, p, Validator.rookMoves(board, (Rook)p));
 			default:
 				return null;
 			}

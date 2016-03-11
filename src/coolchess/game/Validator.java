@@ -22,16 +22,18 @@ public class Validator {
 		}
 	}
 	
-	private static void removeChecks(Board board, Piece p, ArrayList<Cell> ret){
+	public static ArrayList<Cell> removeChecks(Board board, Piece p, ArrayList<Cell> ret){
 		Cell start = p.getLoc();
 		for(Iterator<Cell> iter = ret.iterator(); iter.hasNext();){
 			p.setLoc(iter.next());
-			// 0 alright here since there's only 1 king per side ever
+			// 0 is alright here since there's only 1 king per side ever
 			if(((King)(board.getPiecesOfTypes(p.getColor(), PieceTypes.Type.KING).get(0))).inCheck(board)){
 				iter.remove();
 			}
 		}
 		p.setLoc(start);
+		
+		return ret;
 	}
 	
 	public static ArrayList<Cell> bishopMoves(Board board, Bishop p) {
