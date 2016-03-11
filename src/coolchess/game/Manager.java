@@ -28,7 +28,7 @@ public class Manager {
 		if(p.getType() == PieceTypes.Type.KING){
 			// castling right
 			if(p.getLoc().getLet() - m.getCell().getLet() == -2){
-				board.getPiece(new Cell(p.getLoc().getNum(), 0)).setLoc(new Cell(p.getLoc().getNum(), 5));
+				board.getPiece(new Cell(p.getLoc().getNum(), 7)).setLoc(new Cell(p.getLoc().getNum(), 5));
 			} // castling left
 			else if(p.getLoc().getLet() - m.getCell().getLet() == 2){
 				board.getPiece(new Cell(p.getLoc().getNum(), 0)).setLoc(new Cell(p.getLoc().getNum(), 3));
