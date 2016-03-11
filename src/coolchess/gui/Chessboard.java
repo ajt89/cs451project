@@ -19,7 +19,7 @@ import coolchess.game.*;
 public class Chessboard {
 
 
-	private String pieceText;
+	boolean notPressed = false;
 	private boolean white = true;
 	private String playerName;
 	private static JFrame frame = new JFrame();
@@ -69,7 +69,7 @@ public class Chessboard {
 				flipBoard();
 			}
 		});
-		options.add(flip);
+		//options.add(flip);
 		board = new JPanel(new GridLayout(0,8));
 		board.setBorder(new LineBorder(Color.BLACK));
 		gui.add(board);
@@ -214,8 +214,6 @@ public class Chessboard {
 			viable = man.viableLocations(activex, activey);
 		}
 		System.out.println(activex + " " + activey);
-		//System.out.println(viable.size());
-		//viable.add(new Cell(3, 5));
 		old = viable;
 		for(int k = 0; k < viable.size(); k++) {
 			Cell c = viable.get(k);
@@ -272,7 +270,6 @@ public class Chessboard {
 	
 	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch, CardLayout cl, Container cp) {
 		Move m = null;
-		//Board b = null;
 		if(white) {
 			Icon ic = squares[oldi][oldj].getIcon();
 			squares[oldi][oldj].setIcon(null);
@@ -280,11 +277,14 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(i, j));
 			man.doMove(m);
-			checkPromote();
+			boolean temp = checkPromote();
+			if(temp) {
+				long start = System.currentTimeMillis();
+				long end = System.currentTimeMillis();
+				while(end - start < 1000) {}
+			}
 			try {
-				System.out.println("send board white 1");
 				ch.sendBoard(man.getBoard());
-				System.out.println("send board 2");
 			} catch (Exception e) {
 				System.out.println(e);
 				e.printStackTrace();
@@ -299,12 +299,16 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(7-i, 7-j));
 			man.doMove(m);
-			checkPromote();
+			boolean temp = checkPromote();
+			if(temp) {
+				long start = System.currentTimeMillis();
+				long end = System.currentTimeMillis();
+				while(end - start < 5000) {
+					end = System.currentTimeMillis();
+				}
+			}
 			try {
-				System.out.println("send move black 1");
 				ch.sendBoard(man.getBoard());
-				//System.out.println(m + " 3");
-				System.out.println("send move black 2");
 			} catch (Exception e) {
 				System.out.println(e);
 				e.printStackTrace();
@@ -346,7 +350,7 @@ public class Chessboard {
 		//white = !white;
 	}
 	
-	private void checkPromote() {
+	private boolean checkPromote() {
 		ArrayList<Piece> p = new ArrayList<Piece>();
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButton q = new JRadioButton("Queen");
@@ -478,6 +482,7 @@ public class Chessboard {
         			}
         			//white = !white;
         		}
+				notPressed = false;
         	}
         });
         cont.add(submit);
@@ -488,6 +493,7 @@ public class Chessboard {
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 0) {
 					frame.setVisible(true);
+					return true;
 				}
 			}
 		}
@@ -496,9 +502,11 @@ public class Chessboard {
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 7) {
 					frame.setVisible(true);
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 	
 	private void update() {
