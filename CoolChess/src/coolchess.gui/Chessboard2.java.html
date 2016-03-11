@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Chessboard2.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.gui</a> &gt; <span class="el_source">Chessboard2.java</span></div><h1>Chessboard2.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package coolchess.gui;</span>
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import coolchess.client.ClientHelper;
+import coolchess.game.*;
+
+public class Chessboard2 {
+
+	private String pieceText;
+<span class="nc" id="L22">	private boolean white = true;</span>
+	private String playerName;
+<span class="nc" id="L24">	private static JFrame frame = new JFrame();</span>
+<span class="nc" id="L25">	private static Container contentPane = frame.getContentPane();</span>
+<span class="nc" id="L26">	private static CardLayout cardLayout = new CardLayout();</span>
+<span class="nc" id="L27">	private static ArrayList&lt;String&gt; names = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L28">	private JPanel gui = new JPanel(new BorderLayout(3, 3));</span>
+<span class="nc" id="L29">	private JButton[][] squares = new JButton[8][8];</span>
+	private JPanel board;
+<span class="nc" id="L31">	public static final int QUEEN = 1, KING = 0, ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;</span>
+<span class="nc" id="L32">	private int[] starting = {ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK};</span>
+<span class="nc" id="L33">	private Image[][] pieces = new Image[2][6];</span>
+	//private Board b = new Board(BoardState.WHITE_TURN);
+<span class="nc" id="L35">	private Manager man = new Manager(BoardState.WHITE_TURN);</span>
+	private ArrayList&lt;Cell&gt; old;
+<span class="nc" id="L37">	private boolean active = true;</span>
+	private boolean player;
+	private boolean isViable;
+	private int activex;
+	private int activey;
+	//ClientHelper ch;
+	
+<span class="nc" id="L44">	public Chessboard2(ClientHelper ch, CardLayout cl, Container cp) {</span>
+		//this.ch=ch;
+<span class="nc" id="L46">		initialize(ch, cl, cp);</span>
+		//new Thread ObjectListener
+<span class="nc" id="L48">	}</span>
+	
+	public final void initialize(ClientHelper ch, CardLayout cl, Container cp) {
+<span class="nc" id="L51">		createImages();</span>
+		
+<span class="nc" id="L53">		gui.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+		
+<span class="nc" id="L55">		JToolBar options = new JToolBar();</span>
+<span class="nc" id="L56">		gui.add(options, BorderLayout.PAGE_START);</span>
+		//add all the options
+<span class="nc" id="L58">		JButton surrender = new JButton(&quot;Surrender&quot;);</span>
+<span class="nc" id="L59">		surrender.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L61">				surrender(ch, cl, cp);</span>
+<span class="nc" id="L62">			}</span>
+		});
+<span class="nc" id="L64">		options.add(surrender);</span>
+<span class="nc" id="L65">		JButton flip = new JButton(&quot;Flip&quot;);</span>
+<span class="nc" id="L66">		flip.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L68">				flipBoard();</span>
+<span class="nc" id="L69">			}</span>
+		});
+<span class="nc" id="L71">		options.add(flip);</span>
+<span class="nc" id="L72">		board = new JPanel(new GridLayout(0,8));</span>
+<span class="nc" id="L73">		board.setBorder(new LineBorder(Color.BLACK));</span>
+<span class="nc" id="L74">		gui.add(board);</span>
+		
+<span class="nc" id="L76">		Insets margins = new Insets(0,0,0,0);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		for(int i = 0; i &lt; squares.length; i++) {</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">			for(int j = 0; j &lt; squares[i].length; j++) {</span>
+<span class="nc" id="L79">				JButton button = new JButton();</span>
+		
+<span class="nc" id="L81">				button.setMargin(margins);</span>
+<span class="nc" id="L82">				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));</span>
+<span class="nc" id="L83">				button.setIcon(icon);</span>
+				
+<span class="nc bnc" id="L85" title="All 8 branches missed.">				if((i % 2 == 0 &amp;&amp; j % 2 == 0) || (i % 2 == 1 &amp;&amp; j % 2 == 1)) {</span>
+<span class="nc" id="L86">					button.setBackground(Color.WHITE);</span>
+<span class="nc" id="L87">				}</span>
+				else {
+<span class="nc" id="L89">					button.setBackground(Color.BLACK);</span>
+				}
+<span class="nc" id="L91">				squares[i][j] = button;</span>
+				//Rectangle rect = squares[i][j].getBounds();
+			}
+		}
+		//uncomment for testing
+<span class="nc" id="L96">		player = true;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">		for(int i = 0; i &lt; squares.length; i++) {</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">			for(int j = 0; j &lt; squares[i].length; j++) {</span>
+<span class="nc" id="L99">				board.setLocation(i, j);</span>
+				//System.out.println(board.getBounds().x);
+<span class="nc" id="L101">				int xcord = board.getBounds().x;</span>
+<span class="nc" id="L102">				int ycord = board.getBounds().y;</span>
+<span class="nc" id="L103">				squares[i][j].addActionListener(new ActionListener() {</span>
+					public void actionPerformed(ActionEvent e) {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">						if(player) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">							if(active) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">								if(white) {</span>
+<span class="nc" id="L108">									Cell c = new Cell(xcord, ycord);</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">									if(man.getBoard().getPiece(c) != null) {</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">										if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.WHITE) {</span>
+<span class="nc" id="L111">											showViableMoves(xcord, ycord);</span>
+										}
+									}
+<span class="nc" id="L114">								}</span>
+								else {
+<span class="nc" id="L116">									Cell c = new Cell(7-xcord, 7-ycord);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">									if(man.getBoard().getPiece(c) != null) {</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">										if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L119">											showViableMoves(xcord, ycord);</span>
+										}
+									}
+								}
+<span class="nc" id="L123">							}</span>
+							else {
+								//check if current location is within the viable list
+								//if(is in viable list) {
+								//isViable = true;
+								//}
+<span class="nc bnc" id="L129" title="All 2 branches missed.">								for(int k = 0; k &lt; old.size(); k++) {</span>
+<span class="nc" id="L130">									Cell c = old.get(k);</span>
+<span class="nc bnc" id="L131" title="All 6 branches missed.">									if(xcord == c.getNum() &amp;&amp; ycord == c.getLet() &amp;&amp; white) {</span>
+<span class="nc" id="L132">										isViable = true;</span>
+<span class="nc" id="L133">									}</span>
+<span class="nc bnc" id="L134" title="All 6 branches missed.">									else if(xcord == 7-c.getNum() &amp;&amp; ycord == 7-c.getLet() &amp;&amp; !white){</span>
+<span class="nc" id="L135">										isViable = true;</span>
+									}
+								}
+<span class="nc bnc" id="L138" title="All 2 branches missed.">								if(isViable) {</span>
+<span class="nc" id="L139">									movePiece(activex, activey, xcord, ycord, ch);</span>
+									//comment out for testing
+									//player = false;
+								}
+<span class="nc" id="L143">								active = true;</span>
+<span class="nc" id="L144">								isViable = false;</span>
+<span class="nc" id="L145">								color();</span>
+							}
+						}
+						else {
+							//squares[xcord][ycord].setEnabled(false);
+							//System.out.println(&quot;Does it get here on black?&quot;);
+							//receiveMove(ch);
+							//player = true;
+						}
+<span class="nc" id="L154">					}	</span>
+				});
+<span class="nc" id="L156">				board.add(squares[i][j]);</span>
+			}
+		}
+		
+<span class="nc" id="L160">		setupBoard();</span>
+<span class="nc" id="L161">	}</span>
+	
+	public void surrender(ClientHelper ch, CardLayout cl, Container cp) {
+		//Object[] options = {&quot;Yes&quot;, &quot;No&quot;};
+<span class="nc" id="L165">		int n = JOptionPane.showConfirmDialog(frame, &quot;Would you like to surrender?&quot;, &quot;Surrender&quot;,</span>
+<span class="nc" id="L166">			    JOptionPane.YES_NO_OPTION);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">		if(n == 0) {</span>
+<span class="nc" id="L168">			JOptionPane.showMessageDialog(frame, &quot;You have lost.&quot;, &quot;You lose&quot;,JOptionPane.PLAIN_MESSAGE);</span>
+			//send win message to opponent
+			try {
+<span class="nc" id="L171">				ch.raw(ch.getUser() + &quot; SURRENDER&quot;);</span>
+<span class="nc" id="L172">			} catch (Exception e) {</span>
+<span class="nc" id="L173">				e.printStackTrace();</span>
+			}
+<span class="nc" id="L175">			cl.previous(cp);</span>
+		}
+<span class="nc" id="L177">	}</span>
+	
+	public void createImages() {
+		try {
+<span class="nc" id="L181">			File image = new File(&quot;pieces.png&quot;);</span>
+<span class="nc" id="L182">            BufferedImage bi = ImageIO.read(image);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            for (int i = 0; i &lt; 2; i++) {</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                for (int j = 0; j &lt; 6; j++) {</span>
+<span class="nc" id="L185">                    pieces[i][j] = bi.getSubimage(</span>
+<span class="nc" id="L186">                            j * 64, i * 64, 64, 64);</span>
+                }
+            }
+<span class="nc" id="L189">        } catch (Exception e) {</span>
+<span class="nc" id="L190">            e.printStackTrace();</span>
+<span class="nc" id="L191">            System.exit(1);</span>
+        }
+<span class="nc" id="L193">	}</span>
+	
+	public void setWhite(boolean b) {
+<span class="nc" id="L196">		white = b;</span>
+<span class="nc" id="L197">	}</span>
+	
+	private void showViableMoves(int i, int j) {
+		//System.out.println(i);
+		//System.out.println(j);
+		//adjust based on white or !white
+<span class="nc" id="L203">		ArrayList&lt;Cell&gt; viable = new ArrayList&lt;Cell&gt;();</span>
+<span class="nc" id="L204">		System.out.println(white);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">		if(white) {</span>
+<span class="nc" id="L206">			activex = i;</span>
+<span class="nc" id="L207">			activey = j;	</span>
+<span class="nc" id="L208">			viable = man.viableLocations(i, j);</span>
+<span class="nc" id="L209">		}</span>
+		else {
+<span class="nc" id="L211">			activex = 7 - i;</span>
+<span class="nc" id="L212">			activey = 7 - j;</span>
+<span class="nc" id="L213">			viable = man.viableLocations(activex, activey);</span>
+		}
+<span class="nc" id="L215">		System.out.println(activex + &quot; &quot; + activey);</span>
+		//System.out.println(viable.size());
+		//viable.add(new Cell(3, 5));
+<span class="nc" id="L218">		old = viable;</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">		for(int k = 0; k &lt; viable.size(); k++) {</span>
+<span class="nc" id="L220">			Cell c = viable.get(k);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">			if(white) {</span>
+<span class="nc" id="L222">				squares[c.getNum()][c.getLet()].setBackground(Color.RED);</span>
+<span class="nc" id="L223">			}</span>
+			else {
+<span class="nc" id="L225">				squares[7-c.getNum()][7-c.getLet()].setBackground(Color.RED);</span>
+			}
+		}
+<span class="nc" id="L228">		active = false;</span>
+<span class="nc" id="L229">	}</span>
+	
+	private void color() {
+<span class="nc" id="L232">		Insets margins = new Insets(0,0,0,0);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">		for(int i = 0; i &lt; squares.length; i++) {</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">			for(int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L235">				JButton button = new JButton();</span>
+<span class="nc" id="L236">				button.setMargin(margins);</span>
+<span class="nc" id="L237">				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));</span>
+<span class="nc" id="L238">				button.setIcon(icon);</span>
+				
+<span class="nc bnc" id="L240" title="All 8 branches missed.">				if((i % 2 == 0 &amp;&amp; j % 2 == 0) || (i % 2 == 1 &amp;&amp; j % 2 == 1)) {</span>
+<span class="nc" id="L241">					squares[i][j].setBackground(Color.WHITE);</span>
+<span class="nc" id="L242">				}</span>
+				else {
+<span class="nc" id="L244">					squares[i][j].setBackground(Color.BLACK);</span>
+				}
+			}
+		}
+<span class="nc" id="L248">	}</span>
+	
+	public void receiveMove(ClientHelper ch) {
+<span class="nc" id="L251">		boolean listening = true;</span>
+<span class="nc" id="L252">		System.out.println(&quot;Inside receive move&quot;);</span>
+<span class="nc" id="L253">		Board b = null;</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">		while(listening) {</span>
+			try {
+<span class="nc" id="L256">				b = ch.getBoard();</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">				if(b != null) {</span>
+<span class="nc" id="L258">					listening = false;</span>
+				}
+<span class="nc" id="L260">				man = new Manager(b);</span>
+<span class="nc" id="L261">				System.out.println(&quot;Should've done move&quot;);</span>
+<span class="nc" id="L262">			} catch (Exception e) {</span>
+<span class="nc" id="L263">				System.out.println(e);</span>
+<span class="nc" id="L264">				e.printStackTrace();</span>
+			}
+		}
+<span class="nc bnc" id="L267" title="All 2 branches missed.">		white = !white;</span>
+<span class="nc" id="L268">		update();</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">		player = !player;</span>
+<span class="nc" id="L270">	}</span>
+	
+	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch) {
+<span class="nc" id="L273">		Move m = null;</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">		if(white) {</span>
+<span class="nc" id="L275">			Icon ic = squares[oldi][oldj].getIcon();</span>
+<span class="nc" id="L276">			squares[oldi][oldj].setIcon(null);</span>
+<span class="nc" id="L277">			squares[i][j].setIcon(ic);</span>
+<span class="nc" id="L278">			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));</span>
+<span class="nc" id="L279">			m = new Move(p, new Cell(i, j));</span>
+<span class="nc" id="L280">			man.doMove(m);</span>
+<span class="nc" id="L281">			checkPromote();</span>
+			/*try {
+				System.out.println(&quot;send board white 1&quot;);
+				ch.sendBoard(man.getBoard());
+				System.out.println(&quot;send board 2&quot;);
+			} catch (Exception e) {
+				System.out.println(e);
+				e.printStackTrace();
+			}*/
+<span class="nc" id="L290">		}</span>
+		else {
+<span class="nc" id="L292">			Icon ic = squares[7-oldi][7-oldj].getIcon();</span>
+<span class="nc" id="L293">			squares[7-oldi][7-oldj].setIcon(null);</span>
+<span class="nc" id="L294">			squares[i][j].setIcon(ic);</span>
+<span class="nc" id="L295">			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));</span>
+<span class="nc" id="L296">			m = new Move(p, new Cell(7-i, 7-j));</span>
+<span class="nc" id="L297">			man.doMove(new Move(p, new Cell(7-i, 7-j)));</span>
+<span class="nc" id="L298">			checkPromote();</span>
+			/*try {
+				System.out.println(&quot;send move black 1&quot;);
+				ch.sendBoard(man.getBoard());
+				//System.out.println(m + &quot; 3&quot;);
+				System.out.println(&quot;send move black 2&quot;);
+			} catch (Exception e) {
+				System.out.println(e);
+				e.printStackTrace();
+			}
+			System.out.println(m + &quot; 4&quot;);*/
+		}
+<span class="nc" id="L310">		update();</span>
+<span class="nc bnc" id="L311" title="All 4 branches missed.">		switch(man.getBoard().getBoardState()) {</span>
+		case BLACK_WIN:
+			try {
+<span class="nc" id="L314">				ch.raw(ch.getUser() + &quot; WIN&quot;);</span>
+<span class="nc" id="L315">			} catch (Exception e) {</span>
+<span class="nc" id="L316">				e.printStackTrace();</span>
+			}
+			//cl.previous(cp);
+<span class="nc" id="L319">			break;</span>
+		case TIE:
+			try {
+<span class="nc" id="L322">				ch.raw(ch.getUser() + &quot; TIE&quot;);</span>
+<span class="nc" id="L323">			} catch (Exception e) {</span>
+<span class="nc" id="L324">				e.printStackTrace();</span>
+			}
+			//cl.previous(cp);
+<span class="nc" id="L327">			break;</span>
+		case WHITE_WIN:
+			try {
+<span class="nc" id="L330">				ch.raw(ch.getUser() + &quot; WIN&quot;);</span>
+<span class="nc" id="L331">			} catch (Exception e) {</span>
+<span class="nc" id="L332">				e.printStackTrace();</span>
+			}
+			//cl.previous(cp);
+<span class="nc" id="L335">			break;</span>
+		default:
+			break;
+		}
+<span class="nc bnc" id="L339" title="All 2 branches missed.">		white = !white;</span>
+<span class="nc" id="L340">	}</span>
+	
+	private void checkPromote() {
+<span class="nc" id="L343">		ArrayList&lt;Piece&gt; p = new ArrayList&lt;Piece&gt;();</span>
+<span class="nc" id="L344">		ButtonGroup bg = new ButtonGroup();</span>
+<span class="nc" id="L345">		JRadioButton q = new JRadioButton(&quot;Queen&quot;);</span>
+<span class="nc" id="L346">		JRadioButton r = new JRadioButton(&quot;Rook&quot;);</span>
+<span class="nc" id="L347">		JRadioButton b = new JRadioButton(&quot;Bishop&quot;);</span>
+<span class="nc" id="L348">		JRadioButton k = new JRadioButton(&quot;Knight&quot;);</span>
+<span class="nc" id="L349">		bg.add(q);</span>
+<span class="nc" id="L350">		bg.add(r);</span>
+<span class="nc" id="L351">		bg.add(b);</span>
+<span class="nc" id="L352">		bg.add(k);</span>
+		
+<span class="nc" id="L354">		frame = new JFrame();</span>
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+<span class="nc" id="L356">        frame.setSize(300, 200);</span>
+<span class="nc" id="L357">        Container cont = frame.getContentPane();</span>
+<span class="nc" id="L358">        cont.setLayout(new GridLayout(5, 1));</span>
+<span class="nc" id="L359">        cont.add(new JLabel(&quot;Please choose the piece you would like to promote your pawn into&quot;));</span>
+<span class="nc" id="L360">        cont.add(q);</span>
+<span class="nc" id="L361">        cont.add(r);</span>
+<span class="nc" id="L362">        cont.add(b);</span>
+<span class="nc" id="L363">        cont.add(k);</span>
+<span class="nc" id="L364">        JButton submit = new JButton(&quot;Submit&quot;);</span>
+<span class="nc" id="L365">        submit.addActionListener(new ActionListener() {</span>
+        	public void actionPerformed(ActionEvent e) {
+        		int x;
+				int y;
+				ArrayList&lt;Piece&gt; p;
+<span class="nc bnc" id="L370" title="All 2 branches missed.">				if(q.isSelected()) {</span>
+<span class="nc bnc" id="L371" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        			if(white) {</span>
+<span class="nc" id="L373">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L375">	        				x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L376">	        				y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L377" title="All 2 branches missed.">	        				if(p.get(i).getLoc().getNum() == 0) {</span>
+<span class="nc" id="L378">	        					squares[x][y].setIcon(new ImageIcon(pieces[1][QUEEN]));</span>
+<span class="nc" id="L379">	        					man.promote(new Cell(x, y), PieceTypes.Type.QUEEN);</span>
+	        				}
+	       				}
+<span class="nc" id="L382">           			}</span>
+        			else {
+<span class="nc" id="L384">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L386">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L387">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 7) {</span>
+<span class="nc" id="L389">        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][QUEEN]));</span>
+<span class="nc" id="L390">        						man.promote(new Cell(x, y), PieceTypes.Type.QUEEN);</span>
+        					}
+        				}
+        			}
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc" id="L395">        		}</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">        		else if(r.isSelected()) {</span>
+<span class="nc bnc" id="L397" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">        			if(white) {</span>
+<span class="nc" id="L399">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L401">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L402">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 0) {</span>
+<span class="nc" id="L404">        						squares[x][y].setIcon(new ImageIcon(pieces[1][ROOK]));</span>
+<span class="nc" id="L405">        						man.promote(new Cell(x, y), PieceTypes.Type.ROOK);</span>
+        					}
+        				}
+<span class="nc" id="L408">        			}</span>
+        			else {
+<span class="nc" id="L410">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L411" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L412">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L413">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L414" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 7) {</span>
+<span class="nc" id="L415">        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][ROOK]));</span>
+<span class="nc" id="L416">        						man.promote(new Cell(x, y), PieceTypes.Type.ROOK);</span>
+        					}
+        				}
+        			}
+<span class="nc bnc" id="L420" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc" id="L421">        		}</span>
+<span class="nc bnc" id="L422" title="All 2 branches missed.">        		else if(b.isSelected()) {</span>
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        			if(white) {</span>
+<span class="nc" id="L425">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L427">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L428">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L429" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 0) {</span>
+<span class="nc" id="L430">        						squares[x][y].setIcon(new ImageIcon(pieces[1][BISHOP]));</span>
+<span class="nc" id="L431">        						man.promote(new Cell(x, y), PieceTypes.Type.BISHOP);</span>
+        					}
+        				}
+<span class="nc" id="L434">        			}</span>
+        			else {
+<span class="nc" id="L436">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L438">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L439">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 7) {</span>
+<span class="nc" id="L441">        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][BISHOP]));</span>
+<span class="nc" id="L442">        						man.promote(new Cell(x, y), PieceTypes.Type.BISHOP);</span>
+        					}
+        				}
+        			}
+<span class="nc bnc" id="L446" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc" id="L447">        		}</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">        		else if(k.isSelected()) {</span>
+<span class="nc bnc" id="L449" title="All 2 branches missed.">        			white = !white;</span>
+<span class="nc bnc" id="L450" title="All 2 branches missed.">        			if(white) {</span>
+<span class="nc" id="L451">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L453">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L454">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L455" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 0) {</span>
+<span class="nc" id="L456">        						squares[x][y].setIcon(new ImageIcon(pieces[1][KNIGHT]));</span>
+<span class="nc" id="L457">        						man.promote(new Cell(x, y), PieceTypes.Type.KNIGHT);</span>
+        					}
+        				}
+<span class="nc" id="L460">        			}</span>
+        			else {
+<span class="nc" id="L462">        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L463" title="All 2 branches missed.">        				for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L464">        					x = p.get(i).getLoc().getNum();</span>
+<span class="nc" id="L465">        					y = p.get(i).getLoc().getLet();</span>
+<span class="nc bnc" id="L466" title="All 2 branches missed.">        					if(p.get(i).getLoc().getNum() == 7) {</span>
+<span class="nc" id="L467">        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][KNIGHT]));</span>
+<span class="nc" id="L468">        						man.promote(new Cell(x, y), PieceTypes.Type.KNIGHT);</span>
+        					}
+        				}
+        			}
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        			white = !white;</span>
+        		}
+<span class="nc" id="L474">        	}</span>
+        });
+<span class="nc" id="L476">        cont.add(submit);</span>
+        int x;
+        int y;
+<span class="nc bnc" id="L479" title="All 2 branches missed.">		if (white) {</span>
+<span class="nc" id="L480">			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">			for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc bnc" id="L482" title="All 2 branches missed.">				if(p.get(i).getLoc().getNum() == 0) {</span>
+<span class="nc" id="L483">					frame.setVisible(true);</span>
+				}
+			}
+<span class="nc" id="L486">		}</span>
+		else {
+<span class="nc" id="L488">			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);</span>
+<span class="nc bnc" id="L489" title="All 2 branches missed.">			for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">				if(p.get(i).getLoc().getNum() == 7) {</span>
+<span class="nc" id="L491">					frame.setVisible(true);</span>
+				}
+			}
+		}
+<span class="nc" id="L495">	}</span>
+	
+	private void update() {
+<span class="nc" id="L498">		ArrayList&lt;Piece&gt; p = man.getBoard().getPieces();</span>
+		
+<span class="nc bnc" id="L500" title="All 2 branches missed.">		for(int i = 0; i &lt; squares.length; i++) {</span>
+<span class="nc bnc" id="L501" title="All 2 branches missed.">			for(int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L502">				squares[i][j].setIcon(null);</span>
+			}
+		}
+<span class="nc bnc" id="L505" title="All 2 branches missed.">		if(white) {</span>
+<span class="nc bnc" id="L506" title="All 2 branches missed.">			for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L507">				Piece pi = p.get(i);</span>
+<span class="nc" id="L508">				Cell c = pi.getLoc();</span>
+<span class="nc" id="L509">				int x = c.getNum();</span>
+<span class="nc" id="L510">				int y = c.getLet();</span>
+<span class="nc bnc" id="L511" title="All 7 branches missed.">				switch (pi.getType()) {</span>
+				case BISHOP:
+<span class="nc bnc" id="L513" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L514">						squares[x][y].setIcon(new ImageIcon(pieces[0][BISHOP]));</span>
+<span class="nc" id="L515">					}</span>
+					else {
+<span class="nc" id="L517">						squares[x][y].setIcon(new ImageIcon(pieces[1][BISHOP]));</span>
+					}
+<span class="nc" id="L519">					break;</span>
+				case KING:
+<span class="nc bnc" id="L521" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L522">						squares[x][y].setIcon(new ImageIcon(pieces[0][KING]));</span>
+<span class="nc" id="L523">					}</span>
+					else {
+<span class="nc" id="L525">						squares[x][y].setIcon(new ImageIcon(pieces[1][KING]));</span>
+					}
+<span class="nc" id="L527">					break;</span>
+				case KNIGHT:
+<span class="nc bnc" id="L529" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L530">						squares[x][y].setIcon(new ImageIcon(pieces[0][KNIGHT]));</span>
+<span class="nc" id="L531">					}</span>
+					else {
+<span class="nc" id="L533">						squares[x][y].setIcon(new ImageIcon(pieces[1][KNIGHT]));</span>
+					}
+<span class="nc" id="L535">					break;</span>
+				case PAWN:
+<span class="nc bnc" id="L537" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L538">						squares[x][y].setIcon(new ImageIcon(pieces[0][PAWN]));</span>
+<span class="nc" id="L539">					}</span>
+					else {
+<span class="nc" id="L541">						squares[x][y].setIcon(new ImageIcon(pieces[1][PAWN]));</span>
+					}
+<span class="nc" id="L543">					break;</span>
+				case QUEEN:
+<span class="nc bnc" id="L545" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L546">						squares[x][y].setIcon(new ImageIcon(pieces[0][QUEEN]));</span>
+<span class="nc" id="L547">					}</span>
+					else {
+<span class="nc" id="L549">						squares[x][y].setIcon(new ImageIcon(pieces[1][QUEEN]));</span>
+					}
+<span class="nc" id="L551">					break;</span>
+				case ROOK:
+<span class="nc bnc" id="L553" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L554">						squares[x][y].setIcon(new ImageIcon(pieces[0][ROOK]));</span>
+<span class="nc" id="L555">					}</span>
+					else {
+<span class="nc" id="L557">						squares[x][y].setIcon(new ImageIcon(pieces[1][ROOK]));</span>
+					}
+<span class="nc" id="L559">					break;</span>
+				default:
+					break;
+				
+				}
+			}
+<span class="nc" id="L565">		}</span>
+		else {
+<span class="nc bnc" id="L567" title="All 2 branches missed.">			for(int i = 0; i &lt; p.size(); i++) {</span>
+<span class="nc" id="L568">				Piece pi = p.get(i);</span>
+<span class="nc" id="L569">				Cell c = pi.getLoc();</span>
+<span class="nc" id="L570">				int x = 7 - c.getNum();</span>
+<span class="nc" id="L571">				int y = 7 - c.getLet();</span>
+<span class="nc bnc" id="L572" title="All 7 branches missed.">				switch (pi.getType()) {</span>
+				case BISHOP:
+<span class="nc bnc" id="L574" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L575">						squares[x][y].setIcon(new ImageIcon(pieces[0][BISHOP]));</span>
+<span class="nc" id="L576">					}</span>
+					else {
+<span class="nc" id="L578">						squares[x][y].setIcon(new ImageIcon(pieces[1][BISHOP]));</span>
+					}
+<span class="nc" id="L580">					break;</span>
+				case KING:
+<span class="nc bnc" id="L582" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L583">						squares[x][y].setIcon(new ImageIcon(pieces[0][KING]));</span>
+<span class="nc" id="L584">					}</span>
+					else {
+<span class="nc" id="L586">						squares[x][y].setIcon(new ImageIcon(pieces[1][KING]));</span>
+					}
+<span class="nc" id="L588">					break;</span>
+				case KNIGHT:
+<span class="nc bnc" id="L590" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L591">						squares[x][y].setIcon(new ImageIcon(pieces[0][KNIGHT]));</span>
+<span class="nc" id="L592">					}</span>
+					else {
+<span class="nc" id="L594">						squares[x][y].setIcon(new ImageIcon(pieces[1][KNIGHT]));</span>
+					}
+<span class="nc" id="L596">					break;</span>
+				case PAWN:
+<span class="nc bnc" id="L598" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L599">						squares[x][y].setIcon(new ImageIcon(pieces[0][PAWN]));</span>
+<span class="nc" id="L600">					}</span>
+					else {
+<span class="nc" id="L602">						squares[x][y].setIcon(new ImageIcon(pieces[1][PAWN]));</span>
+					}
+<span class="nc" id="L604">					break;</span>
+				case QUEEN:
+<span class="nc bnc" id="L606" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L607">						squares[x][y].setIcon(new ImageIcon(pieces[0][QUEEN]));</span>
+<span class="nc" id="L608">					}</span>
+					else {
+<span class="nc" id="L610">						squares[x][y].setIcon(new ImageIcon(pieces[1][QUEEN]));</span>
+					}
+<span class="nc" id="L612">					break;</span>
+				case ROOK:
+<span class="nc bnc" id="L614" title="All 2 branches missed.">					if(pi.getColor() == PieceTypes.Color.BLACK) {</span>
+<span class="nc" id="L615">						squares[x][y].setIcon(new ImageIcon(pieces[0][ROOK]));</span>
+<span class="nc" id="L616">					}</span>
+					else {
+<span class="nc" id="L618">						squares[x][y].setIcon(new ImageIcon(pieces[1][ROOK]));</span>
+					}
+<span class="nc" id="L620">					break;</span>
+				default:
+					break;
+				
+				}
+			}
+		}
+<span class="nc" id="L627">	}</span>
+	
+	public void setPlayer(boolean b) {
+<span class="nc" id="L630">		player = b;</span>
+<span class="nc" id="L631">	}</span>
+	
+	public void flipBoard() {
+<span class="nc" id="L634">		JButton[][] temp = new JButton[8][8];</span>
+<span class="nc" id="L635">		Insets margins = new Insets(0,0,0,0);</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">		for(int i = 0; i &lt; squares.length; i++) {</span>
+<span class="nc bnc" id="L637" title="All 2 branches missed.">			for (int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L638">				JButton button = new JButton();</span>
+<span class="nc" id="L639">				button.setMargin(margins);</span>
+<span class="nc" id="L640">				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));</span>
+<span class="nc" id="L641">				button.setIcon(icon);</span>
+<span class="nc bnc" id="L642" title="All 8 branches missed.">				if((i % 2 == 0 &amp;&amp; j % 2 == 0) || (i % 2 == 1 &amp;&amp; j % 2 == 1)) {</span>
+<span class="nc" id="L643">					button.setBackground(Color.WHITE);</span>
+<span class="nc" id="L644">				}</span>
+				else {
+<span class="nc" id="L646">					button.setBackground(Color.BLACK);</span>
+				}
+				
+<span class="nc" id="L649">				temp[7-i][7-j] = button;</span>
+				
+<span class="nc" id="L651">				temp[7-i][7-j].setIcon(squares[i][j].getIcon());</span>
+			}
+		}
+<span class="nc bnc" id="L654" title="All 2 branches missed.">		for(int i = 0; i &lt; temp.length; i++) {</span>
+<span class="nc bnc" id="L655" title="All 2 branches missed.">			for(int j = 0; j &lt; temp.length; j++) {</span>
+<span class="nc" id="L656">				squares[i][j].setIcon(temp[i][j].getIcon());</span>
+			}
+		}
+<span class="nc" id="L659">	}</span>
+	
+	private void setupBoard() {
+<span class="nc bnc" id="L662" title="All 2 branches missed.">		for(int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L663">			squares[1][j].setIcon(new ImageIcon(pieces[0][PAWN]));;</span>
+		}
+<span class="nc bnc" id="L665" title="All 2 branches missed.">		for(int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L666">			squares[6][j].setIcon(new ImageIcon(pieces[1][PAWN]));;</span>
+		}
+<span class="nc bnc" id="L668" title="All 2 branches missed.">		for(int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L669">			squares[0][j].setIcon(new ImageIcon(pieces[0][starting[j]]));</span>
+		}
+<span class="nc bnc" id="L671" title="All 2 branches missed.">		for(int j = 0; j &lt; squares.length; j++) {</span>
+<span class="nc" id="L672">			squares[7][j].setIcon(new ImageIcon(pieces[1][starting[j]]));</span>
+		}
+<span class="nc" id="L674">	}</span>
+	
+	public void setPlayerName(String s) {
+<span class="nc" id="L677">		playerName = s;</span>
+<span class="nc" id="L678">	}</span>
+	
+	public String getPlayerName() {
+<span class="nc" id="L681">		return playerName;</span>
+	}
+	
+	public JComponent getBoard() {
+<span class="nc" id="L685">		return board;</span>
+	}
+	
+	public JComponent getGui() {
+<span class="nc" id="L689">		return gui;</span>
+	}
+	
+	public static void main(String[] args) {
+<span class="nc" id="L693">		ClientHelper ch = new ClientHelper(&quot;AJ-PC&quot;, 6969);</span>
+<span class="nc" id="L694">		Runnable r = new Runnable() {</span>
+			public void run() {
+<span class="nc" id="L696">				Chessboard2 cb = new Chessboard2(ch, cardLayout, contentPane);</span>
+				
+<span class="nc" id="L698">				contentPane.setLayout(cardLayout);</span>
+<span class="nc" id="L699">				JPanel menu = new JPanel();</span>
+<span class="nc" id="L700">				JButton play = new JButton(&quot;Play&quot;);</span>
+<span class="nc" id="L701">				play.addActionListener(new ActionListener()</span>
+			    {
+				      public void actionPerformed(ActionEvent e)
+				      {
+<span class="nc" id="L705">				    	  String alias = (String)JOptionPane.showInputDialog(frame,&quot;Please enter an alias.&quot;);</span>
+				    	  //Send string in here
+<span class="nc" id="L707">				    	  cardLayout.next(contentPane);</span>
+<span class="nc" id="L708">				      }</span>
+			    });
+<span class="nc" id="L710">				menu.add(play);</span>
+<span class="nc" id="L711">				contentPane.add(menu, &quot;CoolChess Menu&quot;);</span>
+				
+<span class="nc" id="L713">				JPanel lobby = new JPanel();</span>
+				
+<span class="nc" id="L715">				DefaultListModel list = new DefaultListModel();</span>
+<span class="nc" id="L716">				JButton add = new JButton(&quot;Add Name&quot;);</span>
+<span class="nc" id="L717">				add.addActionListener(new ActionListener() {</span>
+					public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L719">						String n = (String)JOptionPane.showInputDialog(frame,&quot;Please enter an alias.&quot;);</span>
+<span class="nc" id="L720">						names.add(n);</span>
+<span class="nc" id="L721">						list.clear();</span>
+<span class="nc bnc" id="L722" title="All 2 branches missed.">						for(int i = 0; i &lt; names.size(); i++) {</span>
+<span class="nc" id="L723">							list.addElement(names.get(i));</span>
+						}
+<span class="nc" id="L725">					}</span>
+				});
+				
+<span class="nc" id="L728">				JButton	challenge = new JButton(&quot;Send Challenge&quot;);</span>
+<span class="nc" id="L729">				JList people = new JList(list);</span>
+<span class="nc" id="L730">				people.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);</span>
+<span class="nc" id="L731">				people.setLayoutOrientation(JList.VERTICAL);</span>
+<span class="nc" id="L732">				people.setVisibleRowCount(-1);</span>
+<span class="nc" id="L733">				people.addListSelectionListener(new ListSelectionListener() {</span>
+					public void valueChanged(ListSelectionEvent e) {
+<span class="nc bnc" id="L735" title="All 2 branches missed.">						if (e.getValueIsAdjusting() == false) {</span>
+<span class="nc bnc" id="L736" title="All 2 branches missed.">							if(people.getSelectedIndex() == -1) {</span>
+<span class="nc" id="L737">								challenge.setEnabled(false);</span>
+<span class="nc" id="L738">							}</span>
+							else {
+<span class="nc" id="L740">								challenge.setEnabled(true);</span>
+							}
+						}
+<span class="nc" id="L743">					}</span>
+				});
+<span class="nc" id="L745">				challenge.addActionListener(new ActionListener() {</span>
+					public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L747">						String opponent = (String) people.getSelectedValue();</span>
+						//
+<span class="nc" id="L749">						cardLayout.next(contentPane);</span>
+<span class="nc" id="L750">						System.out.println(opponent);</span>
+<span class="nc" id="L751">					}</span>
+				});
+<span class="nc" id="L753">				JScrollPane listScroller = new JScrollPane(people);</span>
+<span class="nc" id="L754">				listScroller.setPreferredSize(new Dimension(250, 400));</span>
+				
+<span class="nc" id="L756">				lobby.add(listScroller);</span>
+<span class="nc" id="L757">				lobby.add(challenge);</span>
+<span class="nc" id="L758">				lobby.add(add);</span>
+				
+<span class="nc" id="L760">				contentPane.add(lobby, &quot;Player Lobby&quot;);</span>
+				
+<span class="nc" id="L762">				contentPane.add(cb.getGui(), &quot;CoolChess&quot;);</span>
+				
+<span class="nc" id="L764">				frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+<span class="nc" id="L765">                frame.setLocationByPlatform(true);</span>
+                
+<span class="nc" id="L767">                frame.pack();</span>
+                
+<span class="nc" id="L769">                frame.setMinimumSize(frame.getSize());</span>
+<span class="nc" id="L770">                frame.setVisible(true);</span>
+                
+                
+<span class="nc" id="L773">			}</span>
+		};
+
+<span class="nc" id="L776">		SwingUtilities.invokeLater(r);</span>
+<span class="nc" id="L777">	}</span>
+	/*static Runnable ObjectListener = new Runnable(){
+		public void run(){
+			receiveMove(ch);
+		}
+	};*/
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

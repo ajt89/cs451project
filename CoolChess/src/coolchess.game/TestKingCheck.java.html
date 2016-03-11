@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>TestKingCheck.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.game</a> &gt; <span class="el_source">TestKingCheck.java</span></div><h1>TestKingCheck.java</h1><pre class="source lang-java linenums">package coolchess.game;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+
+import org.junit.Test;
+
+<span class="fc" id="L9">public class TestKingCheck {</span>
+	
+	private Board b;
+	private King k;
+
+	@Test
+	public void testNotCheck() {
+<span class="fc" id="L16">		b = new Board(BoardState.BLACK_TURN);</span>
+<span class="fc" id="L17">		k = (King)(b.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.KING).get(0));</span>
+<span class="fc" id="L18">		assertFalse(k.inCheck(b));</span>
+<span class="fc" id="L19">	}</span>
+	
+	@Test
+	public void testCheck() {
+<span class="fc" id="L23">		ArrayList&lt;Piece&gt; pieces = new ArrayList&lt;Piece&gt;();</span>
+<span class="fc" id="L24">		pieces.add(new King(PieceTypes.Color.BLACK, PieceTypes.Type.KING, new Cell(0, 0)));</span>
+<span class="fc" id="L25">		pieces.add(new Rook(PieceTypes.Color.WHITE, PieceTypes.Type.ROOK, new Cell(1, 0)));</span>
+<span class="fc" id="L26">		pieces.add(new Rook(PieceTypes.Color.WHITE, PieceTypes.Type.ROOK, new Cell(0, 1)));</span>
+<span class="fc" id="L27">		b = new Board(BoardState.BLACK_TURN, pieces);</span>
+<span class="fc" id="L28">		k = (King)(b.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.KING).get(0));</span>
+<span class="fc" id="L29">		assertTrue(k.inCheck(b));</span>
+<span class="fc" id="L30">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

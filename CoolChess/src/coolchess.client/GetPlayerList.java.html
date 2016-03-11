@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GetPlayerList.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.client</a> &gt; <span class="el_source">GetPlayerList.java</span></div><h1>GetPlayerList.java</h1><pre class="source lang-java linenums">package coolchess.client;
+
+import java.util.ArrayList;
+
+import junit.framework.TestCase;
+
+<span class="fc" id="L7">public class GetPlayerList extends TestCase {</span>
+	
+<span class="fc" id="L9">	String username1 = &quot;aj&quot;;</span>
+<span class="fc" id="L10">	String username2 = &quot;carl&quot;;</span>
+<span class="fc" id="L11">	String hostname = &quot;AJ-PC&quot;;</span>
+	String response1;
+	String response2;
+<span class="fc" id="L14">	String expected1 = username2;</span>
+<span class="fc" id="L15">	String expected2 = username1;</span>
+<span class="fc" id="L16">	int port = 6969;</span>
+	protected void setUp(){
+<span class="fc" id="L18">		ClientHelper ch1 = new ClientHelper(hostname,port);</span>
+<span class="fc" id="L19">		ClientHelper ch2 = new ClientHelper(hostname,port);</span>
+		try{
+<span class="nc" id="L21">			ch1.connect();</span>
+<span class="nc" id="L22">			ch1.setResponse();</span>
+<span class="nc" id="L23">			ch1.user(username1);</span>
+<span class="nc" id="L24">			ch1.setResponse();</span>
+<span class="nc" id="L25">			ch2.connect();</span>
+<span class="nc" id="L26">			ch2.setResponse();</span>
+<span class="nc" id="L27">			ch2.user(username2);</span>
+<span class="nc" id="L28">			ch2.setResponse();</span>
+<span class="nc" id="L29">			ch1.clearPlayerlist();</span>
+<span class="nc" id="L30">			ch1.raw(&quot;PLAYERLIST&quot;);</span>
+<span class="nc" id="L31">			ch1.setResponse();</span>
+<span class="nc" id="L32">			System.out.println(ch1.getResponse());</span>
+<span class="nc" id="L33">			String[] responseIn1 = ch1.getResponse().split(&quot; &quot;);</span>
+<span class="nc" id="L34">			int listSize1 = Integer.parseInt(responseIn1[1]);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">			for (int i = 0; i &lt; listSize1; i++){</span>
+<span class="nc" id="L36">				ch1.setResponse();</span>
+<span class="nc" id="L37">				String response = ch1.getResponse();</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">				if (response.contains(&quot;PLAYERS&quot;)){</span>
+<span class="nc" id="L39">					String[] responseSplit = response.split(&quot; &quot;);</span>
+<span class="nc" id="L40">					ch1.setPlayerlist(responseSplit[1]);</span>
+				}
+			}
+<span class="nc" id="L43">			ch2.clearPlayerlist();</span>
+<span class="nc" id="L44">			ch2.raw(&quot;PLAYERLIST&quot;);</span>
+<span class="nc" id="L45">			ch2.setResponse();</span>
+<span class="nc" id="L46">			System.out.println(ch2.getResponse());</span>
+<span class="nc" id="L47">			String[] responseIn2 = ch2.getResponse().split(&quot; &quot;);</span>
+<span class="nc" id="L48">			int listSize2 = Integer.parseInt(responseIn2[1]);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">			for (int i = 0; i &lt; listSize2; i++){</span>
+<span class="nc" id="L50">				ch2.setResponse();</span>
+<span class="nc" id="L51">				String response = ch2.getResponse();</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">				if (response.contains(&quot;PLAYERS&quot;)){</span>
+<span class="nc" id="L53">					String[] responseSplit = response.split(&quot; &quot;);</span>
+<span class="nc" id="L54">					ch2.setPlayerlist(responseSplit[1]);</span>
+				}
+			}
+<span class="nc" id="L57">			ArrayList&lt;String&gt; pl1 = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L58">			ArrayList&lt;String&gt; pl2 = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L59">			pl1 = ch1.getPlayerlist();</span>
+<span class="nc" id="L60">			pl2 = ch2.getPlayerlist();</span>
+<span class="nc" id="L61">			response1 = pl1.get(0);</span>
+<span class="nc" id="L62">			response2 = pl2.get(0);</span>
+<span class="nc" id="L63">			ch1.QUIT();</span>
+<span class="nc" id="L64">			ch2.QUIT();</span>
+<span class="pc" id="L65">		} catch(Exception e){</span>
+<span class="fc" id="L66">			System.out.println(e);</span>
+		}
+<span class="fc" id="L68">	}</span>
+	public void test(){
+<span class="nc" id="L70">		assertEquals(expected1,response1);</span>
+<span class="nc" id="L71">		assertEquals(expected2,response2);</span>
+<span class="nc" id="L72">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

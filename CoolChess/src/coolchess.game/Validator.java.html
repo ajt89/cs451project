@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Validator.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.game</a> &gt; <span class="el_source">Validator.java</span></div><h1>Validator.java</h1><pre class="source lang-java linenums">package coolchess.game;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+<span class="nc" id="L6">public class Validator {</span>
+	private static void removeSameSide(Board board, Piece p, ArrayList&lt;Cell&gt; ret){
+<span class="fc bfc" id="L8" title="All 2 branches covered.">		for(Iterator&lt;Cell&gt; iter = ret.iterator(); iter.hasNext();){</span>
+<span class="fc" id="L9">			Piece pp = board.getPiece(iter.next());</span>
+<span class="fc bfc" id="L10" title="All 2 branches covered.">			if(pp != null){</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">				if(p.getColor() == PieceTypes.Color.BLACK){</span>
+<span class="nc bnc" id="L12" title="All 2 branches missed.">					if(pp.getColor() == PieceTypes.Color.BLACK){</span>
+<span class="nc" id="L13">						iter.remove();</span>
+					}
+<span class="nc" id="L15">				}</span>
+				else{
+<span class="fc bfc" id="L17" title="All 2 branches covered.">					if(pp.getColor() == PieceTypes.Color.WHITE){</span>
+<span class="fc" id="L18">						iter.remove();</span>
+					}
+				}
+			}
+		}
+<span class="fc" id="L23">	}</span>
+	
+	public static ArrayList&lt;Cell&gt; removeChecks(Board board, Piece p, ArrayList&lt;Cell&gt; ret){
+<span class="nc" id="L26">		Cell start = p.getLoc();</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">		for(Iterator&lt;Cell&gt; iter = ret.iterator(); iter.hasNext();){</span>
+<span class="nc" id="L28">			Cell c = iter.next();</span>
+<span class="nc" id="L29">			Piece alreadythere = board.getPiece(c);</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">			if(alreadythere != null){</span>
+<span class="nc" id="L31">				alreadythere.setLoc(null);</span>
+			}
+<span class="nc" id="L33">			p.setLoc(c);</span>
+			// 0 is alright here since there's only 1 king per side ever
+<span class="nc bnc" id="L35" title="All 2 branches missed.">			if(((King)(board.getPiecesOfTypes(p.getColor(), PieceTypes.Type.KING).get(0))).inCheck(board)){</span>
+<span class="nc" id="L36">				iter.remove();</span>
+			}
+<span class="nc bnc" id="L38" title="All 2 branches missed.">			if(alreadythere != null){</span>
+<span class="nc" id="L39">				alreadythere.setLoc(c);</span>
+			}
+		}
+<span class="nc" id="L42">		p.setLoc(start);</span>
+		
+<span class="nc" id="L44">		return ret;</span>
+	}
+	
+	public static ArrayList&lt;Cell&gt; bishopMoves(Board board, Bishop p) {
+<span class="fc" id="L48">		ArrayList&lt;Cell&gt; ret = new ArrayList&lt;Cell&gt;();</span>
+		
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">		if(p != null &amp;&amp; p.getLoc() != null){</span>
+<span class="fc" id="L51">			int n = p.getLoc().getNum();</span>
+<span class="fc" id="L52">			int l = p.getLoc().getLet();</span>
+<span class="pc bpc" id="L53" title="3 of 4 branches missed.">			for(int i = 1; n + i &lt; Board.boardSize &amp;&amp; l + i &lt; Board.boardSize; i++){</span>
+<span class="nc" id="L54">				Cell c = new Cell(n + i, l + i);</span>
+<span class="nc" id="L55">				ret.add(c);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="nc" id="L57">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L60" title="3 of 4 branches missed.">			for(int i = 1; n + i &lt; Board.boardSize &amp;&amp; l - i &gt;= 0; i++){</span>
+<span class="nc" id="L61">				Cell c = new Cell(n + i, l - i);</span>
+<span class="nc" id="L62">				ret.add(c);</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="nc" id="L64">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L67" title="2 of 4 branches missed.">			for(int i = 1; n - i &gt;= 0 &amp;&amp; l + i &lt; Board.boardSize; i++){</span>
+<span class="fc" id="L68">				Cell c = new Cell(n - i, l + i);</span>
+<span class="fc" id="L69">				ret.add(c);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L71">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L74" title="2 of 4 branches missed.">			for(int i = 1; n - i &gt;= 0 &amp;&amp; l - i &gt;= 0; i++){</span>
+<span class="fc" id="L75">				Cell c = new Cell(n - i, l - i);</span>
+<span class="fc" id="L76">				ret.add(c);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L78">					break;</span>
+				}
+			}
+			
+<span class="fc" id="L82">			removeSameSide(board, p, ret);</span>
+		}
+		
+<span class="fc" id="L85">		return ret;</span>
+	}
+
+	public static ArrayList&lt;Cell&gt; kingMoves(Board board, King p) {
+<span class="nc" id="L89">		ArrayList&lt;Cell&gt; ret = new ArrayList&lt;Cell&gt;();</span>
+		
+<span class="nc bnc" id="L91" title="All 4 branches missed.">		if(p != null &amp;&amp; p.getLoc() != null){</span>
+<span class="nc" id="L92">			int n = p.getLoc().getNum();</span>
+<span class="nc" id="L93">			int l = p.getLoc().getLet();</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">			if(n + 1 &lt; Board.boardSize &amp;&amp; l + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L95">				ret.add(new Cell(n + 1, l + 1));</span>
+			}
+<span class="nc bnc" id="L97" title="All 4 branches missed.">			if(n + 1 &lt; Board.boardSize &amp;&amp; l - 1 &gt;= 0){</span>
+<span class="nc" id="L98">				ret.add(new Cell(n + 1, l - 1));</span>
+			}
+<span class="nc bnc" id="L100" title="All 4 branches missed.">			if(n - 1 &gt;= 0 &amp;&amp; l + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L101">				ret.add(new Cell(n - 1, l + 1));</span>
+			}
+<span class="nc bnc" id="L103" title="All 4 branches missed.">			if(n - 1 &gt;= 0 &amp;&amp; l - 1 &gt;= 0){</span>
+<span class="nc" id="L104">				ret.add(new Cell(n - 1, l - 1));</span>
+			}
+<span class="nc bnc" id="L106" title="All 2 branches missed.">			if(n + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L107">				ret.add(new Cell(n + 1, l));</span>
+			}
+<span class="nc bnc" id="L109" title="All 2 branches missed.">			if(n - 1 &gt;= 0){</span>
+<span class="nc" id="L110">				ret.add(new Cell(n - 1, l));</span>
+			}
+<span class="nc bnc" id="L112" title="All 2 branches missed.">			if(l + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L113">				ret.add(new Cell(n, l + 1));</span>
+			}
+<span class="nc bnc" id="L115" title="All 2 branches missed.">			if(l - 1 &gt;= 0){</span>
+<span class="nc" id="L116">				ret.add(new Cell(n, l - 1));</span>
+			}
+			
+			//castling
+<span class="nc bnc" id="L120" title="All 4 branches missed.">			if(!p.hasMoved() &amp;&amp; !p.inCheck(board)){</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">				for(Piece r : board.getPiecesOfTypes(p.getColor(), PieceTypes.Type.ROOK)){</span>
+<span class="nc" id="L122">					Rook rr = (Rook) r;</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">					if(!rr.hasMoved()){</span>
+<span class="nc" id="L124">						boolean occupied = false;</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">						for(int i = 1 + Math.min(p.getLoc().getLet(), rr.getLoc().getLet()); i &lt; Math.max(p.getLoc().getLet(), rr.getLoc().getLet()); i++){</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">							if(board.getPiece(new Cell(p.getLoc().getNum(), i)) != null){</span>
+<span class="nc" id="L127">								occupied = true;</span>
+<span class="nc" id="L128">								break;</span>
+							}
+						}
+<span class="nc bnc" id="L131" title="All 2 branches missed.">						if(!occupied){</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">							if(rr.getLoc().getLet() == Math.min(p.getLoc().getLet(), rr.getLoc().getLet())){</span>
+<span class="nc" id="L133">								Cell left = new Cell(p.getLoc().getNum(), p.getLoc().getLet()-2);</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">								if(!p.testCheck(board, left)){</span>
+<span class="nc" id="L135">									ret.add(left);</span>
+								}
+<span class="nc" id="L137">							}</span>
+							else{
+<span class="nc" id="L139">								Cell right = new Cell(p.getLoc().getNum(), p.getLoc().getLet()+2);</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">								if(!p.testCheck(board, right)){</span>
+<span class="nc" id="L141">									ret.add(right);</span>
+								}
+							}
+						}
+					}
+				}
+			}
+			
+<span class="nc" id="L149">			removeSameSide(board, p, ret);</span>
+		}
+		
+<span class="nc" id="L152">		return ret;</span>
+	}
+
+	public static ArrayList&lt;Cell&gt; knightMoves(Board board, Knight p) {
+<span class="fc" id="L156">		ArrayList&lt;Cell&gt; ret = new ArrayList&lt;Cell&gt;();</span>
+		
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">		if(p != null &amp;&amp; p.getLoc() != null){</span>
+<span class="fc" id="L159">			int n = p.getLoc().getNum();</span>
+<span class="fc" id="L160">			int l = p.getLoc().getLet();</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">			for(int r = -1; r &lt;= 1; r+=2){</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">				for(int c = -1; c &lt;= 1; c+=2){</span>
+<span class="pc bpc" id="L163" title="1 of 8 branches missed.">					if(n + 1*r &gt;= 0 &amp;&amp; l + 2*c &gt;= 0 &amp;&amp; n + 1*r &lt; Board.boardSize &amp;&amp; l + 2*c &lt; Board.boardSize){</span>
+<span class="fc" id="L164">						ret.add(new Cell(n + 1*r, l + 2*c));</span>
+					}
+<span class="pc bpc" id="L166" title="3 of 8 branches missed.">					if(n + 2*r &gt;= 0 &amp;&amp; l + 1*c &gt;= 0 &amp;&amp; n + 2*r &lt; Board.boardSize &amp;&amp; l + 1*c &lt; Board.boardSize){</span>
+<span class="fc" id="L167">						ret.add(new Cell(n + 2*r, l + 1*c));</span>
+					}
+				}
+			}
+			
+<span class="fc" id="L172">			removeSameSide(board, p, ret);</span>
+		}
+		
+<span class="fc" id="L175">		return ret;</span>
+	}
+
+	public static ArrayList&lt;Cell&gt; pawnMoves(Board board, Pawn p) {
+<span class="fc" id="L179">		ArrayList&lt;Cell&gt; ret = new ArrayList&lt;Cell&gt;();</span>
+		
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">		if(p != null &amp;&amp; p.getLoc() != null){</span>
+<span class="fc" id="L182">			int n = p.getLoc().getNum();</span>
+<span class="fc" id="L183">			int l = p.getLoc().getLet();</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">			if(p.getColor() == PieceTypes.Color.BLACK){</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">				if(n + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L186">					Cell c = new Cell(n + 1, l);</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">					if(board.getPiece(c) == null){</span>
+<span class="nc" id="L188">						ret.add(c);</span>
+					}
+<span class="nc bnc" id="L190" title="All 2 branches missed.">					if(l + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L191">						c = new Cell(n + 1, l + 1);</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">						if(board.getPiece(c) != null){</span>
+<span class="nc" id="L193">							ret.add(c);</span>
+						}
+					}
+<span class="nc bnc" id="L196" title="All 2 branches missed.">					if(l - 1 &gt;= 0){</span>
+<span class="nc" id="L197">						c = new Cell(n + 1, l - 1);</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">						if(board.getPiece(c) != null){</span>
+<span class="nc" id="L199">							ret.add(c);</span>
+						}
+					}
+					
+					// en passant
+<span class="nc bnc" id="L204" title="All 2 branches missed.">					if(l + 1 &lt; Board.boardSize){</span>
+<span class="nc" id="L205">						c = new Cell(n, l + 1);</span>
+<span class="nc" id="L206">						Piece pp = board.getPiece(c);</span>
+<span class="nc bnc" id="L207" title="All 6 branches missed.">						if(pp != null &amp;&amp; pp.getType() == PieceTypes.Type.PAWN &amp;&amp; p.getColor() != pp.getColor()){</span>
+<span class="nc" id="L208">							Pawn ppp = (Pawn)pp;</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">							if(ppp.hasAdvanced()){</span>
+<span class="nc" id="L210">								ret.add(new Cell(n + 1, l + 1));</span>
+							}
+						}
+					}
+<span class="nc bnc" id="L214" title="All 2 branches missed.">					if(l - 1 &gt;= 0){</span>
+<span class="nc" id="L215">						c = new Cell(n, l - 1);</span>
+<span class="nc" id="L216">						Piece pp = board.getPiece(c);</span>
+<span class="nc bnc" id="L217" title="All 6 branches missed.">						if(pp != null &amp;&amp; pp.getType() == PieceTypes.Type.PAWN &amp;&amp; p.getColor() != pp.getColor()){</span>
+<span class="nc" id="L218">							Pawn ppp = (Pawn)pp;</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">							if(ppp.hasAdvanced()){</span>
+<span class="nc" id="L220">								ret.add(new Cell(n + 1, l - 1));</span>
+							}
+						}
+					}
+				}
+				
+				//advancing / double length movement on first move
+<span class="nc bnc" id="L227" title="All 4 branches missed.">				if(!p.hasMoved() &amp;&amp; n + 2 &lt; Board.boardSize){</span>
+<span class="nc" id="L228">					Cell c = new Cell(n + 2, l);</span>
+<span class="nc bnc" id="L229" title="All 4 branches missed.">					if(board.getPiece(new Cell(n + 1, l)) == null &amp;&amp; board.getPiece(c) == null){</span>
+<span class="nc" id="L230">						ret.add(c);</span>
+					}
+				}
+<span class="nc" id="L233">			}</span>
+			else{
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">				if(n - 1 &gt;= 0){</span>
+<span class="fc" id="L236">					Cell c = new Cell(n - 1, l);</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">					if(board.getPiece(c) == null){</span>
+<span class="fc" id="L238">						ret.add(c);</span>
+					}
+<span class="fc bfc" id="L240" title="All 2 branches covered.">					if(l + 1 &lt; Board.boardSize){</span>
+<span class="fc" id="L241">						c = new Cell(n - 1, l + 1);</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">						if(board.getPiece(c) != null){</span>
+<span class="nc" id="L243">							ret.add(c);</span>
+						}
+					}
+<span class="fc bfc" id="L246" title="All 2 branches covered.">					if(l - 1 &gt;= 0){</span>
+<span class="fc" id="L247">						c = new Cell(n - 1, l - 1);</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">						if(board.getPiece(c) != null){</span>
+<span class="nc" id="L249">							ret.add(c);</span>
+						}
+					}
+					
+					// en passant
+<span class="fc bfc" id="L254" title="All 2 branches covered.">					if(l + 1 &lt; Board.boardSize){</span>
+<span class="fc" id="L255">						c = new Cell(n, l + 1);</span>
+<span class="fc" id="L256">						Piece pp = board.getPiece(c);</span>
+<span class="pc bpc" id="L257" title="3 of 6 branches missed.">						if(pp != null &amp;&amp; pp.getType() == PieceTypes.Type.PAWN &amp;&amp; p.getColor() != pp.getColor()){</span>
+<span class="nc" id="L258">							Pawn ppp = (Pawn)pp;</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">							if(ppp.hasAdvanced()){</span>
+<span class="nc" id="L260">								ret.add(new Cell(n - 1, l + 1));</span>
+							}
+						}
+					}
+<span class="fc bfc" id="L264" title="All 2 branches covered.">					if(l - 1 &gt;= 0){</span>
+<span class="fc" id="L265">						c = new Cell(n, l - 1);</span>
+<span class="fc" id="L266">						Piece pp = board.getPiece(c);</span>
+<span class="pc bpc" id="L267" title="3 of 6 branches missed.">						if(pp != null &amp;&amp; pp.getType() == PieceTypes.Type.PAWN &amp;&amp; p.getColor() != pp.getColor()){</span>
+<span class="nc" id="L268">							Pawn ppp = (Pawn)pp;</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">							if(ppp.hasAdvanced()){</span>
+<span class="nc" id="L270">								ret.add(new Cell(n - 1, l - 1));</span>
+							}
+						}
+					}
+				}
+				
+				//advancing / double length movement on first move
+<span class="pc bpc" id="L277" title="2 of 4 branches missed.">				if(!p.hasMoved() &amp;&amp; n - 2 &gt;= 0){</span>
+<span class="fc" id="L278">					Cell c = new Cell(n - 2, l);</span>
+<span class="pc bpc" id="L279" title="2 of 4 branches missed.">					if(board.getPiece(new Cell(n - 1, l)) == null &amp;&amp; board.getPiece(c) == null){</span>
+<span class="fc" id="L280">						ret.add(c);</span>
+					}
+				}
+			}
+			
+<span class="fc" id="L285">			removeSameSide(board, p, ret);</span>
+		}
+		
+<span class="fc" id="L288">		return ret;</span>
+	}
+
+	public static ArrayList&lt;Cell&gt; queenMoves(Board board, Queen p) {
+<span class="fc" id="L292">		ArrayList&lt;Cell&gt; ret = new ArrayList&lt;Cell&gt;();</span>
+		
+<span class="pc bpc" id="L294" title="2 of 4 branches missed.">		if(p != null &amp;&amp; p.getLoc() != null){</span>
+<span class="fc" id="L295">			int n = p.getLoc().getNum();</span>
+<span class="fc" id="L296">			int l = p.getLoc().getLet();</span>
+<span class="pc bpc" id="L297" title="3 of 4 branches missed.">			for(int i = 1; n + i &lt; Board.boardSize &amp;&amp; l + i &lt; Board.boardSize; i++){</span>
+<span class="nc" id="L298">				Cell c = new Cell(n + i, l + i);</span>
+<span class="nc" id="L299">				ret.add(c);</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="nc" id="L301">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L304" title="3 of 4 branches missed.">			for(int i = 1; n + i &lt; Board.boardSize &amp;&amp; l - i &gt;= 0; i++){</span>
+<span class="nc" id="L305">				Cell c = new Cell(n + i, l - i);</span>
+<span class="nc" id="L306">				ret.add(c);</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="nc" id="L308">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L311" title="2 of 4 branches missed.">			for(int i = 1; n - i &gt;= 0 &amp;&amp; l + i &lt; Board.boardSize; i++){</span>
+<span class="fc" id="L312">				Cell c = new Cell(n - i, l + i);</span>
+<span class="fc" id="L313">				ret.add(c);</span>
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L315">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L318" title="2 of 4 branches missed.">			for(int i = 1; n - i &gt;= 0 &amp;&amp; l - i &gt;= 0; i++){</span>
+<span class="fc" id="L319">				Cell c = new Cell(n - i, l - i);</span>
+<span class="fc" id="L320">				ret.add(c);</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L322">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">			for(int i = 1; n + i &lt; Board.boardSize; i++){</span>
+<span class="nc" id="L326">				Cell c = new Cell(n + i, l);</span>
+<span class="nc" id="L327">				ret.add(c);</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="nc" id="L329">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">			for(int i = 1; n - i &gt;= 0; i++){</span>
+<span class="fc" id="L333">				Cell c = new Cell(n - i, l);</span>
+<span class="fc" id="L334">				ret.add(c);</span>
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L336">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">			for(int i = 1; l + i &lt; Board.boardSize; i++){</span>
+<span class="fc" id="L340">				Cell c = new Cell(n, l + i);</span>
+<span class="fc" id="L341">				ret.add(c);</span>
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L343">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">			for(int i = 1; l - i &gt;= 0; i++){</span>
+<span class="fc" id="L347">				Cell c = new Cell(n, l - i);</span>
+<span class="fc" id="L348">				ret.add(c);</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L350">					break;</span>
+				}
+			}
+			
+<span class="fc" id="L354">			removeSameSide(board, p, ret);</span>
+		}
+		
+<span class="fc" id="L357">		return ret;</span>
+	}
+
+	public static ArrayList&lt;Cell&gt; rookMoves(Board board, Rook p) {
+<span class="fc" id="L361">		ArrayList&lt;Cell&gt; ret = new ArrayList&lt;Cell&gt;();</span>
+		
+<span class="pc bpc" id="L363" title="2 of 4 branches missed.">		if(p != null &amp;&amp; p.getLoc() != null){</span>
+<span class="fc" id="L364">			int n = p.getLoc().getNum();</span>
+<span class="fc" id="L365">			int l = p.getLoc().getLet();</span>
+	
+<span class="fc bfc" id="L367" title="All 2 branches covered.">			for(int i = 1; n + i &lt; Board.boardSize; i++){</span>
+<span class="fc" id="L368">				Cell c = new Cell(n + i, l);</span>
+<span class="fc" id="L369">				ret.add(c);</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="nc" id="L371">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">			for(int i = 1; n - i &gt;= 0; i++){</span>
+<span class="fc" id="L375">				Cell c = new Cell(n - i, l);</span>
+<span class="fc" id="L376">				ret.add(c);</span>
+<span class="pc bpc" id="L377" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L378">					break;</span>
+				}
+			}
+<span class="fc bfc" id="L381" title="All 2 branches covered.">			for(int i = 1; l + i &lt; Board.boardSize; i++){</span>
+<span class="fc" id="L382">				Cell c = new Cell(n, l + i);</span>
+<span class="fc" id="L383">				ret.add(c);</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L385">					break;</span>
+				}
+			}
+<span class="pc bfc" id="L388" title="All 2 branches covered.">			for(int i = 1; l - i &gt;= 0; i++){</span>
+<span class="fc" id="L389">				Cell c = new Cell(n, l - i);</span>
+<span class="fc" id="L390">				ret.add(c);</span>
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">				if(board.getPiece(c) != null){</span>
+<span class="fc" id="L392">					break;</span>
+				}
+			}
+			
+<span class="fc" id="L396">			removeSameSide(board, p, ret);</span>
+		}
+		
+<span class="fc" id="L399">		return ret;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

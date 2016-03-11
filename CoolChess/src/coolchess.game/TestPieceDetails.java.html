@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>TestPieceDetails.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.game</a> &gt; <span class="el_source">TestPieceDetails.java</span></div><h1>TestPieceDetails.java</h1><pre class="source lang-java linenums">package coolchess.game;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+<span class="fc" id="L7">public class TestPieceDetails {</span>
+	
+	private Piece p;
+
+	@Test
+	public void testBishop() {
+<span class="fc" id="L13">		p = new Bishop(PieceTypes.Color.BLACK, PieceTypes.Type.BISHOP, new Cell(0, 0));</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Color.BLACK == p.getColor());</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Type.BISHOP == p.getType());</span>
+<span class="fc" id="L16">		assertTrue((new Cell(0, 0)).equals(p.getLoc()));</span>
+<span class="fc" id="L17">		assertTrue((&quot;[BLACK, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L18">		assertTrue(p.equals(new Bishop(PieceTypes.Color.BLACK, PieceTypes.Type.BISHOP, new Cell(0, 0))));</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Color.WHITE == p.getColor());</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Type.KNIGHT == p.getType());</span>
+<span class="fc" id="L21">		assertFalse((new Cell(1, 1)).equals(p.getLoc()));</span>
+<span class="fc" id="L22">		assertFalse((&quot;[WHITE, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L23">		assertFalse(p.equals(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(5, 5))));</span>
+<span class="fc" id="L24">	}</span>
+	
+	@Test
+	public void testKing() {
+<span class="fc" id="L28">		p = new King(PieceTypes.Color.BLACK, PieceTypes.Type.KING, new Cell(0, 0));</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Color.BLACK == p.getColor());</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Type.KING == p.getType());</span>
+<span class="fc" id="L31">		assertTrue((new Cell(0, 0)).equals(p.getLoc()));</span>
+<span class="fc" id="L32">		assertTrue((&quot;[BLACK, KING, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L33">		assertTrue(p.equals(new King(PieceTypes.Color.BLACK, PieceTypes.Type.KING, new Cell(0, 0))));</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Color.WHITE == p.getColor());</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Type.BISHOP == p.getType());</span>
+<span class="fc" id="L36">		assertFalse((new Cell(1, 1)).equals(p.getLoc()));</span>
+<span class="fc" id="L37">		assertFalse((&quot;[WHITE, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L38">		assertFalse(p.equals(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(5, 5))));</span>
+<span class="fc" id="L39">	}</span>
+	
+	@Test
+	public void testKnight() {
+<span class="fc" id="L43">		p = new Knight(PieceTypes.Color.BLACK, PieceTypes.Type.KNIGHT, new Cell(0, 0));</span>
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Color.BLACK == p.getColor());</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Type.KNIGHT == p.getType());</span>
+<span class="fc" id="L46">		assertTrue((new Cell(0, 0)).equals(p.getLoc()));</span>
+<span class="fc" id="L47">		assertTrue((&quot;[BLACK, KNIGHT, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L48">		assertTrue(p.equals(new Knight(PieceTypes.Color.BLACK, PieceTypes.Type.KNIGHT, new Cell(0, 0))));</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Color.WHITE == p.getColor());</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Type.BISHOP == p.getType());</span>
+<span class="fc" id="L51">		assertFalse((new Cell(1, 1)).equals(p.getLoc()));</span>
+<span class="fc" id="L52">		assertFalse((&quot;[WHITE, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L53">		assertFalse(p.equals(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(5, 5))));</span>
+<span class="fc" id="L54">	}</span>
+	
+	@Test
+	public void testPawn() {
+<span class="fc" id="L58">		p = new Pawn(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN, new Cell(0, 0));</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Color.BLACK == p.getColor());</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Type.PAWN == p.getType());</span>
+<span class="fc" id="L61">		assertTrue((new Cell(0, 0)).equals(p.getLoc()));</span>
+<span class="fc" id="L62">		assertTrue((&quot;[BLACK, PAWN, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L63">		assertTrue(p.equals(new Pawn(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN, new Cell(0, 0))));</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Color.WHITE == p.getColor());</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Type.BISHOP == p.getType());</span>
+<span class="fc" id="L66">		assertFalse((new Cell(1, 1)).equals(p.getLoc()));</span>
+<span class="fc" id="L67">		assertFalse((&quot;[WHITE, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L68">		assertFalse(p.equals(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(5, 5))));</span>
+<span class="fc" id="L69">	}</span>
+	
+	@Test
+	public void testQueen() {
+<span class="fc" id="L73">		p = new Queen(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN, new Cell(0, 0));</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Color.BLACK == p.getColor());</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Type.QUEEN == p.getType());</span>
+<span class="fc" id="L76">		assertTrue((new Cell(0, 0)).equals(p.getLoc()));</span>
+<span class="fc" id="L77">		assertTrue((&quot;[BLACK, QUEEN, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L78">		assertTrue(p.equals(new Queen(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN, new Cell(0, 0))));</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Color.WHITE == p.getColor());</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Type.BISHOP == p.getType());</span>
+<span class="fc" id="L81">		assertFalse((new Cell(1, 1)).equals(p.getLoc()));</span>
+<span class="fc" id="L82">		assertFalse((&quot;[WHITE, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L83">		assertFalse(p.equals(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(5, 5))));</span>
+<span class="fc" id="L84">	}</span>
+	
+	@Test
+	public void testRook() {
+<span class="fc" id="L88">		p = new Rook(PieceTypes.Color.BLACK, PieceTypes.Type.ROOK, new Cell(0, 0));</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Color.BLACK == p.getColor());</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">		assertTrue(PieceTypes.Type.ROOK == p.getType());</span>
+<span class="fc" id="L91">		assertTrue((new Cell(0, 0)).equals(p.getLoc()));</span>
+<span class="fc" id="L92">		assertTrue((&quot;[BLACK, ROOK, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L93">		assertTrue(p.equals(new Rook(PieceTypes.Color.BLACK, PieceTypes.Type.ROOK, new Cell(0, 0))));</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Color.WHITE == p.getColor());</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		assertFalse(PieceTypes.Type.BISHOP == p.getType());</span>
+<span class="fc" id="L96">		assertFalse((new Cell(1, 1)).equals(p.getLoc()));</span>
+<span class="fc" id="L97">		assertFalse((&quot;[WHITE, BISHOP, &quot; + (new Cell(0, 0).toString()) + &quot;]&quot;).equals(p.toString()));</span>
+<span class="fc" id="L98">		assertFalse(p.equals(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(5, 5))));</span>
+<span class="fc" id="L99">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

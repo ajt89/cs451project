@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Manager.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.game</a> &gt; <span class="el_source">Manager.java</span></div><h1>Manager.java</h1><pre class="source lang-java linenums">package coolchess.game;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class Manager {
+	private Board board;
+	
+<span class="nc" id="L9">	public Manager(BoardState bs){</span>
+<span class="nc" id="L10">		this.board = new Board(bs);</span>
+<span class="nc" id="L11">	}</span>
+	
+<span class="nc" id="L13">	public Manager(Board board){</span>
+<span class="nc" id="L14">		this.board  = board;</span>
+<span class="nc" id="L15">	}</span>
+	
+	public void promote(Cell loc, PieceTypes.Type type){
+<span class="nc" id="L18">		Pawn p = (Pawn)(board.getPiece(loc));</span>
+<span class="nc" id="L19">		board.getPieces().remove(p);</span>
+<span class="nc bnc" id="L20" title="All 5 branches missed.">		switch(type){</span>
+		case BISHOP:
+<span class="nc" id="L22">			board.getPieces().add(new Bishop(p.getColor(), type, loc));</span>
+<span class="nc" id="L23">			break;</span>
+		case KNIGHT:
+<span class="nc" id="L25">			board.getPieces().add(new Knight(p.getColor(), type, loc));</span>
+<span class="nc" id="L26">			break;</span>
+		case QUEEN:
+<span class="nc" id="L28">			board.getPieces().add(new Queen(p.getColor(), type, loc));</span>
+<span class="nc" id="L29">			break;</span>
+		case ROOK:
+<span class="nc" id="L31">			board.getPieces().add(new Rook(p.getColor(), type, loc));</span>
+<span class="nc" id="L32">			break;</span>
+		default:
+			break;
+		}
+<span class="nc" id="L36">	}</span>
+	
+	public void doMove(Move m){
+		// get rid of taken pieces
+<span class="nc" id="L40">		Piece p = board.getPiece(m.getCell());</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">		if(p != null){</span>
+<span class="nc" id="L42">			p.setLoc(null);</span>
+		}
+		
+<span class="nc bnc" id="L45" title="All 2 branches missed.">		for(Iterator&lt;Piece&gt; iter = board.getPieces().iterator(); iter.hasNext();){</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">			if(iter.next().getLoc() == null){</span>
+<span class="nc" id="L47">				iter.remove();</span>
+			}
+		}
+		
+		// actually move piece
+<span class="nc" id="L52">		p = m.getPiece();</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">		if(p.getType() == PieceTypes.Type.KING){</span>
+<span class="nc" id="L54">			((King)p).setMoved(true);</span>
+			
+			// castling right / king
+<span class="nc bnc" id="L57" title="All 2 branches missed.">			if(p.getLoc().getLet() - m.getCell().getLet() == -2){</span>
+<span class="nc" id="L58">				Rook r = (Rook)(board.getPiece(new Cell(p.getLoc().getNum(), 7)));</span>
+<span class="nc" id="L59">				r.setMoved(true);</span>
+<span class="nc" id="L60">				r.setLoc(new Cell(p.getLoc().getNum(), 5));</span>
+<span class="nc" id="L61">			} // castling left / queen</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">			else if(p.getLoc().getLet() - m.getCell().getLet() == 2){</span>
+<span class="nc" id="L63">				Rook r = (Rook)(board.getPiece(new Cell(p.getLoc().getNum(), 0)));</span>
+<span class="nc" id="L64">				r.setMoved(true);</span>
+<span class="nc" id="L65">				r.setLoc(new Cell(p.getLoc().getNum(), 3));</span>
+			}
+<span class="nc" id="L67">		}</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">		else if(p.getType() == PieceTypes.Type.ROOK){</span>
+<span class="nc" id="L69">			((Rook)p).setMoved(true);</span>
+<span class="nc" id="L70">		}</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">		else if(p.getType() == PieceTypes.Type.PAWN){</span>
+<span class="nc" id="L72">			Pawn pp = (Pawn)p;</span>
+			
+<span class="nc bnc" id="L74" title="All 2 branches missed.">			if(!pp.hasMoved()){</span>
+<span class="nc" id="L75">				pp.setMoved(true);</span>
+<span class="nc" id="L76">				pp.setAdvanced(false);</span>
+				
+<span class="nc bnc" id="L78" title="All 2 branches missed.">				if(Math.abs(pp.getLoc().getNum() - m.getCell().getNum()) == 2){</span>
+<span class="nc" id="L79">					pp.setAdvanced(true);</span>
+				}
+<span class="nc" id="L81">			}</span>
+			else{ // en passant
+<span class="nc" id="L83">				Cell pc = pp.getLoc();</span>
+<span class="nc" id="L84">				Cell mc = m.getCell();</span>
+<span class="nc bnc" id="L85" title="All 6 branches missed.">				if(board.getPiece(mc) == null &amp;&amp; Math.abs(pc.getNum() - mc.getNum()) == 1 &amp;&amp; Math.abs(pc.getLet() - mc.getLet()) == 1){</span>
+<span class="nc" id="L86">					board.getPieces().remove(board.getPiece(new Cell(pc.getNum(), mc.getLet())));</span>
+				}
+			}
+		}
+		// most pieces don't require special treatment
+<span class="nc" id="L91">		p.setLoc(m.getCell());</span>
+
+		// switch turn - also checks if the game is over or not
+		// turn off possibility for en passant after you finish your turn
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if(board.getBoardState() == BoardState.BLACK_TURN){			</span>
+<span class="nc" id="L96">			board.setBoardState(BoardState.WHITE_TURN);</span>
+			
+<span class="nc bnc" id="L98" title="All 2 branches missed.">			for(Piece pp : board.getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN)){</span>
+<span class="nc" id="L99">				Pawn ppp = (Pawn)pp;</span>
+<span class="nc" id="L100">				ppp.setAdvanced(false);</span>
+			}
+			
+<span class="nc" id="L103">			boolean viable = false;</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">			for(Piece v : getViablePieces()){</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">				if(viableLocations(v).size() != 0){</span>
+<span class="nc" id="L106">					viable = true;</span>
+<span class="nc" id="L107">					break;</span>
+				}
+			}
+			
+<span class="nc bnc" id="L111" title="All 2 branches missed.">			if(!viable){</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">				if(((King)(board.getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.KING).get(0))).inCheck(board)){</span>
+<span class="nc" id="L113">					board.setBoardState(BoardState.BLACK_WIN);</span>
+<span class="nc" id="L114">				}</span>
+				else{
+<span class="nc" id="L116">					board.setBoardState(BoardState.TIE);</span>
+				}
+			}
+<span class="nc" id="L119">		}</span>
+		else{
+<span class="nc" id="L121">			board.setBoardState(BoardState.BLACK_TURN);</span>
+			
+<span class="nc bnc" id="L123" title="All 2 branches missed.">			for(Piece pp : board.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN)){</span>
+<span class="nc" id="L124">				Pawn ppp = (Pawn)pp;</span>
+<span class="nc" id="L125">				ppp.setAdvanced(false);</span>
+			}
+			
+<span class="nc" id="L128">			boolean viable = false;</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">			for(Piece v : getViablePieces()){</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">				if(viableLocations(v).size() != 0){</span>
+<span class="nc" id="L131">					viable = true;</span>
+<span class="nc" id="L132">					break;</span>
+				}
+			}
+			
+<span class="nc bnc" id="L136" title="All 2 branches missed.">			if(!viable){</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">				if(((King)(board.getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.KING).get(0))).inCheck(board)){</span>
+<span class="nc" id="L138">					board.setBoardState(BoardState.WHITE_WIN);</span>
+<span class="nc" id="L139">				}</span>
+				else{
+<span class="nc" id="L141">					board.setBoardState(BoardState.TIE);</span>
+				}
+			}
+		}
+<span class="nc" id="L145">	}</span>
+	
+	public Board getBoard(){
+<span class="nc" id="L148">		return board;</span>
+	}
+	
+	public ArrayList&lt;Piece&gt; getViablePieces(){
+<span class="nc bnc" id="L152" title="All 2 branches missed.">		if(board.getBoardState() == BoardState.BLACK_TURN){</span>
+<span class="nc" id="L153">			return board.getPiecesOfType(PieceTypes.Color.BLACK);</span>
+		}
+<span class="nc bnc" id="L155" title="All 2 branches missed.">		else if(board.getBoardState() == BoardState.WHITE_TURN){</span>
+<span class="nc" id="L156">			return board.getPiecesOfType(PieceTypes.Color.WHITE);</span>
+		}
+		else{
+<span class="nc" id="L159">			return new ArrayList&lt;Piece&gt;();</span>
+		}
+	}
+	
+	public ArrayList&lt;Cell&gt; viableLocations(Piece p){		
+<span class="nc bnc" id="L164" title="All 2 branches missed.">		if(p == null){</span>
+<span class="nc" id="L165">			return new ArrayList&lt;Cell&gt;();</span>
+		}
+		else{
+<span class="nc bnc" id="L168" title="All 7 branches missed.">			switch(p.getType()){</span>
+			case BISHOP:    
+<span class="nc" id="L170">				return Validator.removeChecks(board, p, Validator.bishopMoves(board, (Bishop)p));</span>
+			case KING:
+<span class="nc" id="L172">				return Validator.removeChecks(board, p, Validator.kingMoves(board, (King)p));</span>
+			case KNIGHT:
+<span class="nc" id="L174">				return Validator.removeChecks(board, p, Validator.knightMoves(board, (Knight)p));</span>
+			case PAWN:
+<span class="nc" id="L176">				return Validator.removeChecks(board, p, Validator.pawnMoves(board, (Pawn)p));</span>
+			case QUEEN:
+<span class="nc" id="L178">				return Validator.removeChecks(board, p, Validator.queenMoves(board, (Queen)p));</span>
+			case ROOK:
+<span class="nc" id="L180">				return Validator.removeChecks(board, p, Validator.rookMoves(board, (Rook)p));</span>
+			default:
+<span class="nc" id="L182">				return null;</span>
+			}
+		}
+	}
+	
+	public ArrayList&lt;Cell&gt; viableLocations(int num, int let){
+<span class="nc" id="L188">		return viableLocations(board.getPiece(new Cell(num, let)));</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

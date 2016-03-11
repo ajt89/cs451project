@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Client.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.client</a> &gt; <span class="el_source">Client.java</span></div><h1>Client.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package coolchess.client;</span>
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import coolchess.gui.Chessboard;
+
+public class Client implements Runnable{
+	static ClientHelper ch;
+<span class="nc" id="L13">	static boolean gameChallenge = false;</span>
+<span class="nc" id="L14">	static boolean challengeAccept = false;</span>
+<span class="nc" id="L15">	static boolean challengeDenied = false;</span>
+<span class="nc" id="L16">	static boolean victory = false;</span>
+	static String challengeUser;
+<span class="nc" id="L18">	static CardLayout cardLayout = new CardLayout();</span>
+	static Container contentPane;
+	static Chessboard cb;
+	
+<span class="nc" id="L22">	Client(ClientHelper ch){</span>
+<span class="nc" id="L23">		this.ch = ch;</span>
+<span class="nc" id="L24">	}</span>
+	
+	public static void main(String[] args)throws Exception{
+<span class="nc bnc" id="L27" title="All 2 branches missed.">		if (args.length != 2){</span>
+<span class="nc" id="L28">			System.out.println(&quot;Correct usage: java Client &lt;hostname&gt; &lt;server&gt;&quot;);</span>
+<span class="nc" id="L29">			System.exit(0);</span>
+		}
+<span class="nc" id="L31">		String serverHost = args[0];</span>
+<span class="nc" id="L32">		int portNumber = Integer.parseInt(args[1]);</span>
+<span class="nc" id="L33">		ClientHelper ch = new ClientHelper(serverHost,portNumber);	</span>
+		
+<span class="nc" id="L35">		Runnable r = new Runnable() {</span>
+			public void run() {
+				
+<span class="nc" id="L38">				JFrame frame = new JFrame();</span>
+				
+<span class="nc" id="L40">				contentPane = frame.getContentPane();</span>
+<span class="nc" id="L41">				contentPane.setLayout(cardLayout);</span>
+<span class="nc" id="L42">				cb = new Chessboard(ch, cardLayout, contentPane);</span>
+<span class="nc" id="L43">				JPanel menu = new JPanel();</span>
+<span class="nc" id="L44">				JButton play = new JButton(&quot;Play&quot;);</span>
+<span class="nc" id="L45">				DefaultListModel list = new DefaultListModel();</span>
+<span class="nc" id="L46">				play.addActionListener(new ActionListener()</span>
+			    {
+				      public void actionPerformed(ActionEvent e)
+				      {
+<span class="nc" id="L50">				    	  String alias = (String)JOptionPane.showInputDialog(frame,&quot;Please enter an alias.&quot;);</span>
+				    	  try {
+<span class="nc" id="L52">							ch.user(alias);</span>
+<span class="nc" id="L53">						} catch (Exception e1) {</span>
+<span class="nc" id="L54">							System.out.println(e1);</span>
+						}
+<span class="nc" id="L56">				    	  cardLayout.next(contentPane);</span>
+				    	  try {
+<span class="nc" id="L58">								ch.raw(&quot;PLAYERLIST&quot;);</span>
+<span class="nc" id="L59">								ch.setResponse();</span>
+<span class="nc" id="L60">								String[] responseIn = ch.getResponse().split(&quot; &quot;);</span>
+<span class="nc" id="L61">								int listSize = Integer.parseInt(responseIn[1]);</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">								for (int i = 0; i &lt; listSize; i++){</span>
+<span class="nc" id="L63">									ch.setResponse();</span>
+<span class="nc" id="L64">									String response = ch.getResponse();</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">									if (response.contains(&quot;PLAYERS&quot;)){</span>
+<span class="nc" id="L66">										String[] responseSplit = response.split(&quot; &quot;);</span>
+<span class="nc" id="L67">										ch.setPlayerlist(responseSplit[1]);</span>
+									}
+								}
+<span class="nc" id="L70">				    		} catch (Exception e1) {</span>
+<span class="nc" id="L71">								System.out.println(e1);</span>
+							}
+<span class="nc" id="L73">				    		list.clear();</span>
+<span class="nc" id="L74">				    		ArrayList&lt;String&gt; listPlayer = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L75">				    		listPlayer = ch.getPlayerlist();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">				    		for(int i = 0; i &lt; listPlayer.size(); i++) {</span>
+<span class="nc" id="L77">				    			list.addElement(listPlayer.get(i));</span>
+				    		}
+<span class="nc" id="L79">				      }</span>
+			    });
+<span class="nc" id="L81">				menu.add(play);</span>
+<span class="nc" id="L82">				contentPane.add(menu, &quot;CoolChess Menu&quot;);</span>
+				
+<span class="nc" id="L84">				JPanel lobby = new JPanel();</span>
+				
+<span class="nc" id="L86">				ArrayList&lt;String&gt; players = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L87">				players = ch.getPlayerlist();</span>
+				
+<span class="nc" id="L89">				JButton	challenge = new JButton(&quot;Send Challenge&quot;);</span>
+<span class="nc" id="L90">				JList people = new JList(list);</span>
+<span class="nc" id="L91">				people.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);</span>
+<span class="nc" id="L92">				people.setLayoutOrientation(JList.VERTICAL);</span>
+<span class="nc" id="L93">				people.setVisibleRowCount(-1);</span>
+<span class="nc" id="L94">				people.addListSelectionListener(new ListSelectionListener() {</span>
+					public void valueChanged(ListSelectionEvent e) {
+<span class="nc bnc" id="L96" title="All 2 branches missed.">						if (e.getValueIsAdjusting() == false) {</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">							if(people.getSelectedIndex() == -1) {</span>
+<span class="nc" id="L98">								challenge.setEnabled(false);</span>
+<span class="nc" id="L99">							}</span>
+							else {
+<span class="nc" id="L101">								challenge.setEnabled(true);</span>
+							}
+						}
+<span class="nc" id="L104">					}	</span>
+				});
+				
+<span class="nc" id="L107">				JButton refresh = new JButton(&quot;Refresh&quot;);</span>
+<span class="nc" id="L108">			    refresh.addActionListener(new ActionListener() {</span>
+			    	public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L110">			    		ch.clearPlayerlist();</span>
+			    		try {
+<span class="nc" id="L112">							ch.raw(&quot;PLAYERLIST&quot;);</span>
+<span class="nc" id="L113">							ch.setResponse();</span>
+<span class="nc" id="L114">							System.out.println(ch.getResponse());</span>
+<span class="nc" id="L115">							String[] responseIn = ch.getResponse().split(&quot; &quot;);</span>
+<span class="nc" id="L116">							int listSize = Integer.parseInt(responseIn[1]);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">							for (int i = 0; i &lt; listSize; i++){</span>
+<span class="nc" id="L118">								ch.setResponse();</span>
+<span class="nc" id="L119">								String response = ch.getResponse();</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">								if (response.contains(&quot;PLAYERS&quot;)){</span>
+<span class="nc" id="L121">									String[] responseSplit = response.split(&quot; &quot;);</span>
+<span class="nc" id="L122">									ch.setPlayerlist(responseSplit[1]);</span>
+								}
+							}
+<span class="nc" id="L125">			    		} catch (Exception e1) {</span>
+<span class="nc" id="L126">							System.out.println(e1);</span>
+						}
+<span class="nc" id="L128">			    		list.clear();</span>
+<span class="nc" id="L129">			    		ArrayList&lt;String&gt; listPlayer = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L130">			    		listPlayer = ch.getPlayerlist();</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">			    		for(int i = 0; i &lt; listPlayer.size(); i++) {</span>
+<span class="nc" id="L132">			    			list.addElement(listPlayer.get(i));</span>
+			    		}
+<span class="nc" id="L134">			    	}</span>
+			    });
+			    
+			    //challenge
+<span class="nc" id="L138">				challenge.addActionListener(new ActionListener() {</span>
+					public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L140">						String opponent = (String) people.getSelectedValue();</span>
+						try {
+<span class="nc" id="L142">							ch.raw(ch.getUser() + &quot; challenge &quot; + opponent);</span>
+<span class="nc" id="L143">						} catch (Exception e1) {</span>
+<span class="nc" id="L144">							System.out.println(e1);</span>
+						}
+						
+<span class="nc" id="L147">					}</span>
+				});
+				
+<span class="nc" id="L150">				JButton ready = new JButton(&quot;Ready&quot;);</span>
+<span class="nc" id="L151">			    ready.addActionListener(new ActionListener() {</span>
+			    	public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L153">			    		ready.setEnabled(false);</span>
+<span class="nc" id="L154">			    		Thread t = new Thread(new Client(ch)); </span>
+<span class="nc" id="L155">						t.start();</span>
+<span class="nc" id="L156">			    	}</span>
+			    });
+			    
+<span class="nc" id="L159">			    JButton quit = new JButton(&quot;Quit&quot;);</span>
+<span class="nc" id="L160">			    quit.addActionListener(new ActionListener() {</span>
+			    	public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L162">			    		ready.setEnabled(false);</span>
+			    		try {
+<span class="nc" id="L164">							ch.QUIT();</span>
+<span class="nc" id="L165">							System.exit(0);</span>
+<span class="nc" id="L166">						} catch (Exception e1) {</span>
+<span class="nc" id="L167">							System.out.println(e1);</span>
+						}
+			    		
+<span class="nc" id="L170">			    	}</span>
+			    });
+<span class="nc" id="L172">				JScrollPane listScroller = new JScrollPane(people);</span>
+<span class="nc" id="L173">				listScroller.setPreferredSize(new Dimension(250, 400));</span>
+				
+<span class="nc" id="L175">				lobby.add(listScroller);</span>
+<span class="nc" id="L176">				lobby.add(challenge);</span>
+<span class="nc" id="L177">				lobby.add(refresh);</span>
+<span class="nc" id="L178">				lobby.add(ready);</span>
+<span class="nc" id="L179">				lobby.add(quit);</span>
+				
+<span class="nc" id="L181">				contentPane.add(lobby, &quot;Player Lobby&quot;);</span>
+				
+<span class="nc" id="L183">				contentPane.add(cb.getGui(), &quot;CoolChess&quot;);</span>
+				
+<span class="nc" id="L185">	            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+<span class="nc" id="L186">	            frame.setLocationByPlatform(true);</span>
+	            
+<span class="nc" id="L188">	            frame.pack();</span>
+	            
+<span class="nc" id="L190">	            frame.setMinimumSize(frame.getSize());</span>
+<span class="nc" id="L191">	            frame.setVisible(true);</span>
+	            
+<span class="nc" id="L193">			}</span>
+		};
+		
+<span class="nc" id="L196">		ch.connect();</span>
+<span class="nc" id="L197">		ch.setResponse();</span>
+<span class="nc" id="L198">		System.out.println(ch.getResponse());</span>
+<span class="nc" id="L199">		SwingUtilities.invokeLater(r);</span>
+<span class="nc" id="L200">		ch.setResponse();</span>
+<span class="nc" id="L201">		System.out.println(ch.getResponse());</span>
+<span class="nc" id="L202">	}</span>
+
+	@Override
+	public void run() {
+<span class="nc" id="L206">		String me = ch.getUser();</span>
+		try{
+<span class="nc bnc" id="L208" title="All 2 branches missed.">			while (ch.getSocketString().isConnected()){</span>
+<span class="nc" id="L209">				ch.setResponse();</span>
+<span class="nc" id="L210">				String response = ch.getResponse();</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">				if (response != null){</span>
+<span class="nc" id="L212">					System.out.println(response);</span>
+<span class="nc" id="L213">					String[] responseSplit = response.split(&quot; &quot;);</span>
+<span class="nc bnc" id="L214" title="All 4 branches missed.">					if (responseSplit.length == 3 &amp;&amp; response.contains(me)){</span>
+<span class="nc" id="L215">						String userMessage = responseSplit[0];</span>
+<span class="nc bnc" id="L216" title="All 4 branches missed.">						if(responseSplit[1].equals(&quot;challenge&quot;) &amp;&amp; responseSplit[2].equals(me)){</span>
+<span class="nc" id="L217">							gameChallenge = true;</span>
+<span class="nc" id="L218">							challengeUser = userMessage;</span>
+<span class="nc" id="L219">							System.out.println(&quot;Challenge sent from &quot; + userMessage);</span>
+<span class="nc" id="L220">							System.out.println(&quot;Do you accept?&quot;);</span>
+<span class="nc" id="L221">						}</span>
+<span class="nc bnc" id="L222" title="All 4 branches missed.">						else if(responseSplit[1].equals(me) &amp;&amp; responseSplit[2].equals(&quot;accept&quot;)){</span>
+<span class="nc" id="L223">							challengeAccept = true;</span>
+<span class="nc" id="L224">							challengeUser = userMessage;</span>
+<span class="nc" id="L225">							System.out.println(&quot;Challenge accepted by &quot; + userMessage);</span>
+<span class="nc" id="L226">						}</span>
+<span class="nc bnc" id="L227" title="All 4 branches missed.">						else if(responseSplit[1].equals(me) &amp;&amp; responseSplit[2].equals(&quot;denied&quot;)){</span>
+<span class="nc" id="L228">							challengeDenied = true;</span>
+<span class="nc" id="L229">							challengeUser = userMessage;</span>
+<span class="nc" id="L230">							System.out.println(&quot;Challenge denied by &quot; + userMessage);</span>
+						}
+<span class="nc" id="L232">					}</span>
+<span class="nc bnc" id="L233" title="All 4 branches missed.">					else if (response.contains(&quot;GAME&quot;) &amp;&amp; response.contains(me)){</span>
+<span class="nc" id="L234">						ch.setupGame();</span>
+<span class="nc" id="L235">						new Thread(MoveListen).start();</span>
+<span class="nc" id="L236">					}</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">					else if (response.contains(&quot;COUNTER&quot;)){</span>
+<span class="nc" id="L238">						int counter = Integer.parseInt(responseSplit[1]);</span>
+<span class="nc" id="L239">						ch.setCounter(counter);</span>
+<span class="nc" id="L240">					}</span>
+<span class="nc bnc" id="L241" title="All 4 branches missed.">					else if (response.contains(&quot;VICTORY&quot;) &amp;&amp; response.contains(me)){</span>
+<span class="nc" id="L242">						JOptionPane.showMessageDialog(new JFrame(), &quot;You win.&quot;, &quot;Victory&quot;,JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L243">						cardLayout.previous(contentPane);</span>
+<span class="nc" id="L244">					}</span>
+<span class="nc bnc" id="L245" title="All 4 branches missed.">					else if (response.contains(&quot;LOSS&quot;) &amp;&amp; response.contains(me)){</span>
+<span class="nc" id="L246">						JOptionPane.showMessageDialog(new JFrame(), &quot;You lose.&quot;, &quot;Defeat&quot;,JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L247">						cardLayout.previous(contentPane);</span>
+<span class="nc" id="L248">					}</span>
+<span class="nc bnc" id="L249" title="All 4 branches missed.">					else if (response.contains(&quot;TIE&quot;) &amp;&amp; response.contains(me)){</span>
+<span class="nc" id="L250">						JOptionPane.showMessageDialog(new JFrame(), &quot;You tie?&quot;, &quot;Tie&quot;,JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L251">						cardLayout.previous(contentPane);</span>
+					}
+				}
+<span class="nc bnc" id="L254" title="All 2 branches missed.">				if (gameChallenge){</span>
+<span class="nc" id="L255">					Object[] options = {&quot;Accept&quot;,&quot;Decline&quot;};</span>
+<span class="nc" id="L256">					int n = JOptionPane.showOptionDialog(new JFrame(),</span>
+<span class="nc" id="L257">							&quot;You have received a challenge from &quot; + challengeUser,</span>
+<span class="nc" id="L258">							&quot;Challenge Recieved&quot;,</span>
+<span class="nc" id="L259">							JOptionPane.YES_NO_CANCEL_OPTION,</span>
+<span class="nc" id="L260">							JOptionPane.QUESTION_MESSAGE,</span>
+<span class="nc" id="L261">							null,</span>
+<span class="nc" id="L262">							options,</span>
+<span class="nc" id="L263">							options[1]);</span>
+					try {
+<span class="nc bnc" id="L265" title="All 2 branches missed.">						if (n == 0){		</span>
+<span class="nc" id="L266">							ch.raw(challengeUser + &quot; accept&quot;);</span>
+<span class="nc" id="L267">							ch.raw(&quot;GAME &quot; + challengeUser + &quot; &quot; + me);</span>
+							//ch.setupGame();
+<span class="nc" id="L269">							cb.flipBoard();</span>
+<span class="nc" id="L270">							cb.setWhite(false);</span>
+<span class="nc" id="L271">							cb.setPlayer(false);</span>
+<span class="nc" id="L272">							cardLayout.next(contentPane);</span>
+							//new Thread(SurrenderListen).start();
+							//new Thread(LossListen).start();
+							//new Thread(TieListen).start();
+<span class="nc" id="L276">						}</span>
+						else{
+<span class="nc" id="L278">							ch.raw(challengeUser + &quot; denied&quot;);</span>
+						}
+<span class="nc" id="L280">					} catch (Exception e1) {</span>
+<span class="nc" id="L281">						System.out.println(e1);</span>
+					}
+<span class="nc" id="L283">					gameChallenge = false;</span>
+				}
+				
+<span class="nc bnc" id="L286" title="All 2 branches missed.">				if (challengeAccept){</span>
+<span class="nc" id="L287">					JOptionPane.showMessageDialog(new JFrame(),</span>
+<span class="nc" id="L288">							&quot;Your challenge has been accepted&quot;,</span>
+<span class="nc" id="L289">							&quot;Challenge Accepted&quot;,</span>
+<span class="nc" id="L290">							JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L291">					challengeUser = null;</span>
+<span class="nc" id="L292">					gameChallenge = false;</span>
+<span class="nc" id="L293">					challengeAccept = false;</span>
+<span class="nc" id="L294">					cb.setWhite(true);</span>
+<span class="nc" id="L295">					cb.setPlayer(true);</span>
+<span class="nc" id="L296">					cardLayout.next(contentPane);</span>
+					//new Thread(SurrenderListen).start();
+					//new Thread(LossListen).start();
+					//new Thread(TieListen).start();
+				}
+				
+<span class="nc bnc" id="L302" title="All 2 branches missed.">				if (challengeDenied){</span>
+<span class="nc" id="L303">					JOptionPane.showMessageDialog(new JFrame(),</span>
+<span class="nc" id="L304">							&quot;Your challenge has been declined&quot;,</span>
+<span class="nc" id="L305">							&quot;Challenge declined&quot;,</span>
+<span class="nc" id="L306">							JOptionPane.PLAIN_MESSAGE);</span>
+<span class="nc" id="L307">					challengeUser = null;</span>
+<span class="nc" id="L308">					gameChallenge = false;</span>
+<span class="nc" id="L309">					challengeDenied = false;</span>
+				}
+
+			}
+<span class="nc" id="L313">		}catch(Exception e){</span>
+<span class="nc" id="L314">			System.out.println(e);</span>
+			try{
+<span class="nc" id="L316">				System.out.println(&quot;Attempt reconnect in 30 seconds&quot;);</span>
+<span class="nc" id="L317">				Thread.sleep(30000);</span>
+<span class="nc" id="L318">				ch.connect();</span>
+<span class="nc" id="L319">				ch.user(ch.getUser());</span>
+<span class="nc" id="L320">			} catch (Exception e1) {</span>
+<span class="nc" id="L321">				System.out.println(e);</span>
+<span class="nc" id="L322">				System.out.println(&quot;Reconnect fail&quot;);</span>
+<span class="nc" id="L323">				System.exit(0);</span>
+			}
+		}
+		
+<span class="nc" id="L327">	}</span>
+	
+<span class="nc" id="L329">	static Runnable MoveListen = new Runnable(){</span>
+		public void run(){
+			try{
+<span class="nc" id="L332">				System.out.println(&quot;MoveListen running&quot;);</span>
+<span class="nc" id="L333">				while(true){</span>
+<span class="nc" id="L334">					ch.setBoard();</span>
+<span class="nc" id="L335">					System.out.println(&quot;Recieved move&quot;);</span>
+<span class="nc" id="L336">					cb.recieveBoard(ch);</span>
+<span class="nc" id="L337">					System.out.println(&quot;Sent move to chessboard&quot;);</span>
+				}
+<span class="nc" id="L339">			} catch (Exception e){</span>
+<span class="nc" id="L340">				System.out.println(e);</span>
+			}
+<span class="nc" id="L342">		}</span>
+<span class="nc" id="L343">	};</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

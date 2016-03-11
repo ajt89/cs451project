@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Server.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.server</a> &gt; <span class="el_source">Server.java</span></div><h1>Server.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package coolchess.server;</span>
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import coolchess.game.Board;
+
+<span class="nc" id="L11">public class Server {</span>
+<span class="nc" id="L12">	private static HashSet&lt;String&gt; usernames = new HashSet&lt;String&gt;();</span>
+<span class="nc" id="L13">	private static HashSet&lt;PrintWriter&gt; pw = new HashSet&lt;PrintWriter&gt;();</span>
+<span class="nc" id="L14">	private static HashMap&lt;String, Socket&gt; userSocket = new HashMap&lt;String, Socket&gt;();</span>
+<span class="nc" id="L15">	private static HashMap&lt;String,String&gt; opponents = new HashMap&lt;String,String&gt;();</span>
+<span class="nc" id="L16">	private static HashMap&lt;String,Thread&gt; gameServer = new HashMap&lt;String,Thread&gt;();</span>
+	private static int port;
+<span class="nc" id="L18">	private static int counter = 1;</span>
+	//private static Move m;
+	//private static boolean whiteMove;
+	//private static boolean blackMove;
+	
+	public static void main(String[] args) throws Exception{
+<span class="nc bnc" id="L24" title="All 2 branches missed.">		if (args.length != 1){</span>
+<span class="nc" id="L25">			System.out.println(&quot;Correct usage: java Server &lt;port number&gt;&quot;);</span>
+<span class="nc" id="L26">			System.exit(0);</span>
+		}
+<span class="nc" id="L28">		port = Integer.parseInt(args[0]);</span>
+<span class="nc" id="L29">		counter = 1;</span>
+<span class="nc" id="L30">		System.out.println(&quot;Server running... &quot;);</span>
+<span class="nc" id="L31">		System.out.println(&quot;Hostname: &quot; + InetAddress.getLocalHost().getHostName());</span>
+<span class="nc" id="L32">		ServerSocket listener = new ServerSocket(port, 6);</span>
+<span class="nc" id="L33">		System.out.println(&quot;Listening on: &quot; + port);</span>
+		
+		try {
+<span class="nc" id="L36">			while (true){</span>
+<span class="nc" id="L37">				new Handler(listener.accept()).start();</span>
+			}
+<span class="nc" id="L39">		} finally{</span>
+<span class="nc" id="L40">			listener.close();</span>
+<span class="nc" id="L41">		}</span>
+	}
+	
+	private static class Handler extends Thread {
+		private String username;
+		private Socket socket;
+		private BufferedReader in;
+		private PrintWriter out;
+		//private String opponent;
+		
+<span class="nc" id="L51">		public Handler(Socket socket){</span>
+<span class="nc" id="L52">			this.socket = socket;</span>
+<span class="nc" id="L53">		}</span>
+		
+		public void run(){
+			try {
+<span class="nc" id="L57">				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));</span>
+<span class="nc" id="L58">				out = new PrintWriter(socket.getOutputStream(), true);</span>
+<span class="nc" id="L59">				PrintWriter individual = new PrintWriter(socket.getOutputStream(), true);</span>
+				while(true){
+<span class="nc" id="L61">					out.println(&quot;Enter username: &quot;);</span>
+<span class="nc" id="L62">					username = in.readLine();</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">					if (username == null){</span>
+<span class="nc" id="L64">						return;</span>
+					}
+<span class="nc" id="L66">					synchronized(usernames){</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">						if (!usernames.contains(username)){</span>
+<span class="nc" id="L68">							usernames.add(username);</span>
+<span class="nc" id="L69">							break;</span>
+						}
+					}
+				}
+<span class="nc" id="L73">				userSocket.put(username,socket);</span>
+<span class="nc" id="L74">				out.println(&quot;Username accepted&quot;);</span>
+				
+<span class="nc" id="L76">				System.out.println(username + &quot; added&quot;);</span>
+				/*for (String s : usernames){
+					out.println(&quot;PLAYERS: &quot; + s);
+					System.out.println(&quot;Players: &quot; + s);
+				}*/
+<span class="nc" id="L81">				pw.add(out);</span>
+				
+<span class="nc" id="L83">				boolean status = true;</span>
+<span class="nc" id="L84">				Thread t = null;</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">				while(status){</span>
+<span class="nc" id="L86">					String input = in.readLine();</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">					if (input == null){</span>
+<span class="nc" id="L88">						return;</span>
+					}
+<span class="nc bnc" id="L90" title="All 2 branches missed.">					else if(input.equals(&quot;PLAYERLIST&quot;)){</span>
+<span class="nc" id="L91">						int numberUsers = 0;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">						for (String s : usernames){</span>
+<span class="nc" id="L93">							numberUsers = numberUsers + 1;</span>
+						}
+<span class="nc" id="L95">						String numUsers = Integer.toString(numberUsers);</span>
+<span class="nc" id="L96">						individual.println(&quot;NUMBERPLAYERS: &quot; + numUsers);</span>
+<span class="nc" id="L97">						System.out.println(&quot;NUMBERPLAYERS: &quot; + numUsers);</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">						for (String s : usernames){</span>
+<span class="nc" id="L99">							individual.println(&quot;PLAYERS: &quot; + s);</span>
+<span class="nc" id="L100">							System.out.println(&quot;Players: &quot; + s);</span>
+						}
+<span class="nc" id="L102">					}</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">					else if (input.equals(&quot;QUIT&quot;)){</span>
+						try{
+<span class="nc" id="L105">							gameServer.get(username).interrupt();</span>
+<span class="nc" id="L106">						}catch (Exception e){</span>
+<span class="nc" id="L107">							System.out.println(e);</span>
+						}
+<span class="nc" id="L109">						status = false;</span>
+<span class="nc" id="L110">					}</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">					else if(input.contains(username + &quot; challenge&quot;)){</span>
+<span class="nc" id="L112">						t = new Thread(GameStart);</span>
+<span class="nc" id="L113">						t.start();</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L115">							writer.println(&quot;COUNTER: &quot; + counter);</span>
+						}	
+<span class="nc" id="L117">						String[] inputArray = input.split(&quot; &quot;);</span>
+<span class="nc" id="L118">						String user1 = inputArray[0];</span>
+<span class="nc" id="L119">						String user2 = inputArray[2];</span>
+<span class="nc" id="L120">						gameServer.put(user1, t);</span>
+<span class="nc" id="L121">						gameServer.put(user2, t);</span>
+						
+<span class="nc" id="L123">						opponents.put(user1,user2);</span>
+<span class="nc" id="L124">						opponents.put(user2,user1);</span>
+<span class="nc" id="L125">						System.out.println(user1 + &quot;: opponent = &quot; + opponents.get(user1) + &quot; &quot;);</span>
+<span class="nc" id="L126">						System.out.println(user2 + &quot;: opponent = &quot; + opponents.get(user2) + &quot; &quot;);</span>
+						
+<span class="nc bnc" id="L128" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L129">							writer.println(input);</span>
+						}
+<span class="nc" id="L131">					}</span>
+<span class="nc bnc" id="L132" title="All 4 branches missed.">					else if (input.contains(&quot;accept&quot;) || (input.contains(&quot;denied&quot;))){</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L134">							writer.println(username + &quot; &quot; + input);</span>
+						}
+<span class="nc bnc" id="L136" title="All 2 branches missed.">						if (input.contains(&quot;denied&quot;)){</span>
+<span class="nc" id="L137">							t.interrupt();</span>
+						}
+<span class="nc" id="L139">					}</span>
+<span class="nc bnc" id="L140" title="All 4 branches missed.">					else if (input.contains(username) &amp;&amp; input.contains(&quot;SURRENDER&quot;)){</span>
+						//individual.println(&quot;VICTORY&quot;);
+<span class="nc bnc" id="L142" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L143">							writer.println(opponents.get(username) + &quot; VICTORY&quot;);</span>
+						}
+<span class="nc" id="L145">						System.out.println(&quot;VICTORY sent to &quot; + opponents.get(username));</span>
+<span class="nc" id="L146">						t.interrupt();</span>
+<span class="nc" id="L147">					}</span>
+<span class="nc bnc" id="L148" title="All 4 branches missed.">					else if (input.contains(username) &amp;&amp; input.contains(&quot;WIN&quot;)){</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L150">							writer.println(opponents.get(username) + &quot; LOSS&quot;);</span>
+						}
+						
+<span class="nc" id="L153">						System.out.println(&quot;LOSS sent to &quot; + opponents.get(username));</span>
+<span class="nc" id="L154">						t.interrupt();</span>
+<span class="nc" id="L155">					}</span>
+<span class="nc bnc" id="L156" title="All 4 branches missed.">					else if (input.contains(username) &amp;&amp; input.contains(&quot;TIE&quot;)){</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L158">							writer.println(opponents.get(username) + &quot; TIE&quot;);</span>
+						}
+<span class="nc" id="L160">						System.out.println(&quot;TIE sent to &quot; + opponents.get(username));</span>
+<span class="nc" id="L161">						t.interrupt();</span>
+<span class="nc" id="L162">					}</span>
+					else{
+<span class="nc bnc" id="L164" title="All 2 branches missed.">						for (PrintWriter writer : pw){</span>
+<span class="nc" id="L165">							writer.println(username + &quot;: &quot; + input);</span>
+						}	
+					}
+<span class="nc" id="L168">					System.out.println(username + &quot;: &quot; + input);</span>
+				}
+<span class="nc" id="L170">			} catch(IOException e){</span>
+<span class="nc" id="L171">				System.out.println(e);</span>
+<span class="nc" id="L172">			} finally{</span>
+<span class="nc bnc" id="L173" title="All 10 branches missed.">				if (username != null){</span>
+<span class="nc" id="L174">					usernames.remove(username);</span>
+<span class="nc" id="L175">					System.out.println(username + &quot; removed&quot;);</span>
+				}
+				try{
+<span class="nc" id="L178">					socket.close();</span>
+<span class="nc" id="L179">				} catch(IOException e){</span>
+<span class="nc" id="L180">					System.out.println(e);</span>
+				}
+<span class="nc" id="L182">			}</span>
+<span class="nc" id="L183">		}</span>
+	}
+	
+<span class="nc" id="L186">	static Runnable GameStart = new Runnable(){</span>
+		public void run() {
+<span class="nc" id="L188">			System.out.println(&quot;Thread: &quot; + counter + &quot; running&quot;);</span>
+			try {
+<span class="nc" id="L190">				ServerSocket listener = new ServerSocket(7878+counter, 4);</span>
+<span class="nc" id="L191">				Socket black = listener.accept();</span>
+<span class="nc" id="L192">				System.out.println(black);</span>
+<span class="nc" id="L193">				Socket white = listener.accept();</span>
+<span class="nc" id="L194">				counter++;</span>
+<span class="nc" id="L195">				System.out.println(white);</span>
+<span class="nc" id="L196">				listener.close();</span>
+<span class="nc" id="L197">				ObjectOutputStream outBlack = new ObjectOutputStream(black.getOutputStream());</span>
+<span class="nc" id="L198">				ObjectInputStream inBlack = new ObjectInputStream(black.getInputStream());</span>
+<span class="nc" id="L199">				ObjectOutputStream outWhite = new ObjectOutputStream(white.getOutputStream());</span>
+<span class="nc" id="L200">				ObjectInputStream inWhite = new ObjectInputStream(white.getInputStream());</span>
+<span class="nc" id="L201">				System.out.println(&quot;Sockets up&quot;);</span>
+<span class="nc" id="L202">				Board obj = null;</span>
+<span class="nc" id="L203">				while(true){</span>
+<span class="nc" id="L204">					obj = (Board)inWhite.readObject();</span>
+<span class="nc" id="L205">					System.out.println(&quot;White in&quot;);</span>
+<span class="nc" id="L206">					outBlack.writeObject(obj);</span>
+<span class="nc" id="L207">					System.out.println(&quot;Black Out&quot;);</span>
+<span class="nc" id="L208">					outBlack.flush();</span>
+<span class="nc" id="L209">					obj = (Board)inBlack.readObject();</span>
+<span class="nc" id="L210">					System.out.println(&quot;Black in&quot;);</span>
+<span class="nc" id="L211">					outWhite.writeObject(obj);</span>
+<span class="nc" id="L212">					System.out.println(&quot;White out&quot;);</span>
+<span class="nc" id="L213">					outWhite.flush();</span>
+				}
+<span class="nc" id="L215">			} catch (Exception e) {</span>
+				// TODO Auto-generated catch block
+<span class="nc" id="L217">				e.printStackTrace();</span>
+			}
+<span class="nc" id="L219">		}</span>
+<span class="nc" id="L220">	};</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

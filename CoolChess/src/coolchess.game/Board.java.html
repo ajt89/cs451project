@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.game</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">package coolchess.game;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Board implements Serializable {
+	private static final long serialVersionUID = -4342807129775409263L;
+
+	public static final int boardSize = 8;
+
+	private BoardState state;
+	private ArrayList&lt;Piece&gt; pieces;
+	
+<span class="fc" id="L14">	public Board(BoardState state, ArrayList&lt;Piece&gt; pieces){</span>
+<span class="fc" id="L15">		this.state = state;</span>
+<span class="fc" id="L16">		this.pieces = pieces;</span>
+<span class="fc" id="L17">	}</span>
+	
+	public Board(BoardState state){		
+<span class="fc" id="L20">		this(state, null); </span>
+		
+<span class="fc" id="L22">		this.pieces = new ArrayList&lt;Piece&gt;();</span>
+		
+		//white backline
+<span class="fc" id="L25">		this.pieces.add(new Rook(PieceTypes.Color.WHITE, PieceTypes.Type.ROOK, new Cell(boardSize-1, 0)));</span>
+<span class="fc" id="L26">		this.pieces.add(new Rook(PieceTypes.Color.WHITE, PieceTypes.Type.ROOK, new Cell(boardSize-1, boardSize-1)));</span>
+<span class="fc" id="L27">		this.pieces.add(new Knight(PieceTypes.Color.WHITE, PieceTypes.Type.KNIGHT, new Cell(boardSize-1, 1)));</span>
+<span class="fc" id="L28">		this.pieces.add(new Knight(PieceTypes.Color.WHITE, PieceTypes.Type.KNIGHT, new Cell(boardSize-1, boardSize-2)));</span>
+<span class="fc" id="L29">		this.pieces.add(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(boardSize-1, 2)));</span>
+<span class="fc" id="L30">		this.pieces.add(new Bishop(PieceTypes.Color.WHITE, PieceTypes.Type.BISHOP, new Cell(boardSize-1, boardSize-3)));</span>
+<span class="fc" id="L31">		this.pieces.add(new Queen(PieceTypes.Color.WHITE, PieceTypes.Type.QUEEN, new Cell(boardSize-1, 3)));</span>
+<span class="fc" id="L32">		this.pieces.add(new King(PieceTypes.Color.WHITE, PieceTypes.Type.KING, new Cell(boardSize-1, 4)));</span>
+		
+		//black backline
+<span class="fc" id="L35">		this.pieces.add(new Rook(PieceTypes.Color.BLACK, PieceTypes.Type.ROOK, new Cell(0, 0)));</span>
+<span class="fc" id="L36">		this.pieces.add(new Rook(PieceTypes.Color.BLACK, PieceTypes.Type.ROOK, new Cell(0, boardSize-1)));</span>
+<span class="fc" id="L37">		this.pieces.add(new Knight(PieceTypes.Color.BLACK, PieceTypes.Type.KNIGHT, new Cell(0, 1)));</span>
+<span class="fc" id="L38">		this.pieces.add(new Knight(PieceTypes.Color.BLACK, PieceTypes.Type.KNIGHT, new Cell(0, boardSize-2)));</span>
+<span class="fc" id="L39">		this.pieces.add(new Bishop(PieceTypes.Color.BLACK, PieceTypes.Type.BISHOP, new Cell(0, 2)));</span>
+<span class="fc" id="L40">		this.pieces.add(new Bishop(PieceTypes.Color.BLACK, PieceTypes.Type.BISHOP, new Cell(0, boardSize-3)));</span>
+<span class="fc" id="L41">		this.pieces.add(new Queen(PieceTypes.Color.BLACK, PieceTypes.Type.QUEEN, new Cell(0, 3)));</span>
+<span class="fc" id="L42">		this.pieces.add(new King(PieceTypes.Color.BLACK, PieceTypes.Type.KING, new Cell(0, 4)));</span>
+		
+		// pawns
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		for(int i = 16; i &lt; 24; i++){</span>
+<span class="fc" id="L46">			this.pieces.add(new Pawn(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN, new Cell(boardSize-2, i-16)));</span>
+<span class="fc" id="L47">			this.pieces.add(new Pawn(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN, new Cell(1, i-16)));</span>
+		}
+<span class="fc" id="L49">	}</span>
+	
+	public Board(Board b){
+<span class="nc" id="L52">		this(b.getBoardState(), b.getPieces());</span>
+<span class="nc" id="L53">	}</span>
+
+	public BoardState getBoardState(){
+<span class="fc" id="L56">		return this.state;</span>
+	}
+	
+	public void setBoardState(BoardState state){
+<span class="fc" id="L60">		this.state = state;</span>
+<span class="fc" id="L61">	}	</span>
+	
+	public ArrayList&lt;Piece&gt; getPieces() {
+<span class="fc" id="L64">		return pieces;</span>
+	}
+	
+	public ArrayList&lt;Piece&gt; getPiecesOfTypes(PieceTypes.Color color, PieceTypes.Type type){
+<span class="fc" id="L68">		ArrayList&lt;Piece&gt; ret = new ArrayList&lt;Piece&gt;();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">		for(Piece p : pieces){</span>
+<span class="fc bfc" id="L70" title="All 4 branches covered.">			if(p.getColor() == color &amp;&amp; p.getType() == type){</span>
+<span class="fc" id="L71">				ret.add(p);</span>
+			}
+		}
+<span class="fc" id="L74">		return ret;</span>
+	}
+	
+	public ArrayList&lt;Piece&gt; getPiecesOfType(PieceTypes.Color color){
+<span class="fc" id="L78">		ArrayList&lt;Piece&gt; ret = new ArrayList&lt;Piece&gt;();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		for(Piece p : pieces){</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">			if(p.getColor() == color){</span>
+<span class="fc" id="L81">				ret.add(p);</span>
+			}
+		}
+<span class="fc" id="L84">		return ret;</span>
+	}
+
+	public void setPieces(ArrayList&lt;Piece&gt; pieces) {
+<span class="fc" id="L88">		this.pieces = pieces;</span>
+<span class="fc" id="L89">	}</span>
+	
+	// possibly null result
+	public Piece getPiece(Cell c){
+<span class="fc bfc" id="L93" title="All 2 branches covered.">		for(Piece p : pieces){</span>
+<span class="pc bpc" id="L94" title="1 of 4 branches missed.">			if(p.getLoc() != null &amp;&amp; p.getLoc().equals(c)){</span>
+<span class="fc" id="L95">				return p;</span>
+			}
+		}
+<span class="fc" id="L98">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

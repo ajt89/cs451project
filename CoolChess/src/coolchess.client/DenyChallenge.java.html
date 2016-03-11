@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>DenyChallenge.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.client</a> &gt; <span class="el_source">DenyChallenge.java</span></div><h1>DenyChallenge.java</h1><pre class="source lang-java linenums">package coolchess.client;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import junit.framework.TestCase;
+
+<span class="fc" id="L9">public class DenyChallenge extends TestCase {</span>
+
+<span class="fc" id="L11">	String username1 = &quot;aj&quot;;</span>
+<span class="fc" id="L12">	String username2 = &quot;carl&quot;;</span>
+<span class="fc" id="L13">	String hostname = &quot;AJ-PC&quot;;</span>
+	String response;
+<span class="fc" id="L15">	String expected = username2 + &quot; &quot; + username1 + &quot; denied&quot;;</span>
+<span class="fc" id="L16">	int port = 6969;</span>
+	protected void setUp(){
+<span class="fc" id="L18">		ClientHelper ch1 = new ClientHelper(hostname,port);</span>
+<span class="fc" id="L19">		ClientHelper ch2 = new ClientHelper(hostname,port);</span>
+		try{
+<span class="nc" id="L21">			ch1.connect();</span>
+<span class="nc" id="L22">			ch1.setResponse();</span>
+<span class="nc" id="L23">			ch1.user(username1);</span>
+<span class="nc" id="L24">			ch1.setResponse();</span>
+<span class="nc" id="L25">			ch2.connect();</span>
+<span class="nc" id="L26">			ch2.setResponse();</span>
+<span class="nc" id="L27">			ch2.user(username2);</span>
+<span class="nc" id="L28">			ch2.setResponse();</span>
+			
+<span class="nc" id="L30">			ch1.raw(username1 + &quot; challenge &quot; + username2);</span>
+			/*ch2.setResponse();
+			ch2.setResponse();
+			ch2.raw(username1 + &quot; denied&quot;);
+			ch1.setResponse();
+			ch1.setResponse();
+			ch1.setResponse();
+			response = ch1.getResponse();
+			System.out.println(response);*/
+			
+<span class="nc" id="L40">			ch1.QUIT();</span>
+<span class="nc" id="L41">			ch2.QUIT();</span>
+<span class="pc" id="L42">		} catch(Exception e){</span>
+<span class="fc" id="L43">			System.out.println(e);</span>
+		}
+<span class="fc" id="L45">	}</span>
+	public void test(){
+<span class="nc" id="L47">		assertEquals(expected,response);</span>
+<span class="nc" id="L48">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

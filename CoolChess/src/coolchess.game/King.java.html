@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>King.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">src (Mar 11, 2016 9:15:49 AM)</a> &gt; <a href="../../index.html" class="el_group">CoolChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">coolchess.game</a> &gt; <span class="el_source">King.java</span></div><h1>King.java</h1><pre class="source lang-java linenums">package coolchess.game;
+
+public class King extends Piece {
+	private static final long serialVersionUID = -1477668621166621201L;
+	
+	private boolean moved;
+
+<span class="fc" id="L8">	public King(PieceTypes.Color color, PieceTypes.Type type, Cell loc, boolean moved){</span>
+<span class="fc" id="L9">		this.color = color;</span>
+<span class="fc" id="L10">		this.type = type;</span>
+<span class="fc" id="L11">		this.loc = loc;</span>
+<span class="fc" id="L12">		this.moved = moved;</span>
+<span class="fc" id="L13">	}</span>
+	
+	public King(PieceTypes.Color color, PieceTypes.Type type, Cell loc){
+<span class="fc" id="L16">		this(color, type, loc, false);</span>
+<span class="fc" id="L17">	}</span>
+	
+	public King(King k){
+<span class="nc" id="L20">		this(k.getColor(), k.getType(), k.getLoc(), k.hasMoved());</span>
+<span class="nc" id="L21">	}</span>
+
+	public boolean hasMoved() {
+<span class="fc" id="L24">		return moved;</span>
+	}
+
+	public void setMoved(boolean moved) {
+<span class="fc" id="L28">		this.moved = moved;</span>
+<span class="fc" id="L29">	}</span>
+	
+	public boolean testCheck(Board b, Cell loc){
+<span class="pc bpc" id="L32" title="1 of 4 branches missed.">		for(Piece p : b.getPiecesOfType(this.color == PieceTypes.Color.BLACK ? PieceTypes.Color.WHITE : PieceTypes.Color.BLACK)){</span>
+<span class="pc bpc" id="L33" title="1 of 7 branches missed.">			switch(p.getType()){</span>
+			case BISHOP:    
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">				for(Cell c : Validator.bishopMoves(b, (Bishop)p)){</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">					if(loc.equals(c)){</span>
+<span class="nc" id="L37">						return true;</span>
+					}
+				}
+<span class="fc" id="L40">				break;</span>
+			case KING:
+				// kings can't put other kings in check
+<span class="fc" id="L43">				break;</span>
+			case KNIGHT:
+<span class="fc bfc" id="L45" title="All 2 branches covered.">				for(Cell c : Validator.knightMoves(b, (Knight)p)){</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">					if(loc.equals(c)){</span>
+<span class="nc" id="L47">						return true;</span>
+					}
+				}
+<span class="fc" id="L50">				break;</span>
+			case PAWN:
+<span class="fc bfc" id="L52" title="All 2 branches covered.">				for(Cell c : Validator.pawnMoves(b, (Pawn)p)){</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">					if(loc.equals(c)){</span>
+<span class="nc" id="L54">						return true;</span>
+					}
+				}
+<span class="fc" id="L57">				break; </span>
+			case QUEEN:
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">				for(Cell c : Validator.queenMoves(b, (Queen)p)){</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">					if(loc.equals(c)){</span>
+<span class="nc" id="L61">						return true;</span>
+					}
+				}
+<span class="fc" id="L64">				break;</span>
+			case ROOK:
+<span class="fc bfc" id="L66" title="All 2 branches covered.">				for(Cell c : Validator.rookMoves(b, (Rook)p)){</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">					if(loc.equals(c)){</span>
+<span class="fc" id="L68">						return true;</span>
+					}
+				}
+				break;
+			default:
+				// nothing
+			}
+		}
+<span class="fc" id="L76">		return false;</span>
+	}
+	
+	public boolean inCheck(Board b){
+<span class="fc" id="L80">		return testCheck(b, this.getLoc());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>src (Mar 11, 2016 9:15:49 AM)</div></body></html>

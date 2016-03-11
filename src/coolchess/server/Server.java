@@ -81,6 +81,7 @@ public class Server {
 				pw.add(out);
 				
 				boolean status = true;
+				Thread t = null;
 				while(status){
 					String input = in.readLine();
 					if (input == null){
@@ -108,7 +109,7 @@ public class Server {
 						status = false;
 					}
 					else if(input.contains(username + " challenge")){
-						Thread t = new Thread(GameStart);
+						t = new Thread(GameStart);
 						t.start();
 						for (PrintWriter writer : pw){
 							writer.println("COUNTER: " + counter);
@@ -132,6 +133,9 @@ public class Server {
 						for (PrintWriter writer : pw){
 							writer.println(username + " " + input);
 						}
+						if (input.contains("denied")){
+							t.interrupt();
+						}
 					}
 					else if (input.contains(username) && input.contains("SURRENDER")){
 						//individual.println("VICTORY");
@@ -139,18 +143,22 @@ public class Server {
 							writer.println(opponents.get(username) + " VICTORY");
 						}
 						System.out.println("VICTORY sent to " + opponents.get(username));
+						t.interrupt();
 					}
 					else if (input.contains(username) && input.contains("WIN")){
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " LOSS");
 						}
+						
 						System.out.println("LOSS sent to " + opponents.get(username));
+						t.interrupt();
 					}
 					else if (input.contains(username) && input.contains("TIE")){
 						for (PrintWriter writer : pw){
 							writer.println(opponents.get(username) + " TIE");
 						}
 						System.out.println("TIE sent to " + opponents.get(username));
+						t.interrupt();
 					}
 					else{
 						for (PrintWriter writer : pw){
