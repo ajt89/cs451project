@@ -303,7 +303,9 @@ public class Chessboard {
 			if(temp) {
 				long start = System.currentTimeMillis();
 				long end = System.currentTimeMillis();
-				while(end - start < 1000) {}
+				while(end - start < 5000) {
+					end = System.currentTimeMillis();
+				}
 			}
 			try {
 				ch.sendBoard(man.getBoard());
