@@ -47,7 +47,7 @@ public class Validator {
 	public static ArrayList<Cell> bishopMoves(Board board, Bishop p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
-		if(p != null){
+		if(p != null && p.getLoc() != null){
 			int n = p.getLoc().getNum();
 			int l = p.getLoc().getLet();
 			for(int i = 1; n + i < Board.boardSize && l + i < Board.boardSize; i++){
@@ -88,7 +88,7 @@ public class Validator {
 	public static ArrayList<Cell> kingMoves(Board board, King p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
-		if(p != null){
+		if(p != null && p.getLoc() != null){
 			int n = p.getLoc().getNum();
 			int l = p.getLoc().getLet();
 			if(n + 1 < Board.boardSize && l + 1 < Board.boardSize){
@@ -155,7 +155,7 @@ public class Validator {
 	public static ArrayList<Cell> knightMoves(Board board, Knight p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
-		if(p != null){
+		if(p != null && p.getLoc() != null){
 			int n = p.getLoc().getNum();
 			int l = p.getLoc().getLet();
 			for(int r = -1; r <= 1; r+=2){
@@ -178,7 +178,7 @@ public class Validator {
 	public static ArrayList<Cell> pawnMoves(Board board, Pawn p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
-		if(p != null){
+		if(p != null && p.getLoc() != null){
 			int n = p.getLoc().getNum();
 			int l = p.getLoc().getLet();
 			if(p.getColor() == PieceTypes.Color.BLACK){
@@ -225,7 +225,7 @@ public class Validator {
 	public static ArrayList<Cell> queenMoves(Board board, Queen p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
-		if(p != null){
+		if(p != null && p.getLoc() != null){
 			int n = p.getLoc().getNum();
 			int l = p.getLoc().getLet();
 			for(int i = 1; n + i < Board.boardSize && l + i < Board.boardSize; i++){
@@ -294,7 +294,7 @@ public class Validator {
 	public static ArrayList<Cell> rookMoves(Board board, Rook p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
-		if(p != null){
+		if(p != null && p.getLoc() != null){
 			int n = p.getLoc().getNum();
 			int l = p.getLoc().getLet();
 	
