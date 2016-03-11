@@ -37,36 +37,42 @@ public class King extends Piece {
 						return true;
 					}
 				}
+				break;
 			case KING:
 				for(Cell c : Validator.kingMoves(b, (King)p, p.getColor() == PieceTypes.Color.BLACK)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
+				break;
 			case KNIGHT:
 				for(Cell c : Validator.knightMoves(b, (Knight)p, p.getColor() == PieceTypes.Color.BLACK)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
+				break;
 			case PAWN:
 				for(Cell c : Validator.pawnMoves(b, (Pawn)p, p.getColor() == PieceTypes.Color.BLACK)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
+				break;
 			case QUEEN:
 				for(Cell c : Validator.queenMoves(b, (Queen)p, p.getColor() == PieceTypes.Color.BLACK)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
+				break;
 			case ROOK:
 				for(Cell c : Validator.rookMoves(b, (Rook)p, p.getColor() == PieceTypes.Color.BLACK)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
+				break;
 			default:
 				// nothing
 			}
