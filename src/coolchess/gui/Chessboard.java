@@ -18,7 +18,7 @@ import coolchess.game.*;
 
 public class Chessboard {
 
-
+	
 	boolean notPressed = false;
 	private boolean white = true;
 	private String playerName;
@@ -33,7 +33,7 @@ public class Chessboard {
 	private int[] starting = {ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK};
 	private Image[][] pieces = new Image[2][6];
 	//private Board b = new Board(BoardState.WHITE_TURN);
-	private Manager man = new Manager(BoardState.WHITE_TURN);
+	private static Manager man = new Manager(BoardState.WHITE_TURN);
 	private ArrayList<Cell> old;
 	private boolean active = true;
 	private boolean player;
@@ -277,19 +277,20 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(i, j));
 			man.doMove(m);
-			boolean temp = checkPromote();
+			boolean temp = checkPromote(ch);
 			if(temp) {
-				long start = System.currentTimeMillis();
-				long end = System.currentTimeMillis();
-				while(end - start < 1000) {}
+				//long start = System.currentTimeMillis();
+				//long end = System.currentTimeMillis();
+				//while(end - start < 1000) {}
 			}
-			try {
-				ch.sendBoard(man.getBoard());
-			} catch (Exception e) {
-				System.out.println(e);
-				e.printStackTrace();
+			else {
+				try {
+					ch.sendBoard(man.getBoard());
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
 			}
-			
 			System.out.println(m + "2");
 		}
 		else {
@@ -299,19 +300,21 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(7-i, 7-j));
 			man.doMove(m);
-			boolean temp = checkPromote();
-			if(temp) {
+			boolean temp = checkPromote(ch);
+			/*if(temp) {
 				long start = System.currentTimeMillis();
 				long end = System.currentTimeMillis();
 				while(end - start < 5000) {
 					end = System.currentTimeMillis();
 				}
-			}
-			try {
-				ch.sendBoard(man.getBoard());
-			} catch (Exception e) {
-				System.out.println(e);
-				e.printStackTrace();
+			}*/
+			if(!temp) {
+				try {
+					ch.sendBoard(man.getBoard());
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
 			}
 			System.out.println(m + " 4");
 		}
@@ -350,7 +353,7 @@ public class Chessboard {
 		//white = !white;
 	}
 	
-	private boolean checkPromote() {
+	private boolean checkPromote(ClientHelper ch) {
 		ArrayList<Piece> p = new ArrayList<Piece>();
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButton q = new JRadioButton("Queen");
@@ -488,11 +491,33 @@ public class Chessboard {
         cont.add(submit);
         int x;
         int y;
+        class ButtonListener implements Runnable{
+    		private JButton submit;
+    		private ClientHelper ch;
+    		public ButtonListener(JButton submit, ClientHelper ch){
+    			this.submit = submit;
+    			this.ch = ch;
+    		}
+    		public void run(){
+    			if(submit.getModel().isPressed()) {
+    				Board b = man.getBoard();
+    				try {
+    					ch.sendBoard(b);
+    				} catch (Exception e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+    			}
+    		}
+    	};
 		if (white) {
 			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 0) {
 					frame.setVisible(true);
+					//new Thread(ButtonListener(submit, ch)).start();
+					Runnable run = new ButtonListener(submit, ch);
+					new Thread(run).start();
 					return true;
 				}
 			}
@@ -502,6 +527,8 @@ public class Chessboard {
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 7) {
 					frame.setVisible(true);
+					Runnable run = new ButtonListener(submit, ch);
+					new Thread(run).start();
 					return true;
 				}
 			}
@@ -790,10 +817,5 @@ public class Chessboard {
 
 		SwingUtilities.invokeLater(r);
 	}
-	/*static Runnable ObjectListener = new Runnable(){
-		public void run(){
-			receiveMove(ch);
-		}
-	};*/
 
 }
