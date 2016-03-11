@@ -26,10 +26,10 @@ public class Manager {
 		// actually move piece
 		p = m.getPiece();
 		if(p.getType() == PieceTypes.Type.KING){
-			// castling right
+			// castling right / king
 			if(p.getLoc().getLet() - m.getCell().getLet() == -2){
 				board.getPiece(new Cell(p.getLoc().getNum(), 7)).setLoc(new Cell(p.getLoc().getNum(), 5));
-			} // castling left
+			} // castling left / queen
 			else if(p.getLoc().getLet() - m.getCell().getLet() == 2){
 				board.getPiece(new Cell(p.getLoc().getNum(), 0)).setLoc(new Cell(p.getLoc().getNum(), 3));
 			}
