@@ -37,4 +37,8 @@ public class Cell implements Serializable{
 	public boolean equals(Cell c){
 		return this.num == c.getNum() && this.let == c.getLet();
 	}
+	
+	public String toString(){
+		return "(" + num + ", " + let + ")";
+	}
 }

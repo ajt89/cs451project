@@ -25,4 +25,8 @@ public class Move implements Serializable {
 	public Cell getCell() {
 		return cell;
 	}
+	
+	public String toString(){
+		return "<" + piece.toString() + ", " + cell.toString() + ">";
+	}
 }

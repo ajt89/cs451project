@@ -36,4 +36,23 @@ public abstract class Piece implements Serializable {
 	public boolean equals(Piece p){
 		return this.color == p.getColor() && this.type == p.getType() && this.loc.equals(p.getLoc());
 	}
+	
+	public String toString(){
+		switch(type){
+		case BISHOP:
+			return "[" + (color == PieceTypes.Color.BLACK ? "BLACK" : "WHITE") + ", " + "BISHOP" + ", " + loc.toString() + "]";
+		case KING:
+			return "[" + (color == PieceTypes.Color.BLACK ? "BLACK" : "WHITE") + ", " + "KING" + ", " + loc.toString() + "]";
+		case KNIGHT:
+			return "[" + (color == PieceTypes.Color.BLACK ? "BLACK" : "WHITE") + ", " + "KNIGHT" + ", " + loc.toString() + "]";
+		case PAWN:
+			return "[" + (color == PieceTypes.Color.BLACK ? "BLACK" : "WHITE") + ", " + "PAWN" + ", " + loc.toString() + "]";
+		case QUEEN:
+			return "[" + (color == PieceTypes.Color.BLACK ? "BLACK" : "WHITE") + ", " + "QUEEN" + ", " + loc.toString() + "]";
+		case ROOK:
+			return "[" + (color == PieceTypes.Color.BLACK ? "BLACK" : "WHITE") + ", " + "ROOK" + ", " + loc.toString() + "]";
+		default:
+			return "";
+		}
+	}
 }
