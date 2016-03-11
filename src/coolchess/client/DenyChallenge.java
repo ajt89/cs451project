@@ -6,13 +6,13 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 
-public class AcceptChallenge extends TestCase {
+public class DenyChallenge extends TestCase {
 
 	String username1 = "aj";
 	String username2 = "carl";
 	String hostname = "AJ-PC";
 	String response;
-	String expected = username2 + " " + username1 + " accept";
+	String expected = username2 + " " + username1 + " denied";
 	int port = 6969;
 	protected void setUp(){
 		ClientHelper ch1 = new ClientHelper(hostname,port);
@@ -30,7 +30,7 @@ public class AcceptChallenge extends TestCase {
 			ch1.raw(username1 + " challenge " + username2);
 			ch2.setResponse();
 			ch2.setResponse();
-			ch2.raw(username1 + " accept");
+			ch2.raw(username1 + " denied");
 			ch1.setResponse();
 			ch1.setResponse();
 			ch1.setResponse();

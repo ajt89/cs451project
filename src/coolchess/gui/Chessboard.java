@@ -18,6 +18,8 @@ import coolchess.game.*;
 
 public class Chessboard {
 
+
+	private String pieceText;
 	private boolean white = true;
 	private String playerName;
 	private static JFrame frame = new JFrame();
@@ -135,7 +137,7 @@ public class Chessboard {
 									}
 								}
 								if(isViable) {
-									movePiece(activex, activey, xcord, ycord, ch);
+									movePiece(activex, activey, xcord, ycord, ch, cl, cp);
 									//comment out for testing
 									player = false;
 								}
@@ -268,7 +270,7 @@ public class Chessboard {
 		player = !player;
 	}
 	
-	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch) {
+	private void movePiece(int oldi, int oldj, int i, int j, ClientHelper ch, CardLayout cl, Container cp) {
 		Move m = null;
 		//Board b = null;
 		if(white) {
@@ -278,6 +280,7 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(i, j));
 			man.doMove(m);
+			checkPromote();
 			try {
 				System.out.println("send board white 1");
 				ch.sendBoard(man.getBoard());
@@ -296,6 +299,7 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(7-i, 7-j));
 			man.doMove(m);
+			checkPromote();
 			try {
 				System.out.println("send move black 1");
 				ch.sendBoard(man.getBoard());
@@ -307,9 +311,194 @@ public class Chessboard {
 			}
 			System.out.println(m + " 4");
 		}
-		
+		switch(man.getBoard().getBoardState()) {
+		case BLACK_WIN:
+			try {
+				ch.raw(ch.getUser() + " WIN");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(frame, "Black Checkmate. You win!", "Black Wins",JOptionPane.PLAIN_MESSAGE);
+			cl.previous(cp);
+			break;
+		case TIE:
+			try {
+				ch.raw(ch.getUser() + " TIE");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(frame, "There is a Stalemate", "Tie",JOptionPane.PLAIN_MESSAGE);
+			cl.previous(cp);
+			break;
+		case WHITE_WIN:
+			try {
+				ch.raw(ch.getUser() + " WIN");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(frame, "White Checkmate. You win!", "White Wins",JOptionPane.PLAIN_MESSAGE);
+			cl.previous(cp);
+			break;
+		default:
+			break;
+		}
 		update();
 		//white = !white;
+	}
+	
+	private void checkPromote() {
+		ArrayList<Piece> p = new ArrayList<Piece>();
+		ButtonGroup bg = new ButtonGroup();
+		JRadioButton q = new JRadioButton("Queen");
+		JRadioButton r = new JRadioButton("Rook");
+		JRadioButton b = new JRadioButton("Bishop");
+		JRadioButton k = new JRadioButton("Knight");
+		bg.add(q);
+		bg.add(r);
+		bg.add(b);
+		bg.add(k);
+		
+		frame = new JFrame();
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+        Container cont = frame.getContentPane();
+        cont.setLayout(new GridLayout(5, 1));
+        cont.add(new JLabel("Please choose the piece you would like to promote your pawn into"));
+        cont.add(q);
+        cont.add(r);
+        cont.add(b);
+        cont.add(k);
+        JButton submit = new JButton("Submit");
+        submit.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int x;
+				int y;
+				ArrayList<Piece> p;
+				if(q.isSelected()) {
+        			//white = !white;
+        			if(white) {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+	        				x = p.get(i).getLoc().getNum();
+	        				y = p.get(i).getLoc().getLet();
+	        				if(p.get(i).getLoc().getNum() == 0) {
+	        					squares[x][y].setIcon(new ImageIcon(pieces[1][QUEEN]));
+	        					man.promote(new Cell(x, y), PieceTypes.Type.QUEEN);
+	        				}
+	       				}
+           			}
+        			else {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 7) {
+        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][QUEEN]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.QUEEN);
+        					}
+        				}
+        			}
+        			//white = !white;
+        		}
+        		else if(r.isSelected()) {
+        			//white = !white;
+        			if(white) {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 0) {
+        						squares[x][y].setIcon(new ImageIcon(pieces[1][ROOK]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.ROOK);
+        					}
+        				}
+        			}
+        			else {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 7) {
+        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][ROOK]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.ROOK);
+        					}
+        				}
+        			}
+        			//white = !white;
+        		}
+        		else if(b.isSelected()) {
+        			//white = !white;
+        			if(white) {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 0) {
+        						squares[x][y].setIcon(new ImageIcon(pieces[1][BISHOP]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.BISHOP);
+        					}
+        				}
+        			}
+        			else {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 7) {
+        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][BISHOP]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.BISHOP);
+        					}
+        				}
+        			}
+        			//white = !white;
+        		}
+        		else if(k.isSelected()) {
+        			//white = !white;
+        			if(white) {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 0) {
+        						squares[x][y].setIcon(new ImageIcon(pieces[1][KNIGHT]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.KNIGHT);
+        					}
+        				}
+        			}
+        			else {
+        				p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
+        				for(int i = 0; i < p.size(); i++) {
+        					x = p.get(i).getLoc().getNum();
+        					y = p.get(i).getLoc().getLet();
+        					if(p.get(i).getLoc().getNum() == 7) {
+        						squares[7-x][7-y].setIcon(new ImageIcon(pieces[0][KNIGHT]));
+        						man.promote(new Cell(x, y), PieceTypes.Type.KNIGHT);
+        					}
+        				}
+        			}
+        			//white = !white;
+        		}
+        	}
+        });
+        cont.add(submit);
+        int x;
+        int y;
+		if (white) {
+			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
+			for(int i = 0; i < p.size(); i++) {
+				if(p.get(i).getLoc().getNum() == 0) {
+					frame.setVisible(true);
+				}
+			}
+		}
+		else {
+			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
+			for(int i = 0; i < p.size(); i++) {
+				if(p.get(i).getLoc().getNum() == 7) {
+					frame.setVisible(true);
+				}
+			}
+		}
 	}
 	
 	private void update() {

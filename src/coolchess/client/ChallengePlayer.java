@@ -8,7 +8,7 @@ public class ChallengePlayer extends TestCase {
 	String username2 = "carl";
 	String hostname = "AJ-PC";
 	String response;
-	String expected = username1 + ": challenge " + username2;
+	String expected = username1 + " challenge " + username2;
 	int port = 6969;
 	protected void setUp(){
 		ClientHelper ch1 = new ClientHelper(hostname,port);
@@ -23,7 +23,8 @@ public class ChallengePlayer extends TestCase {
 			ch2.user(username2);
 			ch2.setResponse();
 			
-			ch1.raw("challenge " + username2);
+			ch1.raw(username1 + " challenge " + username2);
+			ch2.setResponse();
 			ch2.setResponse();
 			response = ch2.getResponse();
 			
