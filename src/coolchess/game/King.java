@@ -32,7 +32,7 @@ public class King extends Piece {
 		for(Piece p : b.getPiecesOfType(this.color == PieceTypes.Color.BLACK ? PieceTypes.Color.WHITE : PieceTypes.Color.BLACK)){
 			switch(p.getType()){
 			case BISHOP:    
-				for(Cell c : Validator.bishopMoves(b, (Bishop)p, p.getColor() == PieceTypes.Color.BLACK)){
+				for(Cell c : Validator.bishopMoves(b, (Bishop)p)){
 					if(loc.equals(c)){
 						return true;
 					}
@@ -42,28 +42,28 @@ public class King extends Piece {
 				// kings can't put other kings in check
 				break;
 			case KNIGHT:
-				for(Cell c : Validator.knightMoves(b, (Knight)p, p.getColor() == PieceTypes.Color.BLACK)){
+				for(Cell c : Validator.knightMoves(b, (Knight)p)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
 				break;
 			case PAWN:
-				for(Cell c : Validator.pawnMoves(b, (Pawn)p, p.getColor() == PieceTypes.Color.BLACK)){
+				for(Cell c : Validator.pawnMoves(b, (Pawn)p)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
 				break;
 			case QUEEN:
-				for(Cell c : Validator.queenMoves(b, (Queen)p, p.getColor() == PieceTypes.Color.BLACK)){
+				for(Cell c : Validator.queenMoves(b, (Queen)p)){
 					if(loc.equals(c)){
 						return true;
 					}
 				}
 				break;
 			case ROOK:
-				for(Cell c : Validator.rookMoves(b, (Rook)p, p.getColor() == PieceTypes.Color.BLACK)){
+				for(Cell c : Validator.rookMoves(b, (Rook)p)){
 					if(loc.equals(c)){
 						return true;
 					}

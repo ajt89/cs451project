@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Validator {
-	private static void removeSameSide(Board board, ArrayList<Cell> ret, boolean isBlack){
+	private static void removeSameSide(Board board, Piece p, ArrayList<Cell> ret){
 		for(Iterator<Cell> iter = ret.iterator(); iter.hasNext();){
 			Piece pp = board.getPiece(iter.next());
 			if(pp != null){
-				if(isBlack){
+				if(p.getColor() == PieceTypes.Color.BLACK){
 					if(pp.getColor() == PieceTypes.Color.BLACK){
 						iter.remove();
 					}
@@ -22,7 +22,19 @@ public class Validator {
 		}
 	}
 	
-	public static ArrayList<Cell> bishopMoves(Board board, Bishop p, boolean isBlack) {
+	private static void removeChecks(Board board, Piece p, ArrayList<Cell> ret){
+		Cell start = p.getLoc();
+		for(Iterator<Cell> iter = ret.iterator(); iter.hasNext();){
+			p.setLoc(iter.next());
+			// 0 alright here since there's only 1 king per side ever
+			if(((King)(board.getPiecesOfTypes(p.getColor(), PieceTypes.Type.KING).get(0))).inCheck(board)){
+				iter.remove();
+			}
+		}
+		p.setLoc(start);
+	}
+	
+	public static ArrayList<Cell> bishopMoves(Board board, Bishop p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -56,12 +68,13 @@ public class Validator {
 			}
 		}
 		
-		removeSameSide(board, ret, isBlack);
+		removeSameSide(board, p, ret);
+		removeChecks(board, p, ret);
 		
 		return ret;
 	}
 
-	public static ArrayList<Cell> kingMoves(Board board, King p, boolean isBlack) {
+	public static ArrayList<Cell> kingMoves(Board board, King p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -121,12 +134,13 @@ public class Validator {
 			}
 		}
 		
-		removeSameSide(board, ret, isBlack);
+		removeSameSide(board, p, ret);
+		removeChecks(board, p, ret);
 		
 		return ret;
 	}
 
-	public static ArrayList<Cell> knightMoves(Board board, Knight p, boolean isBlack) {
+	public static ArrayList<Cell> knightMoves(Board board, Knight p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -142,17 +156,18 @@ public class Validator {
 			}
 		}
 		
-		removeSameSide(board, ret, isBlack);
+		removeSameSide(board, p, ret);
+		removeChecks(board, p, ret);
 		
 		return ret;
 	}
 
-	public static ArrayList<Cell> pawnMoves(Board board, Pawn p, boolean isBlack) {
+	public static ArrayList<Cell> pawnMoves(Board board, Pawn p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
 		int l = p.getLoc().getLet();
-		if(isBlack){
+		if(p.getColor() == PieceTypes.Color.BLACK){
 			if(n + 1 < Board.boardSize){
 				ret.add(new Cell(n + 1, l));
 				if(l + 1 < Board.boardSize){
@@ -187,12 +202,13 @@ public class Validator {
 			}
 		}
 		
-		removeSameSide(board, ret, isBlack);
+		removeSameSide(board, p, ret);
+		removeChecks(board, p, ret);
 		
 		return ret;
 	}
 
-	public static ArrayList<Cell> queenMoves(Board board, Queen p, boolean isBlack) {
+	public static ArrayList<Cell> queenMoves(Board board, Queen p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -254,12 +270,13 @@ public class Validator {
 			}
 		}
 		
-		removeSameSide(board, ret, isBlack);
+		removeSameSide(board, p, ret);
+		removeChecks(board, p, ret);
 		
 		return ret;
 	}
 
-	public static ArrayList<Cell> rookMoves(Board board, Rook p, boolean isBlack) {
+	public static ArrayList<Cell> rookMoves(Board board, Rook p) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 		
 		int n = p.getLoc().getNum();
@@ -294,7 +311,8 @@ public class Validator {
 			}
 		}
 		
-		removeSameSide(board, ret, isBlack);
+		removeSameSide(board, p, ret);
+		removeChecks(board, p, ret);
 		
 		return ret;
 	}
