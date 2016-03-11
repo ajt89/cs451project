@@ -26,12 +26,33 @@ public class Manager {
 		// actually move piece
 		p = m.getPiece();
 		if(p.getType() == PieceTypes.Type.KING){
+			((King)p).setMoved(true);
+			
 			// castling right / king
 			if(p.getLoc().getLet() - m.getCell().getLet() == -2){
-				board.getPiece(new Cell(p.getLoc().getNum(), 7)).setLoc(new Cell(p.getLoc().getNum(), 5));
+				Rook r = (Rook)(board.getPiece(new Cell(p.getLoc().getNum(), 7)));
+				r.setMoved(true);
+				r.setLoc(new Cell(p.getLoc().getNum(), 5));
 			} // castling left / queen
 			else if(p.getLoc().getLet() - m.getCell().getLet() == 2){
-				board.getPiece(new Cell(p.getLoc().getNum(), 0)).setLoc(new Cell(p.getLoc().getNum(), 3));
+				Rook r = (Rook)(board.getPiece(new Cell(p.getLoc().getNum(), 0)));
+				r.setMoved(true);
+				r.setLoc(new Cell(p.getLoc().getNum(), 3));
+			}
+		}
+		else if(p.getType() == PieceTypes.Type.ROOK){
+			((Rook)p).setMoved(true);
+		}
+		else if(p.getType() == PieceTypes.Type.PAWN){
+			Pawn pp = (Pawn)p;
+			
+			if(!pp.hasMoved()){
+				if(!!pp.hasAdvanced()){
+					if(Math.abs(pp.getLoc().getNum() - m.getCell().getNum()) == 2){
+						pp.setAdvanced(true);
+					}
+				}
+				pp.setMoved(true);
 			}
 		}
 		// most pieces don't require special treatment
