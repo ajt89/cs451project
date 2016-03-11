@@ -190,13 +190,18 @@ public class Server {
 				ObjectInputStream inBlack = new ObjectInputStream(black.getInputStream());
 				ObjectOutputStream outWhite = new ObjectOutputStream(white.getOutputStream());
 				ObjectInputStream inWhite = new ObjectInputStream(white.getInputStream());
+				System.out.println("Sockets up");
 				Board obj = null;
 				while(true){
 					obj = (Board)inWhite.readObject();
+					System.out.println("White in");
 					outBlack.writeObject(obj);
+					System.out.println("Black Out");
 					outBlack.flush();
 					obj = (Board)inBlack.readObject();
+					System.out.println("Black in");
 					outWhite.writeObject(obj);
+					System.out.println("White out");
 					outWhite.flush();
 				}
 			} catch (Exception e) {
