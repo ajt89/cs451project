@@ -237,14 +237,11 @@ public class Chessboard {
 				button.setIcon(icon);
 				
 				if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
-					//button.setBackground(Color.WHITE);
 					squares[i][j].setBackground(Color.WHITE);
 				}
 				else {
-					//button.setBackground(Color.BLACK);
 					squares[i][j].setBackground(Color.BLACK);
 				}
-				//squares[x][y] = button;
 			}
 		}
 	}
@@ -261,13 +258,14 @@ public class Chessboard {
 				if(m != null) {
 					listening = false;
 				}
+				man.doMove(m);
+				System.out.println("Should've done move");
 			} catch (Exception e) {
 				System.out.println(e);
 				e.printStackTrace();
 			}
 		}
-		man.doMove(m);
-		white = !white;
+		//white = !white;
 		update();
 		player = !player;
 	}
@@ -308,7 +306,7 @@ public class Chessboard {
 		}
 		
 		update();
-		white = !white;
+		//white = !white;
 	}
 	
 	private void update() {
