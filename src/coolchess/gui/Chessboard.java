@@ -279,6 +279,12 @@ public class Chessboard {
 			man.doMove(m);
 			checkPromote();
 			try {
+				Thread.sleep(7500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
 				ch.sendBoard(man.getBoard());
 			} catch (Exception e) {
 				System.out.println(e);
@@ -295,6 +301,12 @@ public class Chessboard {
 			m = new Move(p, new Cell(7-i, 7-j));
 			man.doMove(m);
 			checkPromote();
+			try {
+				Thread.sleep(7500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			try {
 				ch.sendBoard(man.getBoard());
 			} catch (Exception e) {
@@ -494,9 +506,9 @@ public class Chessboard {
 				}
 			}
 		}
-		while(notPressed) {
+		/*while(notPressed) {
 			
-		}
+		}*/
 	}
 	
 	private void update() {
