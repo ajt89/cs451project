@@ -277,12 +277,14 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(i, j));
 			man.doMove(m);
-			checkPromote();
-			try {
-				Thread.sleep(7500);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			boolean temp = checkPromote();
+			if(temp) {
+				try {
+					Thread.sleep(7500);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			try {
 				ch.sendBoard(man.getBoard());
@@ -300,12 +302,14 @@ public class Chessboard {
 			Piece p = man.getBoard().getPiece(new Cell(oldi, oldj));
 			m = new Move(p, new Cell(7-i, 7-j));
 			man.doMove(m);
-			checkPromote();
-			try {
-				Thread.sleep(7500);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			boolean temp = checkPromote();
+			if(temp) {
+				try {
+					Thread.sleep(7500);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			try {
 				ch.sendBoard(man.getBoard());
@@ -350,7 +354,7 @@ public class Chessboard {
 		//white = !white;
 	}
 	
-	private void checkPromote() {
+	private boolean checkPromote() {
 		ArrayList<Piece> p = new ArrayList<Piece>();
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButton q = new JRadioButton("Queen");
@@ -492,8 +496,8 @@ public class Chessboard {
 			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 0) {
-					notPressed = true;
 					frame.setVisible(true);
+					return true;
 				}
 			}
 		}
@@ -501,14 +505,12 @@ public class Chessboard {
 			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 7) {
-					notPressed = true;
 					frame.setVisible(true);
+					return true;
 				}
 			}
 		}
-		/*while(notPressed) {
-			
-		}*/
+		return false;
 	}
 	
 	private void update() {
