@@ -1,8 +1,11 @@
 package coolchess.game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Board {
+public class Board implements Serializable {
+	private static final long serialVersionUID = -4342807129775409263L;
+
 	public static final int boardSize = 8;
 
 	private BoardState state;
