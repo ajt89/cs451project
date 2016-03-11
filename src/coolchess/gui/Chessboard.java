@@ -19,7 +19,7 @@ import coolchess.game.*;
 public class Chessboard {
 
 
-	boolean notPressed = true;
+	boolean notPressed = false;
 	private boolean white = true;
 	private String playerName;
 	private static JFrame frame = new JFrame();
@@ -480,6 +480,7 @@ public class Chessboard {
 			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.WHITE, PieceTypes.Type.PAWN);
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 0) {
+					notPressed = true;
 					frame.setVisible(true);
 				}
 			}
@@ -488,6 +489,7 @@ public class Chessboard {
 			p = man.getBoard().getPiecesOfTypes(PieceTypes.Color.BLACK, PieceTypes.Type.PAWN);
 			for(int i = 0; i < p.size(); i++) {
 				if(p.get(i).getLoc().getNum() == 7) {
+					notPressed = true;
 					frame.setVisible(true);
 				}
 			}
