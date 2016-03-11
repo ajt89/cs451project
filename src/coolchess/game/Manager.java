@@ -54,6 +54,13 @@ public class Manager {
 					pp.setAdvanced(true);
 				}
 			}
+			else{ // en passant
+				Cell pc = pp.getLoc();
+				Cell mc = m.getCell();
+				if(board.getPiece(mc) == null && Math.abs(pc.getNum() - mc.getNum()) == 1 && Math.abs(pc.getLet() - mc.getLet()) == 1){
+					board.getPieces().remove(board.getPiece(new Cell(pc.getNum(), 2 * pc.getLet() - mc.getLet())));
+				}
+			}
 		}
 		// most pieces don't require special treatment
 		p.setLoc(m.getCell());
