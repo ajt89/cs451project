@@ -1,89 +1,56 @@
 package coolchess.server;
 
 import java.net.*;
+import java.util.HashMap;
 
+import coolchess.client.Client;
 import coolchess.game.Move;
 
 import java.io.*;
 
 public class ServerHelper {
-	Socket user1Socket;
-	Socket user2Socket;
+	private int portNumber;
+	//private static Move m;
+	private static boolean whiteRecieved;
+	private static boolean blackRecieved;
+	private static HashMap<String, Socket> userSocket;
+	private static String white;
+	private static String black;
 	
-	public ServerHelper(Socket user1Socket, Socket user2Socket){
-		this.user1Socket = user1Socket;
-		this.user2Socket = user2Socket;
-		//new Thread(SurrenderListen1).start();
-		//new Thread(SurrenderListen2).start();
-		//new Thread(ChessGame).start();
+	public ServerHelper(int portNumber, HashMap<String, Socket> userSocket, String white, String black){
+		this.portNumber = portNumber;
+		whiteRecieved = false;
+		blackRecieved = false;
+		ServerHelper.userSocket = userSocket;
+		ServerHelper.white = white;
+		ServerHelper.black = black;
 	}
-	Runnable ChessGame = new Runnable(){
-		public void run(){
-			System.out.println("Server ChessGame running");
-			try {
-				ObjectInputStream user1In = new ObjectInputStream(user1Socket.getInputStream());
-				ObjectOutputStream user1Out = new ObjectOutputStream(user1Socket.getOutputStream());
-				ObjectInputStream user2In = new ObjectInputStream(user2Socket.getInputStream());
-				ObjectOutputStream user2Out = new ObjectOutputStream(user1Socket.getOutputStream());
-				while(true){
-					Move obj = (Move)user1In.readObject();
-					user2Out.writeObject(obj);
-					obj = (Move)user2In.readObject();
-					user1Out.writeObject(obj);
-				}	
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-		}
-	};
 	
-	Runnable SurrenderListen1 = new Runnable(){
-		public void run(){
-			boolean inProgress = true;
-			System.out.println("SurrenderListen1 running");
-			try{
-				BufferedReader in1 = new BufferedReader(new InputStreamReader(user1Socket.getInputStream()));
-				//PrintWriter out1 = new PrintWriter(user1Socket.getOutputStream(), true);
-				//BufferedReader in2 = new BufferedReader(new InputStreamReader(user2Socket.getInputStream()));
-				PrintWriter out2 = new PrintWriter(user2Socket.getOutputStream(), true);
-				while(inProgress){
-					String input = in1.readLine();
-					System.out.println(input + "ONE");
-					if (input.contains("SURRENDER")){
-						out2.println("VICTORY");
-						System.out.println("Print vicotry? ONE");
-						inProgress = false;
-						break;
-					}
-				}
-			} catch (Exception e){
-				System.out.println(e);
+	public void startGameServer() throws IOException{
+		ServerSocket listener = new ServerSocket(portNumber, 2);
+		try {
+			Socket white = listener.accept();
+			Socket black = listener.accept();
+			ObjectInputStream inWhite = new ObjectInputStream(white.getInputStream());
+			ObjectOutputStream outWhite = new ObjectOutputStream(white.getOutputStream());
+			ObjectInputStream inBlack = new ObjectInputStream(black.getInputStream());
+			ObjectOutputStream outBlack = new ObjectOutputStream(black.getOutputStream());
+			while(true){
+				Move m = (Move)inWhite.readObject();
+				//System.out.println("Object recieved from black");
+				outBlack.writeObject(m);
+				//System.out.println("Object sent to black");
+				m = (Move)inBlack.readObject();
+				//System.out.println("Object recieved from black");
+				outWhite.writeObject(m);
+				//System.out.println("Object sent to white");
 			}
+		} catch (Exception e){
+			System.out.println(e);
 		}
-	};
-	
-	Runnable SurrenderListen2 = new Runnable(){
-		public void run(){
-			System.out.println("SurrenderListen2 running");
-			boolean inProgress = true;
-			try{
-				//BufferedReader in1 = new BufferedReader(new InputStreamReader(user1Socket.getInputStream()));
-				PrintWriter out1 = new PrintWriter(user1Socket.getOutputStream(), true);
-				BufferedReader in2 = new BufferedReader(new InputStreamReader(user2Socket.getInputStream()));
-				//PrintWriter out2 = new PrintWriter(user2Socket.getOutputStream(), true);
-				while(inProgress){
-					String input = in2.readLine();
-					System.out.println(input + "TWO");
-					if (input.contains("SURRENDER")){
-						out1.println("VICTORY");
-						System.out.println("Print vicotry? TWO");
-						inProgress = false;
-						break;
-					}
-				}
-			} catch (Exception e){
-				System.out.println(e);
-			}
+		finally{
+			listener.close();
 		}
-	};
+		
+	}
 }

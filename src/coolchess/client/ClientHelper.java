@@ -3,11 +3,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import coolchess.game.Move;
+import coolchess.game.Board;
 
 public class ClientHelper {
 	private String serverHost;
 	private int portNumber;
+	private int counter;
 	private String response;
 	private String message;
 	private String username;
@@ -18,12 +19,13 @@ public class ClientHelper {
 	private ObjectInputStream objectIn;
 	private ObjectOutputStream objectOut;
 	private ArrayList<String> playerlist = new ArrayList<String>();;
-	private Move obj;
+	private Board obj;
 
 	// Server Host and port number are passed in
 	public ClientHelper(String _serverHost, int _portNumber){
 		serverHost = _serverHost;
 		portNumber = _portNumber;
+		counter = 1;
 	}
 	
 	//Getters and setters
@@ -41,6 +43,14 @@ public class ClientHelper {
 	
 	public void setPortNumber(int portNumber){
 		this.portNumber = portNumber;
+	}
+	
+	public int getCounter(){
+		return counter;
+	}
+	
+	public void setCounter(int counter){
+		this.counter = counter;
 	}
 	
 	public String getMessage(){
@@ -78,12 +88,16 @@ public class ClientHelper {
 		*/
 	}	
 	
-	public void sendMove(Move m) throws Exception{
+	public void sendBoard(Board m) throws Exception{
 		objectOut.writeObject(m);
 	}
 	
-	public Move getMove() throws Exception{
-		Move obj = (Move)objectIn.readObject();
+	public void setBoard() throws Exception{
+		obj = (Board)objectIn.readObject();
+		//return obj;
+	}
+	
+	public Board getBoard() throws Exception{
 		return obj;
 	}
 	
@@ -130,9 +144,12 @@ public class ClientHelper {
         InputStreamReader isr = new InputStreamReader(is);
         br = new BufferedReader(isr);
         
-        socketObject = new Socket(serverHost, portNumber);
-        objectIn = new ObjectInputStream(socketObject.getInputStream());
+	}
+	
+	public void setupGame() throws Exception{
+		socketObject = new Socket(serverHost, 7878);
 		objectOut = new ObjectOutputStream(socketObject.getOutputStream());
+        objectIn = new ObjectInputStream(socketObject.getInputStream());
 	}
 		
 	//sends QUIT to server, closing the connection

@@ -9,7 +9,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import coolchess.game.Move;
 import coolchess.gui.Chessboard;
 
 public class Client implements Runnable{
@@ -21,6 +20,7 @@ public class Client implements Runnable{
 	static String challengeUser;
 	static CardLayout cardLayout = new CardLayout();
 	static Container contentPane;
+	static Chessboard cb;
 	private boolean surrender = false;
 	
 	Client(ClientHelper ch){
@@ -46,7 +46,7 @@ public class Client implements Runnable{
 				
 				contentPane = frame.getContentPane();
 				contentPane.setLayout(cardLayout);
-				Chessboard cb = new Chessboard(ch, cardLayout, contentPane);
+				cb = new Chessboard(ch, cardLayout, contentPane);
 				JPanel menu = new JPanel();
 				JButton play = new JButton("Play");
 				DefaultListModel list = new DefaultListModel();
@@ -158,7 +158,7 @@ public class Client implements Runnable{
 					public void actionPerformed(ActionEvent e) {
 						String opponent = (String) people.getSelectedValue();
 						try {
-							ch.raw("challenge " + opponent);
+							ch.raw(ch.getUser() + " challenge " + opponent);
 						} catch (Exception e1) {
 							System.out.println(e1);
 						}
@@ -321,14 +321,15 @@ public class Client implements Runnable{
 	public void run() {
 		String me = ch.getUser();
 		try{
-			while (ch.getSocket().isConnected()){
+			while (ch.getSocketString().isConnected()){
 				ch.setResponse();
 				String response = ch.getResponse();
 				if (response != null){
 					System.out.println(response);
 					String[] responseSplit = response.split(" ");
 					if (responseSplit.length == 3 && response.contains(me)){
-						String userMessage = responseSplit[0].substring(0,responseSplit[0].length()-1);
+						//String userMessage = responseSplit[0].substring(0,responseSplit[0].length()-1);
+						String userMessage = responseSplit[0];
 						if(responseSplit[1].equals("challenge") && responseSplit[2].equals(me)){
 							gameChallenge = true;
 							challengeUser = userMessage;
@@ -339,7 +340,7 @@ public class Client implements Runnable{
 							challengeAccept = true;
 							challengeUser = userMessage;
 							System.out.println("Challenge accepted by " + userMessage);
-							ch.raw("GAME " + me + " " + userMessage);
+							//ch.raw("GAME " + me + " " + userMessage);
 						}
 						else if(responseSplit[1].equals(me) && responseSplit[2].equals("denied")){
 							challengeDenied = true;
@@ -347,9 +348,17 @@ public class Client implements Runnable{
 							System.out.println("Challenge denied by " + userMessage);
 						}
 					}
+					else if (response.contains("GAME") && response.contains(me)){
+						ch.setupGame();
+						new Thread(MoveListen).start();
+					}
 					else if (response.contains("VICTORY") && response.contains(me)){
 						System.out.println("Victory received");
 						victory = true;
+					}
+					else if (response.contains("COUNTER")){
+						int counter = Integer.parseInt(responseSplit[1]);
+						ch.setCounter(counter);
 					}
 				}
 				if (gameChallenge){
@@ -365,8 +374,12 @@ public class Client implements Runnable{
 					try {
 						if (n == 0){		
 							ch.raw(challengeUser + " accept");
+							ch.raw("GAME " + challengeUser + " " + me);
+							//ch.setupGame();
+							cb.flipBoard();
+							cb.setWhite(false);
+							cb.setPlayer(false);
 							cardLayout.next(contentPane);
-							new Thread(ChessGame).start();
 							new Thread(SurrenderListen).start();
 						}
 						else{
@@ -383,11 +396,14 @@ public class Client implements Runnable{
 							"Your challenge has been accepted",
 							"Challenge Accepted",
 							JOptionPane.PLAIN_MESSAGE);
+					//ch.setupGame();
 					challengeUser = null;
 					gameChallenge = false;
 					challengeAccept = false;
+					cb.setWhite(true);
+					cb.setPlayer(true);
 					cardLayout.next(contentPane);
-					new Thread(ChessGame).start();
+					//new Thread(ChessGame).start();
 					new Thread(SurrenderListen).start();
 				}
 				
@@ -424,21 +440,6 @@ public class Client implements Runnable{
 		
 	}
 	
-	static Runnable ChessGame = new Runnable(){
-		public void run(){
-			try{
-				ObjectInputStream objectIn = new ObjectInputStream(ch.getSocket().getInputStream());
-				ObjectOutputStream ObjectOut = new ObjectOutputStream(ch.getSocket().getOutputStream());
-				while(true){
-					Move obj = (Move)objectIn.readObject();
-				}
-			} catch (Exception e){
-				System.out.println(e);
-			}
-			
-		}
-	};
-	
 	static Runnable SurrenderListen = new Runnable(){
 		public void run() {
 			try{
@@ -464,6 +465,22 @@ public class Client implements Runnable{
 			
 		}
 		
+	};
+	
+	static Runnable MoveListen = new Runnable(){
+		public void run(){
+			try{
+				System.out.println("MoveListen running");
+				while(true){
+					ch.setBoard();
+					System.out.println("Recieved move");
+					cb.recieveBoard(ch);
+					System.out.println("Sent move to chessboard");
+				}
+			} catch (Exception e){
+				System.out.println(e);
+			}
+		}
 	};
 	
 }
