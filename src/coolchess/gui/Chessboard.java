@@ -141,8 +141,9 @@ public class Chessboard {
 						}
 						else {
 							//squares[xcord][ycord].setEnabled(false);
-							//receiveMove(ch);
-							//player = true;
+							System.out.println("Does it get here on black?");
+							receiveMove(ch);
+							player = true;
 						}
 					}	
 				});
@@ -259,6 +260,8 @@ public class Chessboard {
 		while(listening) {
 			try {
 				m = ch.getMove();
+				System.out.println(m.getCell().getNum());
+				System.out.println(m.getCell().getLet());
 				if(m != null) {
 					listening = false;
 				}
@@ -313,7 +316,10 @@ public class Chessboard {
 			//}
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
+
+		update();
 		white = !white;
+
 		//man.doMove();
 	}
 	
@@ -447,7 +453,6 @@ public class Chessboard {
 				}
 			}
 		}
-		white = !white;
 	}
 	
 	public void setPlayer(boolean b) {
