@@ -69,7 +69,6 @@ public class Validator {
 		}
 		
 		removeSameSide(board, p, ret);
-		removeChecks(board, p, ret);
 		
 		return ret;
 	}
@@ -135,7 +134,6 @@ public class Validator {
 		}
 		
 		removeSameSide(board, p, ret);
-		removeChecks(board, p, ret);
 		
 		return ret;
 	}
@@ -157,7 +155,6 @@ public class Validator {
 		}
 		
 		removeSameSide(board, p, ret);
-		removeChecks(board, p, ret);
 		
 		return ret;
 	}
@@ -203,7 +200,6 @@ public class Validator {
 		}
 		
 		removeSameSide(board, p, ret);
-		removeChecks(board, p, ret);
 		
 		return ret;
 	}
@@ -271,7 +267,6 @@ public class Validator {
 		}
 		
 		removeSameSide(board, p, ret);
-		removeChecks(board, p, ret);
 		
 		return ret;
 	}
@@ -312,7 +307,6 @@ public class Validator {
 		}
 		
 		removeSameSide(board, p, ret);
-		removeChecks(board, p, ret);
 		
 		return ret;
 	}

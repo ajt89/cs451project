@@ -54,7 +54,7 @@ public class King extends Piece {
 						return true;
 					}
 				}
-				break;
+				break; 
 			case QUEEN:
 				for(Cell c : Validator.queenMoves(b, (Queen)p)){
 					if(loc.equals(c)){
