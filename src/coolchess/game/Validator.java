@@ -199,6 +199,28 @@ public class Validator {
 							ret.add(c);
 						}
 					}
+					
+					// en passant
+					if(l + 1 < Board.boardSize){
+						c = new Cell(n + 1, l + 1);
+						Piece pp = board.getPiece(c);
+						if(pp != null && pp.getType() == PieceTypes.Type.PAWN && p.getColor() != pp.getColor()){
+							Pawn ppp = (Pawn)pp;
+							if(ppp.hasAdvanced()){
+								ret.add(c);
+							}
+						}
+					}
+					if(l - 1 >= 0){
+						c = new Cell(n + 1, l - 1);
+						Piece pp = board.getPiece(c);
+						if(pp != null && pp.getType() == PieceTypes.Type.PAWN && p.getColor() != pp.getColor()){
+							Pawn ppp = (Pawn)pp;
+							if(ppp.hasAdvanced()){
+								ret.add(c);
+							}
+						}
+					}
 				}
 				
 				//advancing / double length movement on first move
@@ -225,6 +247,28 @@ public class Validator {
 						c = new Cell(n - 1, l - 1);
 						if(board.getPiece(c) != null){
 							ret.add(c);
+						}
+					}
+					
+					// en passant
+					if(l + 1 < Board.boardSize){
+						c = new Cell(n - 1, l + 1);
+						Piece pp = board.getPiece(c);
+						if(pp != null && pp.getType() == PieceTypes.Type.PAWN && p.getColor() != pp.getColor()){
+							Pawn ppp = (Pawn)pp;
+							if(ppp.hasAdvanced()){
+								ret.add(c);
+							}
+						}
+					}
+					if(l - 1 >= 0){
+						c = new Cell(n - 1, l - 1);
+						Piece pp = board.getPiece(c);
+						if(pp != null && pp.getType() == PieceTypes.Type.PAWN && p.getColor() != pp.getColor()){
+							Pawn ppp = (Pawn)pp;
+							if(ppp.hasAdvanced()){
+								ret.add(c);
+							}
 						}
 					}
 				}
