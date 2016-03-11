@@ -75,6 +75,7 @@ public class Chessboard {
 		for(int i = 0; i < squares.length; i++) {
 			for(int j = 0; j < squares[i].length; j++) {
 				JButton button = new JButton();
+		
 				button.setMargin(margins);
 				ImageIcon icon = new ImageIcon(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
 				button.setIcon(icon);
@@ -89,7 +90,8 @@ public class Chessboard {
 				//Rectangle rect = squares[i][j].getBounds();
 			}
 		}
-		player = true;
+		//uncomment for testing
+		//player = true;
 		for(int i = 0; i < squares.length; i++) {
 			for(int j = 0; j < squares[i].length; j++) {
 				board.setLocation(i, j);
@@ -101,12 +103,17 @@ public class Chessboard {
 						if(player) {
 							if(active) {
 								if(white) {
-									//Cell c = new Cell(xcord, ycord);
-									/*if(man.getBoard().getPiece(c)) {
-										
-									}*/
+									Cell c = new Cell(xcord, ycord);
+									if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.WHITE) {
+										showViableMoves(xcord, ycord);
+									}
 								}
-								showViableMoves(xcord, ycord);
+								else {
+									Cell c = new Cell(7-xcord, 7-ycord);
+									if(man.getBoard().getPiece(c).getColor() == PieceTypes.Color.BLACK) {
+										showViableMoves(xcord, ycord);
+									}
+								}
 							}
 							else {
 								//check if current location is within the viable list
@@ -124,6 +131,7 @@ public class Chessboard {
 								}
 								if(isViable) {
 									movePiece(activex, activey, xcord, ycord, ch);
+									//comment out for testing
 									player = false;
 								}
 								active = true;
@@ -132,7 +140,9 @@ public class Chessboard {
 							}
 						}
 						else {
-							receiveMove(ch);
+							//squares[xcord][ycord].setEnabled(false);
+							//receiveMove(ch);
+							//player = true;
 						}
 					}	
 				});
@@ -208,7 +218,6 @@ public class Chessboard {
 				squares[7-c.getNum()][7-c.getLet()].setBackground(Color.RED);
 			}
 		}
-		//squares[i][j].setBackground(Color.gray);
 		active = false;
 	}
 	
@@ -305,9 +314,7 @@ public class Chessboard {
 			man.doMove(new Move(p, new Cell(7-i, 7-j)));
 		}
 		white = !white;
-		
 		//man.doMove();
-		//move in board as well
 	}
 	
 	private void update() {
@@ -443,67 +450,9 @@ public class Chessboard {
 		white = !white;
 	}
 	
-	/*private void update(Board b) {
-		//for(int i = 0; i < b.getSize(); i++) {
-		//for(int j = 0; j < b.getSize(); j++) {
-		Cell[][] cells = b.getCells();
-		for(int i = 0; i < b.boardSize; i++) {
-			for(int j = 0; j < b.boardSize; j++) {
-				switch(cells[i][j].getCellState()) {
-					case EMPTY:
-						break;
-					case WHITE_KING:
-						squares[i][j].setText("King");
-						squares[i][j].setForeground(Color.RED);
-						break;
-					case WHITE_QUEEN:
-						squares[i][j].setText("Queen");
-						squares[i][j].setForeground(Color.RED);
-						break;
-					case WHITE_ROOK:
-						squares[i][j].setText("Rook");
-						squares[i][j].setForeground(Color.RED);
-						break;
-					case WHITE_BISHOP:
-						squares[i][j].setText("Bishop");
-						squares[i][j].setForeground(Color.RED);
-						break;
-					case WHITE_KNIGHT:
-						squares[i][j].setText("Knight");
-						squares[i][j].setForeground(Color.RED);
-						break;
-					case WHITE_PAWN:
-						squares[i][j].setText("Pawn");
-						squares[i][j].setForeground(Color.RED);
-						break;
-					case BLACK_KING:
-						squares[i][j].setText("King");
-						squares[i][j].setForeground(Color.BLUE);
-						break;
-					case BLACK_QUEEN:
-						squares[i][j].setText("Queen");
-						squares[i][j].setForeground(Color.BLUE);
-						break;
-					case BLACK_ROOK:
-						squares[i][j].setText("Rook");
-						squares[i][j].setForeground(Color.BLUE);
-						break;
-					case BLACK_BISHOP:
-						squares[i][j].setText("Bishop");
-						squares[i][j].setForeground(Color.BLUE);
-						break;
-					case BLACK_KNIGHT:
-						squares[i][j].setText("Knight");
-						squares[i][j].setForeground(Color.BLUE);
-						break;
-					case BLACK_PAWN:
-						squares[i][j].setText("Pawn");
-						squares[i][j].setForeground(Color.BLUE);
-						break;
-				}
-			}
-		}
-	}*/
+	public void setPlayer(boolean b) {
+		player = b;
+	}
 	
 	public void flipBoard() {
 		/*if(white) {
